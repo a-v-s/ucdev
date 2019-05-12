@@ -1,0 +1,6 @@
+[submodule "mod/libopencm3"]
+	path = mod/libopencm3
+	url = https://github.com/libopencm3/libopencm3
+[submodule "mod/nrfx"]
+	path = mod/nrfx
+	url = https://github.com/NordicSemiconductor/nrfx
