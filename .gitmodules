@@ -1,6 +1,24 @@
 [submodule "mod/libopencm3"]
-	path = mod/libopencm3
+	path = ext/libopencm3
 	url = https://github.com/libopencm3/libopencm3
 [submodule "mod/nrfx"]
-	path = mod/nrfx
+	path = ext/nrfx
 	url = https://github.com/NordicSemiconductor/nrfx
+[submodule "ext-nonfree/Gecko_SDK"]
+	path = ext-nonfree/Gecko_SDK
+	url = git@github.com:BlaatSchaapCode/Gecko_SDK.git
+[submodule "ext-nonfree/stm8s-header"]
+	path = ext-nonfree/stm8s-header
+	url = https://github.com/the-cave/stm8s-header
+[submodule "ext/stm8-header"]
+	path = ext/stm8-header
+	url = https://github.com/midnight-wonderer/stm8-header
+[submodule "ext/CMSIS_5"]
+	path = ext/CMSIS_5
+	url = https://github.com/ARM-software/CMSIS_5
+[submodule "lib/halglue"]
+	path = lib/halglue
+	url = git@github.com:BlaatSchaapCode/halglue.git
+[submodule "ext/lufa"]
+	path = ext/lufa
+	url = https://github.com/abcminiuser/lufa
