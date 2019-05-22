@@ -22,3 +22,6 @@
 [submodule "ext/lufa"]
 	path = ext/lufa
 	url = https://github.com/abcminiuser/lufa
+[submodule "lib/libhalglue"]
+	path = lib/libhalglue
+	url = git@github.com:a-v-s/libhalglue.git
