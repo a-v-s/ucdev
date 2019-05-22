@@ -1,5 +1,14 @@
 # GPIO
 
+
+<!--
+ Cam I enter HTML comments  in markdown ??? It seems so
+  Well... it seems the suggested mixed markdown/html syntax for colspan doesn't work
+  However it seems I can enter a table in plain HTML. TODO make it so
+-->
+
+
+
 This document describes the working of the GPIO on the PSoC4 families. The document descibes the registers in each GPIO present in a PSoC device, as offset from the first register. At this point, it is assumed they are the same on all PSoC4 families.
 
 ## Registers
@@ -51,6 +60,7 @@ TBD
 
 ### PC
 Port Configuration Register
+
 
 |  |15|14|13|12|11|10|9|8|7|6|5|4|3|2|1|0| 
 |-|||||||||||||||||
