@@ -4,11 +4,11 @@
 [submodule "mod/nrfx"]
 	path = ext/nrfx
 	url = https://github.com/NordicSemiconductor/nrfx
-[submodule "ext-nonfree/Gecko_SDK"]
-	path = ext-nonfree/Gecko_SDK
+[submodule "ext/Gecko_SDK"]
+	path = ext/Gecko_SDK
 	url = git@github.com:BlaatSchaapCode/Gecko_SDK.git
-[submodule "ext-nonfree/stm8s-header"]
-	path = ext-nonfree/stm8s-header
+[submodule "ext/stm8s-header"]
+	path = ext/stm8s-header
 	url = https://github.com/the-cave/stm8s-header
 [submodule "ext/stm8-header"]
 	path = ext/stm8-header
@@ -25,3 +25,39 @@
 [submodule "lib/libhalglue"]
 	path = lib/libhalglue
 	url = git@github.com:a-v-s/libhalglue.git
+[submodule "ext/STM32CubeF0"]
+	path = ext/ST/STM32CubeF0
+	url = https://github.com/STMicroelectronics/STM32CubeF0
+[submodule "ext/STM32CubeF1"]
+	path = ext/ST/STM32CubeF1
+	url = https://github.com/STMicroelectronics/STM32CubeF1
+[submodule "ext/STM32CubeF2"]
+	path = ext/ST/STM32CubeF2
+	url = https://github.com/STMicroelectronics/STM32CubeF2
+[submodule "ext/STM32CubeF3"]
+	path = ext/ST/STM32CubeF3
+	url = https://github.com/STMicroelectronics/STM32CubeF3
+[submodule "ext/STM32CubeF4"]
+	path = ext/ST/STM32CubeF4
+	url = https://github.com/STMicroelectronics/STM32CubeF4
+[submodule "ext/STM32CubeF7"]
+	path = ext/ST/STM32CubeF7
+	url = https://github.com/STMicroelectronics/STM32CubeF7
+[submodule "ext/ST/STM32CubeG0"]
+	path = ext/ST/STM32CubeG0
+	url = https://github.com/STMicroelectronics/STM32CubeG0
+[submodule "ext/ST/STM32CubeG4"]
+	path = ext/ST/STM32CubeG4
+	url = https://github.com/STMicroelectronics/STM32CubeG4
+[submodule "ext/ST/STM32CubeL0"]
+	path = ext/ST/STM32CubeL0
+	url = https://github.com/STMicroelectronics/STM32CubeL0
+[submodule "ext/ST/STM32CubeL1"]
+	path = ext/ST/STM32CubeL1
+	url = https://github.com/STMicroelectronics/STM32CubeL1
+[submodule "ext/ST/STM32CubeL4"]
+	path = ext/ST/STM32CubeL4
+	url = https://github.com/STMicroelectronics/STM32CubeL4
+[submodule "ext/ST/STM32CubeWB"]
+	path = ext/ST/STM32CubeWB
+	url = https://github.com/STMicroelectronics/STM32CubeWB

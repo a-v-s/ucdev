@@ -10,25 +10,20 @@ I have split up the libraries in ext and ext-nonfree. In the ext-nonfree I have 
 On licenses, I prefer libraries under licenses like MIT, BSD and Apache. I want to be concerned about code, and not about legal license compatibility.
 
 ## ext
-External libraries using an open source license
+External libraries
 
 | Repository | License | Description |
 |--|--|--|
-|libopencm3	| LGPL3+ | firmware library for various mcu (mostly STM32)  |
-|nrfx		| BSD3 | firmware library for Nordic nRF5x and nRF91x |
-|stm8-header| MIT  | MIT licensed headers for STM8 using SDCC compiler|
-|CMSIS_5| Apache 2.0 | Cortex Microcontroller Software Interface Standard
-| 
+| CMSIS_5       | Apache 2.0 | Cortex Microcontroller Software Interface Standard       |
+| Gecko_SDK     | Non-Free | firmware library for Silicon Labs EFM32, EFR32 and EZR32   |
+| libopencm3	| LGPL3+ | firmware library for various mcu (mostly STM32)              |
+| nrfx		    | 3BSD | firmware library for Nordic nRF5x and nRF91x                   |
+| stm8-header   | MIT  | MIT licensed headers for STM8 using SDCC compiler              |
+| stm8s-header  | Non-Free | Patched ST headers for SDCC compatibility                  | 
+| STM32Cube*    | Mixed | Official ST SDK libraries                                     |
 
-## ext-nonfree
-External libraries using a license with some non-free restrictions. 
-These restrictions usually mean the code may only be used on the suppliers 
-hardware. 
-
-| Repository | License | Description |
-|--|--|--|
-| Gecko_SDK | Non-Free | firmware library for Silicon Labs EFM32, EFR32 and EZR32 |
-| stm8s-header | Non-Free | Patched ST headers for SDCC compatibility | 
+For STM32Cube* see License.md in their directories. Basically, the HAL is 3BSD, 
+the USB libraries are SLA0044, wich is not GPL compatible. 
 
 # Projects
 
