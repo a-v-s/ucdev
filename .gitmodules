@@ -61,3 +61,6 @@
 [submodule "ext/ST/STM32CubeWB"]
 	path = ext/STM32CubeWB
 	url = https://github.com/STMicroelectronics/STM32CubeWB
+[submodule "lib/libhlusbd"]
+	path = lib/libhlusbd
+	url = git@github.com:a-v-s/libhlusbd.git
