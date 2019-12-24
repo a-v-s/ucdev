@@ -39,13 +39,16 @@ C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_systick.c
 
 
 C_SOURCES += main.c
+C_SOURCES += ../demo.c
+
+
 C_SOURCES += $(LIBHLUSBD_ROOT)/drivers/usbd_nrfx.c
 C_SOURCES += $(LIBHLUSBD_ROOT)/usbd.c
 C_SOURCES += $(LIBHLUSBD_ROOT)/usbd_descriptors.c
 C_SOURCES += $(LIBHLUSBD_ROOT)/ConvertUTF/ConvertUTF.c
 
 
-INC += -I.
+INC += -I. -I..
 
 INC += -I $(CMSIS_ROOT)/Include
 

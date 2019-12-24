@@ -98,10 +98,15 @@ C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_utils.c
 C_SOURCES += $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
 
 C_SOURCES += main.c
+C_SOURCES += ../demo.c
+
+
 C_SOURCES += $(LIBHLUSBD_ROOT)/drivers/usbd_stm.c
 C_SOURCES += $(LIBHLUSBD_ROOT)/usbd.c
 C_SOURCES += $(LIBHLUSBD_ROOT)/usbd_descriptors.c
 C_SOURCES += $(LIBHLUSBD_ROOT)/ConvertUTF/ConvertUTF.c
+
+INC += -I. -I..
 
 
 INC += -I $(LIBHLUSBD_ROOT)/drivers/
