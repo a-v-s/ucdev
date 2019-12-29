@@ -64,3 +64,6 @@
 [submodule "lib/libhlusbd"]
 	path = lib/libhlusbd
 	url = git@github.com:a-v-s/libhlusbd.git
+[submodule "lib/libws2812dma"]
+	path = lib/libws2812dma
+	url = git@github.com:a-v-s/libws2812dma.git
