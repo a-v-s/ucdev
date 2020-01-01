@@ -60,7 +60,7 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 
 	usbd_add_endpoint_in(handle, 1, 1, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
 			(usbd_transfer_cb_f) &transfer_in_complete);
-	usbd_add_endpoint_out(handle, 1, 1, USB_EP_ATTR_TYPE_BULK, 64, 1,
+	usbd_add_endpoint_out(handle, 1, 1, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
 			temp_recv_buffer, 64, (usbd_transfer_cb_f) &transfer_out_complete);
 
 	// Be sure to save the file as UTF-8. ;)
