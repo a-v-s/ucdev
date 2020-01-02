@@ -26,15 +26,24 @@ libopencm3 is under a LGPL license. As on embedded systems libraries are usually
 For STM32Cube* see License.md in their directories. Basically, the HAL is 3BSD.
 The USB libraries are SLA0044, wich states that other code licenses won't change its license, rendering it GPL incompatible. 
 
-# Projects
+# Projects (lib)
 
-## PSoC4 support for libopencm3
+## libhlusb
 
-I'm working on writing peripheral driver for Cypress PSoC4 microcontrollers to contribute to the libopencm3 project (LGPL license)
+High Level USB library: implements the USB protocol, agnostic of the hardware,
+so it can be used in combination with any microcontroller once some glue code
+with the low level drivers has been written. This project is in development.
+There are hardware bindings for STM32CubeF1 and nrfx. Currently it can 
+enumerate, send and transmit data.
 
-## nrfx integration in libopencm3
+## libws2812dma
 
-Building the Nordic nrfx license with libopencm3. 
+WS2812 Implementation using DMA transfers. This project started out on the
+STM32F103. It uses the timer hardware to generate a PWM signal, where using DMA
+transfers set the duty cycle per cycle, implementing the WS2812 protocol this 
+way. It can control up to 4 channels simultaneously. 
+There is a port for the NRF52 series, however for the time being this is a 
+single channel only implementation.
 
 <!--
 WYSIWYG Markdown Editor 	https://stackedit.io/app#
