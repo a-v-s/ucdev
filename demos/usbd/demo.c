@@ -8,7 +8,7 @@
 #include "usbd.h"
 
 
-uint8_t temp_recv_buffer[64];
+uint8_t temp_recv_buffer[256];
 void transfer_in_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
 		size_t size) {
 
@@ -58,10 +58,10 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 	iface->bInterfaceNumber = 0;
 	iface->bAlternateSetting = 0;
 
-	usbd_add_endpoint_in(handle, 1, 1, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
+	usbd_add_endpoint_in(handle, 1, 1, USB_EP_ATTR_TYPE_BULK, 64, 1,
 			(usbd_transfer_cb_f) &transfer_in_complete);
-	usbd_add_endpoint_out(handle, 1, 1, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
-			temp_recv_buffer, 64, (usbd_transfer_cb_f) &transfer_out_complete);
+	usbd_add_endpoint_out(handle, 1, 1, USB_EP_ATTR_TYPE_BULK, 64, 1,
+			temp_recv_buffer, sizeof(temp_recv_buffer), (usbd_transfer_cb_f) &transfer_out_complete);
 
 	// Be sure to save the file as UTF-8. ;)
 	handle->descriptor_string[1] = add_string_descriptor_utf8(handle, u8"🐈Blaat!");

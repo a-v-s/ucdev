@@ -1,2 +1,2 @@
 #!/bin/bash
-for D in */; do cd $D; git pull; cd ..; done
+for D in */; do cd $D; pwd; git checkout master; git pull; cd ..; done
