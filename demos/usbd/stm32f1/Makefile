@@ -23,6 +23,7 @@ BUILD_DIR = build
 # C sources
 CUBEF1_ROOT =     ../../../ext/STM32CubeF1
 LIBHLUSBD_ROOT =  ../../../lib/libhlusbd
+LIBHALGLUE_ROOT = ../../../lib/libhalglue
 
 CUBEF1_HAL_SRC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Src
 CUBEF1_HAL_INC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Inc
@@ -35,6 +36,8 @@ CFLAGS += --std=GNU11
 
 INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
 INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
+
+C_SOURCES += $(LIBHALGLUE_ROOT)/hal/cubef1/clocksetup.c
 
 
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_adc.c
