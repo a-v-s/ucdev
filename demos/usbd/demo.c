@@ -6,7 +6,7 @@
  */
 
 #include "usbd.h"
-
+#include "serialnumber.h"
 
 uint8_t temp_recv_buffer[256];
 void transfer_in_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
@@ -36,6 +36,7 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 
 	handle->descriptor_device->iManufacturer = 1;
 	handle->descriptor_device->iProduct = 2;
+	handle->descriptor_device->iSerialNumber = 3;
 
 	handle->descriptor_configuration[0] = add_descriptor(handle,
 			sizeof(usb_descriptor_configuration_t));
@@ -64,9 +65,14 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 			temp_recv_buffer, sizeof(temp_recv_buffer), (usbd_transfer_cb_f) &transfer_out_complete);
 
 	// Be sure to save the file as UTF-8. ;)
-	handle->descriptor_string[1] = add_string_descriptor_utf8(handle, u8"🐈Blaat!");
+	handle->descriptor_string[1] = add_string_descriptor_utf16(handle, u"BlaatSchaap");
 
 	// The u"string" prefix encodes it as UTF16 from the start
-	handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"Schaap!🐼");
+	handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"USB Device Demo");
+
+	uint16_t serial_number[9] = {0};
+	GetSerialStringUTF16(serial_number,8);
+	handle->descriptor_string[3] = add_string_descriptor_utf16(handle, serial_number);
+
 
 }

@@ -23,6 +23,7 @@ BUILD_DIR = build
 # C sources
 NRFX_ROOT =     ../../../ext/nrfx
 LIBHLUSBD_ROOT =  ../../../lib/libhlusbd
+LIBHALGLUE_ROOT = ../../../lib/libhalglue
 CMSIS_ROOT = ../../../ext/CMSIS_5/CMSIS/Core/
 
 CFLAGS += --std=GNU11
@@ -35,7 +36,7 @@ C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_clock.c
 C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_systick.c
 
 
-
+C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
 
 
 C_SOURCES += main.c

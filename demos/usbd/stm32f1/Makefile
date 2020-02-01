@@ -38,7 +38,8 @@ INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
 INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/hal/cubef1/clocksetup.c
-
+C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
+INC += -I$(LIBHALGLUE_ROOT)/common/
 
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_adc.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_adc_ex.c
