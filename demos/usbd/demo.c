@@ -65,7 +65,7 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 			temp_recv_buffer, sizeof(temp_recv_buffer), (usbd_transfer_cb_f) &transfer_out_complete);
 
 	// Be sure to save the file as UTF-8. ;)
-	handle->descriptor_string[1] = add_string_descriptor_utf16(handle, u"BlaatSchaap");
+	handle->descriptor_string[1] = add_string_descriptor_utf16(handle, u"BlaatSchaap 🐑");
 
 	// The u"string" prefix encodes it as UTF16 from the start
 	handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"USB Device Demo");
