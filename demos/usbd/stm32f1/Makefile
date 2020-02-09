@@ -39,6 +39,7 @@ INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/hal/cubef1/clocksetup.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
+C_SOURCES += $(LIBHALGLUE_ROOT)/common/arm_cpuid.c
 INC += -I$(LIBHALGLUE_ROOT)/common/
 
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_adc.c
@@ -193,7 +194,10 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32F103XB_FLASH.ld
+#LDSCRIPT = STM32F103XB_FLASH.ld
+
+# It's not a simple drop-in replacement, it will need some patching in the start up code as well
+LDSCRIPT = stm32f103xb.ld
 
 # libraries
 LIBS = -lc -lm -lnosys 
