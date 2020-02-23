@@ -100,8 +100,19 @@ CPU = -mcpu=cortex-m4
 # fpu
 # NONE for Cortex-M0/M0+/M3
 
+# For Cortex M4, there is M4 without FPU, (eg nRF52810) so these have none
+# For Cortex M4F, set to fpv4-sp-d16
+
+FPU = -mfpu=fpv4-sp-d16
 
 # float-abi
+
+# There is an different ABI for MCUs with and without FPU support, so libraries
+# compiled with abi=hard and abi=soft cannot link together. There is a middle
+# way softfp. softfp is the soft abi but allows fpu instructions within 
+# functions. When using the FPU, the hard abi offers best performance.
+
+FLOAT-ABI = -mfloat-abi=hard
 
 
 # mcu
