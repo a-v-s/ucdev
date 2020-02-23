@@ -23,11 +23,14 @@ BUILD_DIR = build
 # C sources
 CUBEF3_ROOT =     ../../../ext/STM32CubeF3
 LIBHLUSBD_ROOT =  ../../../lib/libhlusbd
+LIBHALGLUE_ROOT = ../../../lib/libhalglue
 
 CUBEF3_HAL_SRC_ROOT = $(CUBEF3_ROOT)/Drivers/STM32F3xx_HAL_Driver/Src
 CUBEF3_HAL_INC_ROOT = $(CUBEF3_ROOT)/Drivers/STM32F3xx_HAL_Driver/Inc
 
 
+C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
+INC += -I$(LIBHALGLUE_ROOT)/common/
 
 
 INC += -I$(CUBEF3_ROOT)/Drivers/CMSIS/Device/ST/STM32F3xx/Include/
@@ -134,13 +137,9 @@ CPU = -mcpu=cortex-m4
 
 # fpu
 # NONE for Cortex-M0/M0+/M3
-# For M4, there is M4F with float
-FPU = -mfpu=fpv4-sp-d16
 
 # float-abi
-# If we have an FPU we have hard abi, otherwise we have soft abi
-# when we have fpu, we could select softfp, which is soft abi with fpu code
-FLOAT-ABI = -mfloat-abi=hard
+
 
 # mcu
 MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)

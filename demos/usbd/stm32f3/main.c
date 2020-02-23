@@ -25,9 +25,6 @@
 
 #include "usbd_stm.h"
 
-#include "stm32f1xx_hal_gpio.h"
-#include "stm32f1xx_hal_rcc.h"
-
 void usbd_reenumerate(){
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	GPIO_InitTypeDef GPIO_InitStruct;
@@ -42,16 +39,41 @@ void usbd_reenumerate(){
 	HAL_Delay(1);
 }
 
-void ClockSetup(void)
-{
-	//ClockSetup_HSE8_SYS72();
-	//ClockSetup_HSE8_SYS48();
-	ClockSetup_HSI_SYS48();
+void SystemClock_Config(void) {
+	RCC_ClkInitTypeDef RCC_ClkInitStruct;
+	RCC_OscInitTypeDef RCC_OscInitStruct;
+	RCC_PeriphCLKInitTypeDef RCC_PeriphClkInit;
+
+	/* Enable HSE Oscillator and activate PLL with HSE as source */
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+	RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+	RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+	RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
+	HAL_RCC_OscConfig(&RCC_OscInitStruct);
+
+	/* Configures the USB clock */
+	HAL_RCCEx_GetPeriphCLKConfig(&RCC_PeriphClkInit);
+	RCC_PeriphClkInit.USBClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
+	HAL_RCCEx_PeriphCLKConfig(&RCC_PeriphClkInit);
+
+	/* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
+	 clocks dividers */
+	RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK
+			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
+
 }
 
 int main() {
 	HAL_Init();
-	ClockSetup();
+	SystemClock_Config();
+	SystemCoreClockUpdate();
 
 	usbd_reenumerate();
 	usbd_init();

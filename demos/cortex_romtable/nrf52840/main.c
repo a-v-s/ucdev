@@ -23,35 +23,39 @@
  SOFTWARE.
  */
 
-#include "usbd_stm.h"
 
-#include "stm32f1xx_hal_gpio.h"
-#include "stm32f1xx_hal_rcc.h"
+#include "usbd_nrfx.h"
 
-void usbd_reenumerate(){
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_InitStruct;
-	// Configure USB DM/DP pins
-	GPIO_InitStruct.Pin = (GPIO_PIN_11 | GPIO_PIN_12);
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+#include "arm_cpuid.h"
 
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11 | GPIO_PIN_12, GPIO_PIN_RESET);
-	HAL_Delay(1);
+#include <stdbool.h>
+
+void usbd_reenumerate() {
+	// TODO
 }
 
-void ClockSetup(void)
-{
-	//ClockSetup_HSE8_SYS72();
-	//ClockSetup_HSE8_SYS48();
-	ClockSetup_HSI_SYS48();
+char rt[128];
+
+void parse_romtable() {
+
+	intptr_t ROMTABLE = (intptr_t)(0xE00FF000);
+	romtable_id_t *rid = (romtable_id_t*) (ROMTABLE | 0xFD0);
+	romtable_pid_t romtable_pid = extract_romtable_pid(rid);
+
+	char *prob = "Unknown";
+	if (romtable_pid.identity_code == 68
+			&& romtable_pid.continuation_code == 2) {
+		prob = "nRF5x";
+	}
+	sprintf(rt, "%s %s  V:%1d CONT:%3d ID:%3d PART: %3X REV:%3d ", prob,
+			cpuid(), romtable_pid.jep106_used, romtable_pid.continuation_code,
+			romtable_pid.identity_code, romtable_pid.partno,
+			romtable_pid.revision);
+
 }
 
 int main() {
-	HAL_Init();
-	ClockSetup();
+	parse_romtable();
 
 	usbd_reenumerate();
 	usbd_init();

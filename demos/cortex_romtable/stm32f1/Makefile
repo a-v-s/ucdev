@@ -1,4 +1,4 @@
-TARGET = STM32USB
+TARGET = STM32ROMTABLE
 
 
 ######################################
@@ -39,6 +39,7 @@ INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/hal/cubef1/clocksetup.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
+C_SOURCES += $(LIBHALGLUE_ROOT)/common/arm_cpuid.c
 INC += -I$(LIBHALGLUE_ROOT)/common/
 
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_adc.c
@@ -193,7 +194,11 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32F103XB_FLASH.ld
+#LDSCRIPT = STM32F103XB_FLASH.ld
+
+# Using a linker file based on the nrfx one, as the linker script from the 
+# STM32Cube examples has a license that prevents it from being used legally
+LDSCRIPT = stm32f103xb.ld
 
 # libraries
 LIBS = -lc -lm -lnosys 
