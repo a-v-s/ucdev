@@ -37,6 +37,8 @@ C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_systick.c
 
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
+C_SOURCES += $(LIBHALGLUE_ROOT)/common/arm_cpuid.c
+INC += -I$(LIBHALGLUE_ROOT)/common/
 
 
 C_SOURCES += main.c

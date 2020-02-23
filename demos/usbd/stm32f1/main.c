@@ -186,9 +186,25 @@ void stm_romtable() {
 
 }
 
+#pragma pack(push,1)
+typedef struct {
+	//Byte 0-3 :  X-Y Position des Die auf dem Wafer
+	int16_t pos_x;
+	int16_t pos_y;
+	//Byte 4:     Wafer-Numer
+	uint8_t wafer;
+	union {
+		unsigned long long int lot: 56;
+		char clot[7];
+	}
+} stm32_mcuid_t;
+#pragma pack(pop)
+
 int main() {
 	//cpuid();
 	stm_romtable();
+
+	stm32_mcuid_t* mcuid = (stm32_mcuid_t*)0x1FFFF7E8;
 
 	HAL_Init();
 	ClockSetup();
