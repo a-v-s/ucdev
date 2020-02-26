@@ -134,8 +134,8 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 LDSCRIPT = STM32F103XB_FLASH.ld
 
 # libraries
-LIBDIR = -L../../../build/staticlib/stm32f103cb/build 
-LIBS = -lc -lm -lnosys -lstm32f103cb
+LIBDIR = -L../../../build/staticlib/stm32f1 
+LIBS = -lc -lm -lnosys -lstm32f103xb
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all

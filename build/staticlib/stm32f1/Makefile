@@ -1,4 +1,4 @@
-TARGET = stm32f103cb
+#TARGET = stm32f103cb
 
 
 ######################################
@@ -11,11 +11,17 @@ DEBUG = 1
 OPT = -O0
 
 
+
+TARGET ?= STM32F103xB
+
+CFLAGS += -D$(TARGET)
+
 #######################################
 # paths
 #######################################
 # Build path
-BUILD_DIR = build
+BUILD_DIR = BUILD_$(TARGET)
+OUT_DIR = out
 
 ######################################
 # source
@@ -27,10 +33,8 @@ CUBEF1_HAL_SRC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Src
 CUBEF1_HAL_INC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Inc
 
 
-CFLAGS += -DSTM32F103xB
-CFLAGS += -mcpu=cortex-m3
 
-CFLAGS += --std=GNU11
+CFLAGS += --std=gnu11
 
 INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
 INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
@@ -97,6 +101,7 @@ C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_usart.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_usb.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_utils.c
 
+# The last rule will fail....??
 
 # ASM sources
 ASM_SOURCES +=  $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
@@ -145,10 +150,8 @@ MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 AS_DEFS = 
 
 # C defines
-C_DEFS =  \
--DUSBD_LPM_ENABLED \
--DUSE_HAL_DRIVER \
--DSTM32F103xB
+C_DEFS =  -DUSBD_LPM_ENABLED -DUSE_HAL_DRIVER 
+
 
 
 # AS includes
@@ -160,9 +163,9 @@ C_INCLUDES =  $(INC) -I. \
 
 
 # compile gcc flags
-ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+ASFLAGS += $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -g -gdwarf-2
@@ -173,20 +176,14 @@ endif
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 
-#######################################
-# LDFLAGS
-#######################################
-# link script
-LDSCRIPT = STM32F103XB_FLASH.ld
 
-# libraries
-LIBS = -lc -lm -lnosys 
-LIBDIR = 
-LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+#default action: build all
 
-# default action: build all
-#all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
-all: $(BUILD_DIR)/lib$(TARGET).a
+all: lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+
+
+
+
 
 
 #######################################
@@ -199,33 +196,33 @@ vpath %.c $(sort $(dir $(C_SOURCES)))
 OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
 
+
+
+
+
+
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
 	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
-
-$(BUILD_DIR)/lib$(TARGET).a: $(OBJECTS) Makefile
-	$(AR) rcs $@ $(OBJECTS)
-
-$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
-	$(SZ) $@
-
-$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
-	$(HEX) $< $@
-	
-$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
-	$(BIN) $< $@	
 	
 $(BUILD_DIR):
 	mkdir $@		
+
+
+%.a: $(OBJECTS) Makefile
+	$(AR) rcs $@ $(OBJECTS)
+
+
+
 
 #######################################
 # clean up
 #######################################
 clean:
-	-rm -fR $(BUILD_DIR)
+	rm -fR $(BUILD_DIR)
+	rm lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
   
 #######################################
 # dependencies
