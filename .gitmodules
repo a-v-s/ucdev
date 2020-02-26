@@ -67,3 +67,6 @@
 [submodule "lib/libws2812dma"]
 	path = lib/libws2812dma
 	url = git@github.com:a-v-s/libws2812dma.git
+[submodule "ext/STM32CubeL5"]
+	path = ext/STM32CubeL5
+	url = https://github.com/STMicroelectronics/STM32CubeL5
