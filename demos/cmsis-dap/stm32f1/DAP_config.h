@@ -25,7 +25,7 @@
 #include "pinout.h"
 
 // To build a DAP v1 firmware, define
-// #define DAP_FW_V1
+#define DAP_FW_V1
 
 #define CPU_CLOCK SystemCoreClock
 
