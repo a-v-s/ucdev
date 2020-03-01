@@ -1,6 +1,10 @@
 #ifndef __MCU_H__
 #define __MCU_H__
 
+#include <stdint.h>
+#include <stdlib.h>
+
+
 #if defined (NRF51) ||\
     defined (NRF51422_XXAA) ||\
     defined (NRF51422_XXAB) ||\
@@ -29,6 +33,7 @@ defined (NRF9160_XXAA)
 #include "system_stm32f0xx.h"
 #include "stm32f0xx.h"
 #include "stm32f0xx_hal.h"
+#include "stm32f0xx_hal_conf.h"
 #endif
 
 #if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101x6) || \
@@ -37,12 +42,14 @@ defined (NRF9160_XXAA)
 #include "system_stm32f1xx.h"
 #include "stm32f1xx.h"
 #include "stm32f1xx_hal.h"
+#include "stm32f1xx_hal_conf.h"
 #endif
 
 #if defined (STM32F205xx) || defined (STM32F215xx) || defined (STM32F207xx) || defined (STM32F217xx)
 #include "system_stm32f2xx.h"
 #include "stm32f2xx.h"
 #include "stm32f2xx_hal.h"
+#include "stm32f2xx_hal_conf.h"
 #endif
 
 #if defined (STM32F301x8) || defined (STM32F302x8) || defined (STM32F318xx) || \
@@ -53,6 +60,7 @@ defined (NRF9160_XXAA)
 #include "system_stm32f3xx.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_hal.h"
+#include "stm32f3xx_hal_conf.h"
 #endif
 
 #if defined (STM32F405xx) || defined (STM32F415xx) || defined (STM32F407xx) || defined (STM32F417xx) || \
@@ -64,6 +72,7 @@ defined (NRF9160_XXAA)
 #include "system_stm32f4xx.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_conf.h"
 #endif
 
 #if defined (STM32F756xx) || defined (STM32F746xx) || defined (STM32F745xx) || defined (STM32F767xx) || \
@@ -73,12 +82,14 @@ defined (NRF9160_XXAA)
 #include "system_stm32f7xx.h"
 #include "stm32f7xx.h"
 #include "stm32f7xx_hal.h"
+#include "stm32f7xx_hal_conf.h"
 #endif
 
 #if defined (STM32G071xx) || defined (STM32G081xx) || defined (STM32G070xx) || defined (STM32G030xx) || defined (STM32G031xx) || defined (STM32G041xx)
 #include "system_stm32g0xx.h"
 #include "stm32g0xx.h"
 #include "stm32g0xx_hal.h"
+#include "stm32g0xx_hal_conf.h"
 #endif
 
 
@@ -87,6 +98,7 @@ defined (NRF9160_XXAA)
 #include "system_stm32g4xx.h"
 #include "stm32g4xx.h"
 #include "stm32g4xx_hal.h"
+#include "stm32g4xx_hal_conf.h"
 #endif
 
 #if defined (STM32L010x4) || defined (STM32L010x6) || defined (STM32L010x8) || defined (STM32L010xB) || \
@@ -99,6 +111,7 @@ defined (NRF9160_XXAA)
 #include "system_stm32l0xx.h"
 #include "stm32l0xx.h"
 #include "stm32l0xx_hal.h"
+#include "stm32l0xx_hal_conf.h"
 #endif
 
 #if defined (STM32L100xB) || defined (STM32L100xBA) || defined (STM32L100xC) || \
@@ -108,6 +121,7 @@ defined (NRF9160_XXAA)
 #include "system_stm32l1xx.h"
 #include "stm32l1xx.h"
 #include "stm32l1xx_hal.h"
+#include "stm32l1xx_hal_conf.h"
 #endif
 
 #if defined (STM32L412xx) || defined (STM32L422xx) || \
@@ -120,6 +134,7 @@ defined (NRF9160_XXAA)
 #include "system_stm32l4xx.h"
 #include "stm32l4xx.h"
 #include "stm32l4xx_hal.h"
+#include "stm32l4xx_hal_conf.h"
 #endif
 
 
@@ -127,6 +142,7 @@ defined (NRF9160_XXAA)
 #include "system_stm32l5xx.h"
 #include "stm32l5xx.h"
 #include "stm32l5xx_hal.h"
+#include "stm32l5xx_hal_conf.h"
 #endif
 
 
@@ -134,6 +150,7 @@ defined (NRF9160_XXAA)
 #include "system_stm32wbxx.h"
 #include "stm32wbxx.h"
 #include "stm32wbxx_hal.h"
+#include "stm32wbxx_hal_conf.h"
 #endif
 
 

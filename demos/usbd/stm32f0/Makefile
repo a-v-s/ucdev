@@ -21,29 +21,26 @@ BUILD_DIR = build
 # source
 ######################################
 # C sources
-CUBEF1_ROOT =     ../../../ext/STM32CubeF1
+CUBEF0_ROOT =     ../../../ext/STM32CubeF0
 LIBHLUSBD_ROOT =  ../../../lib/libhlusbd
 LIBHALGLUE_ROOT = ../../../lib/libhalglue
 UCDEV_HAL_ROOT = ../../../build/hal
-SLIB_DIR = ../../../build/staticlib/stm32f1
+SLIB_DIR = ../../../build/staticlib/stm32f0
 LD_DIR = ../../../build/linker
 
-CUBEF1_HAL_SRC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Src
-CUBEF1_HAL_INC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Inc
+CUBEF0_HAL_SRC_ROOT = $(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Src
+CUBEF0_HAL_INC_ROOT = $(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Inc
 
 
-CFLAGS += -DSTM32F103xB
-CFLAGS += -mcpu=cortex-m3
 
-CFLAGS += --std=GNU11
 
-INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
-INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
+INC += -I$(CUBEF0_ROOT)/Drivers/CMSIS/Device/ST/STM32F0xx/Include/
+INC += -I$(CUBEF0_ROOT)/Drivers/CMSIS/Include/
 
-C_SOURCES += $(LIBHALGLUE_ROOT)/hal/cubef1/clocksetup.c
+C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f0/clocksetup.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
 INC += -I$(LIBHALGLUE_ROOT)/common/
-INC += -I$(UCDEV_HAL_ROOT)
+INC += -I$(UCDEV_HAL_ROOT) -I$(UCDEV_HAL_ROOT)/stm32
 
 C_SOURCES += main.c
 C_SOURCES += ../demo.c
@@ -89,7 +86,7 @@ BIN = $(CP) -O binary -S
 # CFLAGS
 #######################################
 # cpu
-CPU = -mcpu=cortex-m3
+CPU = -mcpu=cortex-m0
 
 # fpu
 # NONE for Cortex-M0/M0+/M3
@@ -106,18 +103,18 @@ MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 AS_DEFS = 
 
 # C defines
-C_DEFS =  \
--DUSBD_LPM_ENABLED \
--DUSE_HAL_DRIVER \
--DSTM32F103xB
+C_DEFS +=  -DUSBD_LPM_ENABLED -DUSE_HAL_DRIVER -DSTM32F072xB
 
+OPT += --std=gnu11
 
 # AS includes
 AS_INCLUDES = 
 
 # C includes
 C_INCLUDES =  $(INC) -I. \
--I$(CUBEF1_HAL_INC_ROOT)
+-I$(CUBEF0_HAL_INC_ROOT)
+
+
 
 
 # compile gcc flags
@@ -138,11 +135,10 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-#LDSCRIPT = STM32F103XB_FLASH.ld
-LDSCRIPT = stm32f103xb.ld
+LDSCRIPT = stm32f072xb.ld
 
 # libraries
-LIBS = -lc -lm -lnosys -lstm32f103xb
+LIBS = -lc -lm -lnosys -lstm32f072xb
 LIBDIR = -L$(SLIB_DIR) -L$(LD_DIR)
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
