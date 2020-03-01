@@ -25,15 +25,16 @@ NRFX_ROOT =     ../../../ext/nrfx
 LIBHLUSBD_ROOT =  ../../../lib/libhlusbd
 LIBHALGLUE_ROOT = ../../../lib/libhalglue
 CMSIS_ROOT = ../../../ext/CMSIS_5/CMSIS/Core/
+SLIB_DIR = ../../../build/staticlib/nrfx
 
-CFLAGS += --std=GNU11
+CFLAGS += --std=gnu11
 
 
-C_SOURCES += $(NRFX_ROOT)/mdk/system_nrf52840.c 
-C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_usbd.c 
-C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_power.c 
-C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_clock.c 
-C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_systick.c
+#C_SOURCES += $(NRFX_ROOT)/mdk/system_nrf52840.c 
+#C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_usbd.c 
+#C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_power.c 
+#C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_clock.c 
+#C_SOURCES += $(NRFX_ROOT)/drivers/src/nrfx_systick.c
 
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
@@ -48,6 +49,7 @@ C_SOURCES += $(LIBHLUSBD_ROOT)/usbd.c
 C_SOURCES += $(LIBHLUSBD_ROOT)/usbd_descriptors.c
 C_SOURCES += $(LIBHLUSBD_ROOT)/ConvertUTF/ConvertUTF.c
 
+INC += -I $(LIBHALGLUE_ROOT)/hal
 
 INC += -I. -I..
 
@@ -101,6 +103,7 @@ CPU = -mcpu=cortex-m4
 
 
 # float-abi
+FLOAT-ABI = -mfloat-abi=hard
 
 
 # mcu
@@ -125,7 +128,7 @@ C_INCLUDES =  $(INC) -I. \
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -g -gdwarf-2
@@ -145,8 +148,8 @@ LDSCRIPT = $(NRFX_ROOT)/mdk/nrf52840_xxaa.ld
 
 
 # libraries
-LIBS = -lc -lm -lnosys 
-LIBDIR = -L$(NRFX_ROOT)/mdk
+LIBS = -lc -lm -lnosys -lnrf52840
+LIBDIR = -L$(NRFX_ROOT)/mdk -L$(SLIB_DIR) 
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections 
 
 # default action: build all

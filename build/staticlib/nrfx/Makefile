@@ -29,7 +29,7 @@ OUT_DIR = out
 # C sources
 NRFX_ROOT =     ../../../ext/nrfx
 CMSIS_ROOT = 	../../../ext/CMSIS_5/CMSIS/Core/Include
-UCDEV_HAL_ROOT = ../../../build/hal
+UCDEV_HAL_ROOT = ../../../lib/libhalglue/hal
 
 
 NRFX_HAL_ROOT = $(NRFX_ROOT)/hal
