@@ -27,7 +27,7 @@
 // To build a DAP v1 firmware, define
 #define DAP_FW_V1
 
-#define CPU_CLOCK SystemCoreClock
+#define CPU_CLOCK 				(SystemCoreClock)
 
 /// Number of processor cycles for I/O Port write operations.
 /// This value is used to calculate the SWD/JTAG clock speed that is generated with I/O
@@ -35,15 +35,15 @@
 /// require 2 processor cycles for a I/O Port Write operation.  If the Debug Unit uses
 /// a Cortex-M0+ processor with high-speed peripheral I/O only 1 processor cycle might be
 /// required.
-#define IO_PORT_WRITE_CYCLES    2U              ///< I/O Cycles: 2=default, 1=Cortex-M0+ fast I/0.
+#define IO_PORT_WRITE_CYCLES    (2)              ///< I/O Cycles: 2=default, 1=Cortex-M0+ fast I/0.
 
 /// Indicate that Serial Wire Debug (SWD) communication mode is available at the Debug Access Port.
 /// This information is returned by the command \ref DAP_Info as part of <b>Capabilities</b>.
-#define DAP_SWD                 1               ///< SWD Mode:  1 = available, 0 = not available.
+#define DAP_SWD                 (1)               ///< SWD Mode:  1 = available, 0 = not available.
 
 /// Indicate that JTAG communication mode is available at the Debug Port.
 /// This information is returned by the command \ref DAP_Info as part of <b>Capabilities</b>.
-#define DAP_JTAG                1               ///< JTAG Mode: 1 = available, 0 = not available.
+#define DAP_JTAG                (1)               ///< JTAG Mode: 1 = available, 0 = not available.
 
 /// Configure maximum number of JTAG devices on the scan chain connected to the Debug Access Port.
 /// This setting impacts the RAM requirements of the Debug Unit. Valid range is 1 .. 255.
@@ -51,7 +51,7 @@
 
 /// Default communication mode on the Debug Access Port.
 /// Used for the command \ref DAP_Connect when Port Default mode is selected.
-#define DAP_DEFAULT_PORT        1U              ///< Default JTAG/SWJ Port Mode: 1 = SWD, 2 = JTAG.
+#define DAP_DEFAULT_PORT        (1)              ///< Default JTAG/SWJ Port Mode: 1 = SWD, 2 = JTAG.
 
 /// Default communication speed on the Debug Access Port for SWD and JTAG mode.
 /// Used to initialize the default SWD/JTAG clock frequency.
@@ -70,7 +70,7 @@
 /// debugger and depends on the USB peripheral. For devices with limited RAM or USB buffer the
 /// setting can be reduced (valid range is 1 .. 255).
 //#define DAP_PACKET_COUNT        8U              ///< Specifies number of packets buffered.
-#define DAP_PACKET_COUNT        (1)              ///< Specifies number of packets buffered.
+#define DAP_PACKET_COUNT        (8)              ///< Specifies number of packets buffered.
 
 /// Indicate that UART Serial Wire Output (SWO) trace is available.
 /// This information is returned by the command \ref DAP_Info as part of <b>Capabilities</b>.
@@ -90,7 +90,8 @@
 #define SWO_STREAM              0               ///< SWO Streaming Trace: 1 = available, 0 = not available.
 
 /// Clock frequency of the Test Domain Timer. Timer value is returned with \ref TIMESTAMP_GET.
-#define TIMESTAMP_CLOCK         100000000U      ///< Timestamp clock in Hz (0 = timestamps not supported).
+//#define TIMESTAMP_CLOCK         100000000U      ///< Timestamp clock in Hz (0 = timestamps not supported).
+#define TIMESTAMP_CLOCK         (0)      ///< Timestamp clock in Hz (0 = timestamps not supported).
 
 /// Debug Unit is connected to fixed Target Device.
 /// The Debug Unit may be part of an evaluation board and always connected to a fixed
@@ -108,9 +109,11 @@
  \return String length.
  */
 __STATIC_INLINE uint8_t DAP_GetVendorString(char *str) {
-	(void) str;
-	return (0U);
-
+	static char bs[]  = "BlaatSchaap";
+	*str=bs;
+	return strlen(bs);
+	//(void) str;
+	//return (0U);
 }
 
 /** Get Product ID string.
@@ -175,8 +178,6 @@ __STATIC_INLINE uint8_t DAP_GetSerNumString(char *str) {
  - TDO to input mode.
  */
 __STATIC_INLINE void PORT_JTAG_SETUP(void) {
-	// Todo: enable clock
-
 	GPIO_InitTypeDef init_out;
 	init_out.Pin = TCK_PIN | TMS_PIN | TDI_PIN | TDO_PIN; // RESET PINS???
 	init_out.Mode = GPIO_MODE_OUTPUT_PP;
@@ -204,7 +205,7 @@ __STATIC_INLINE void PORT_SWD_SETUP(void) {
 	GPIO_InitTypeDef init_out;
 	init_out.Pin = SWCLK_PIN | SWDIO_PIN; // RESET PINS???
 	init_out.Mode = GPIO_MODE_OUTPUT_PP;
-	init_out.Pull = GPIO_NOPULL;
+	init_out.Pull = GPIO_PULLUP;//GPIO_NOPULL;
 	init_out.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(SWD_PORT, &init_out);
 	HAL_GPIO_WritePin(SWD_PORT, init_out.Pin,1);
@@ -212,7 +213,7 @@ __STATIC_INLINE void PORT_SWD_SETUP(void) {
 	GPIO_InitTypeDef init_in;
 	init_out.Pin = TDI_PIN;
 	init_out.Mode = GPIO_MODE_INPUT;
-	init_out.Pull = GPIO_NOPULL;
+	init_out.Pull = GPIO_PULLUP;//GPIO_NOPULL;
 	init_out.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(SWD_PORT, &init_in);
 
@@ -284,7 +285,7 @@ __STATIC_FORCEINLINE uint32_t PIN_SWDIO_IN(void) {
  \param bit Output value for the SWDIO DAP hardware I/O pin.
  */
 __STATIC_FORCEINLINE void PIN_SWDIO_OUT(uint32_t bit) {
-	PIN_SWDIO_TMS_SET();
+	HAL_GPIO_WritePin(SWDIO_PORT, SWDIO_PIN, bit);
 }
 
 /** SWDIO I/O pin: Switch to Output mode (used in SWD mode only).
@@ -319,14 +320,14 @@ __STATIC_FORCEINLINE void PIN_SWDIO_OUT_DISABLE(void) {
  \return Current status of the TDI DAP hardware I/O pin.
  */
 __STATIC_FORCEINLINE uint32_t PIN_TDI_IN(void) {
-	return (0U);
+	return HAL_GPIO_ReadPin(TDI_PORT, TDI_PIN);
 }
 
 /** TDI I/O pin: Set Output.
  \param bit Output value for the TDI DAP hardware I/O pin.
  */
 __STATIC_FORCEINLINE void PIN_TDI_OUT(uint32_t bit) {
-	;
+	HAL_GPIO_WritePin(TDI_PORT, TDI_PIN, bit);
 }
 
 // TDO Pin I/O ---------------------------------------------
@@ -335,7 +336,7 @@ __STATIC_FORCEINLINE void PIN_TDI_OUT(uint32_t bit) {
  \return Current status of the TDO DAP hardware I/O pin.
  */
 __STATIC_FORCEINLINE uint32_t PIN_TDO_IN(void) {
-	return (0U);
+	return HAL_GPIO_ReadPin(TDO_PORT, TDO_PIN);
 }
 
 // nTRST Pin I/O -------------------------------------------
@@ -423,6 +424,7 @@ __STATIC_INLINE void LED_RUNNING_OUT(uint32_t bit) {
  \return Current timestamp value.
  */
 __STATIC_INLINE uint32_t TIMESTAMP_GET(void) {
+	// TODO verify this
 	return (DWT->CYCCNT);
 }
 

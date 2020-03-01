@@ -26,8 +26,15 @@ void transfer_out_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
 	//   return:   number of bytes in response (lower 16 bits)
 	//             number of bytes in request (upper 16 bits)
 
-	int result = DAP_ExecuteCommand(data, temp_send_buffer);
-	usbd_transmit(handle, 0x80 | epnum, temp_send_buffer, result & 0xFFFF);
+	if (size) {
+		memset(temp_send_buffer,0,sizeof(temp_send_buffer));
+		int result = DAP_ExecuteCommand(data, temp_send_buffer);
+		usbd_transmit(handle, 0x80 | epnum, temp_send_buffer, result & 0xFFFF);
+
+		// When we're running in CMSIS-DAP v1 HID-based mode
+		// Are we required to send 64 bytes regardless the actual lenghth?
+		//usbd_transmit(handle, 0x80 | epnum, temp_send_buffer, 64);
+	}
 }
 
 void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
@@ -37,8 +44,8 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 	handle->descriptor_device->bMaxPacketSize0 = 64;
 	handle->descriptor_device->bNumConfigurations = 1;
 	handle->descriptor_device->bcdUSB = 0x0101;
-	handle->descriptor_device->idVendor = 0xdead;
-	handle->descriptor_device->idProduct = 0xbeef;
+	handle->descriptor_device->idVendor = 0xBAEA;
+	handle->descriptor_device->idProduct = 0xDEBA;
 
 	handle->descriptor_device->bDeviceClass = 0x00;
 	// For HID we need another HID descriptor
@@ -86,7 +93,7 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 			(usbd_transfer_cb_f) &transfer_in_complete);
 
 	usbd_add_endpoint_out(handle, 1, 0x01, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
-			temp_recv_buffer, 64, (usbd_transfer_cb_f) &transfer_out_complete);
+			temp_recv_buffer, sizeof(temp_recv_buffer), (usbd_transfer_cb_f) &transfer_out_complete);
 
 	// Is there a size limit to USB Strings? They appear to get truncated at 32 characters
 	// I swear I've seen longer strings, or am I imagining things?

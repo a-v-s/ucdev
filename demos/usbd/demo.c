@@ -22,8 +22,20 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
  */
+
+#include "usbd_descriptors.h"
 #include "usbd.h"
+
 #include "serialnumber.h"
+#include "protocol.h"
+
+
+itph_handler_status_t ping_handler(itph_protocol_packet_t *data, protocol_transport_t transport, uint32_t param){
+	data->head.sub = ITPH_SUB_SSTA;
+	usbd_transmit((usbd_handle_t*)param,0x80|transport,data, data->head.size);
+	return ITPH_HANDLER_STATUS_OK;
+}
+
 
 uint8_t temp_recv_buffer[256];
 void transfer_in_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
@@ -34,9 +46,7 @@ void transfer_in_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
 void transfer_out_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
 		size_t size) {
 
-	// This is a test to reply the data increased by 1;
-	((uint8_t*) (data))[0]++;
-	usbd_transmit(handle, 0x80 | epnum, data, size);
+	ping_handler(data,epnum,(uint32_t)handle);
 
 }
 
@@ -91,5 +101,7 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 	GetSerialStringUTF16(serial_number,8);
 	handle->descriptor_string[3] = add_string_descriptor_utf16(handle, serial_number);
 
+
+	protocol_register_command(ping_handler,ITPH_CMD_PING);
 
 }
