@@ -32,17 +32,15 @@
 #ifndef NRFX_GLUE_H__
 #define NRFX_GLUE_H__
 
-// THIS IS A TEMPLATE FILE.
-// It should be copied to a suitable location within the host environment into
-// which nrfx is integrated, and the following macros should be provided with
-// appropriate implementations.
-// And this comment should be removed from the customized file.
+// Filled this template out using C11, CMSIS 5 and gcc __builtin functions
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "soc/nrfx_irqs_nrf52840.h"
+#include <assert.h>
+#include "nrfx_coredep.h"
+
 
 /**
  * @defgroup nrfx_glue nrfx_glue.h
@@ -55,7 +53,7 @@ extern "C" {
 
 // Uncomment this line to use the standard MDK way of binding IRQ handlers
 // at linking time.
-//#include <soc/nrfx_irqs.h>
+#include <soc/nrfx_irqs.h>
 
 //------------------------------------------------------------------------------
 
@@ -64,14 +62,14 @@ extern "C" {
  *
  * @param expression  Expression to evaluate.
  */
-#define NRFX_ASSERT(expression)
+#define NRFX_ASSERT(expression)													assert(expression)
 
 /**
  * @brief Macro for placing a compile time assertion.
  *
  * @param expression  Expression to evaluate.
  */
-#define NRFX_STATIC_ASSERT(expression)
+#define NRFX_STATIC_ASSERT(expression)											static_assert(expression)
 
 //------------------------------------------------------------------------------
 
@@ -81,14 +79,14 @@ extern "C" {
  * @param irq_number  IRQ number.
  * @param priority    Priority to set.
  */
-#define NRFX_IRQ_PRIORITY_SET(irq_number, priority)
+#define NRFX_IRQ_PRIORITY_SET(irq_number, priority)								NVIC_SetPriority(irq_number, priority)	
 
 /**
  * @brief Macro for enabling a specific IRQ.
  *
  * @param irq_number  IRQ number.
  */
-#define NRFX_IRQ_ENABLE(irq_number)  NVIC_EnableIRQ(irq_number)
+#define NRFX_IRQ_ENABLE(irq_number)  											NVIC_EnableIRQ(irq_number)
 
 /**
  * @brief Macro for checking if a specific IRQ is enabled.
@@ -98,28 +96,28 @@ extern "C" {
  * @retval true  If the IRQ is enabled.
  * @retval false Otherwise.
  */
-#define NRFX_IRQ_IS_ENABLED(irq_number)  NVIC_GetActive(irq_number)
+#define NRFX_IRQ_IS_ENABLED(irq_number)  										NVIC_GetActive(irq_number)
 
 /**
  * @brief Macro for disabling a specific IRQ.
  *
  * @param irq_number  IRQ number.
  */
-#define NRFX_IRQ_DISABLE(irq_number)
+#define NRFX_IRQ_DISABLE(irq_number)											NVIC_DisableIRQ(irq_number)
 
 /**
  * @brief Macro for setting a specific IRQ as pending.
  *
  * @param irq_number  IRQ number.
  */
-#define NRFX_IRQ_PENDING_SET(irq_number)
+#define NRFX_IRQ_PENDING_SET(irq_number)										NVIC_SetPendingIRQ(irq_number)
 
 /**
  * @brief Macro for clearing the pending status of a specific IRQ.
  *
  * @param irq_number  IRQ number.
  */
-#define NRFX_IRQ_PENDING_CLEAR(irq_number)
+#define NRFX_IRQ_PENDING_CLEAR(irq_number)										NVIC_ClearPendingIRQ(irq_number)
 
 /**
  * @brief Macro for checking the pending status of a specific IRQ.
@@ -127,17 +125,17 @@ extern "C" {
  * @retval true  If the IRQ is pending.
  * @retval false Otherwise.
  */
-#define NRFX_IRQ_IS_PENDING(irq_number)
+#define NRFX_IRQ_IS_PENDING(irq_number)											NVIC_GetPendingIRQ(irq_number)
 
 /**
  * @brief Macro for entering into a critical section.
  */
-#define NRFX_CRITICAL_SECTION_ENTER()
+#define NRFX_CRITICAL_SECTION_ENTER()											__disable_irq()
 
 /**
  * @brief Macro for exiting from a critical section.
  */
-#define NRFX_CRITICAL_SECTION_EXIT()
+#define NRFX_CRITICAL_SECTION_EXIT()											__enable_irq()
 
 //------------------------------------------------------------------------------
 
@@ -147,21 +145,31 @@ extern "C" {
  *        A compilation error is generated if the DWT unit is not present
  *        in the SoC used.
  */
-#define NRFX_DELAY_DWT_BASED    0
+// #define NRFX_DELAY_DWT_BASED    0
+#if defined(NRF52832_XXAA) || defined(NRF52832_XXAB) || \
+      defined(NRF52833_XXAA) || defined(NRF52840_XXAA) || \
+      defined(NRF9160_XXAA) || defined(NRF5340_XXAA_APPLICATION) || \
+	  defined(NRF5340_XXAA_NETWORK)
+    #define NRFX_DELAY_DWT_BASED  1
+#else
+    #define NRFX_DELAY_DWT_BASED  0
+#endif
+
+
 
 /**
  * @brief Macro for delaying the code execution for at least the specified time.
  *
  * @param us_time Number of microseconds to wait.
  */
-#define NRFX_DELAY_US(us_time)
+#define NRFX_DELAY_US(us_time)													nrfx_coredep_delay_us(us_time)	
 
 //------------------------------------------------------------------------------
 
 /**
  * @brief Atomic 32-bit unsigned type.
  */
-#define nrfx_atomic_t
+#define nrfx_atomic_t															uint32_t
 
 /**
  * @brief Macro for storing a value to an atomic object and returning its previous value.
@@ -171,7 +179,7 @@ extern "C" {
  *
  * @return Previous value of the atomic object.
  */
-#define NRFX_ATOMIC_FETCH_STORE(p_data, value)
+#define NRFX_ATOMIC_FETCH_STORE(p_data, value)									__atomic_fetch_store(p_data, value, __ATOMIC_SEQ_CST)
 
 /**
  * @brief Macro for running a bitwise OR operation on an atomic object and returning its previous value.
@@ -181,7 +189,7 @@ extern "C" {
  *
  * @return Previous value of the atomic object.
  */
-#define NRFX_ATOMIC_FETCH_OR(p_data, value)
+#define NRFX_ATOMIC_FETCH_OR(p_data, value)										__atomic_fetch_or(p_data, value, __ATOMIC_SEQ_CST)
 
 /**
  * @brief Macro for running a bitwise AND operation on an atomic object
@@ -192,7 +200,7 @@ extern "C" {
  *
  * @return Previous value of the atomic object.
  */
-#define NRFX_ATOMIC_FETCH_AND(p_data, value) __atomic_fetch_and(p_data, value, __ATOMIC_SEQ_CST)
+#define NRFX_ATOMIC_FETCH_AND(p_data, value) 									__atomic_fetch_and(p_data, value, __ATOMIC_SEQ_CST)
 
 /**
  * @brief Macro for running a bitwise XOR operation on an atomic object
@@ -203,7 +211,7 @@ extern "C" {
  *
  * @return Previous value of the atomic object.
  */
-#define NRFX_ATOMIC_FETCH_XOR(p_data, value)
+#define NRFX_ATOMIC_FETCH_XOR(p_data, value)									__atomic_fetch_xor(p_data, value, __ATOMIC_SEQ_CST)
 
 /**
  * @brief Macro for running an addition operation on an atomic object
@@ -214,7 +222,7 @@ extern "C" {
  *
  * @return Previous value of the atomic object.
  */
-#define NRFX_ATOMIC_FETCH_ADD(p_data, value)
+#define NRFX_ATOMIC_FETCH_ADD(p_data, value)									__atomic_fetch_add(p_data, value, __ATOMIC_SEQ_CST)
 
 /**
  * @brief Macro for running a subtraction operation on an atomic object
@@ -225,7 +233,7 @@ extern "C" {
  *
  * @return Previous value of the atomic object.
  */
-#define NRFX_ATOMIC_FETCH_SUB(p_data, value)
+#define NRFX_ATOMIC_FETCH_SUB(p_data, value)									__atomic_fetch_sub(p_data, value, __ATOMIC_SEQ_CST)
 
 //------------------------------------------------------------------------------
 
