@@ -21,35 +21,26 @@ BUILD_DIR = build
 # source
 ######################################
 # C sources
-CUBEF1_ROOT =     ../../../ext/STM32CubeF1
-STATIC_LIB_DIR = ../../../build/staticlib/
-
+CUBEF0_ROOT =     ../../../ext/STM32CubeF0
 LIBHLUSBD_ROOT =  ../../../lib/libhlusbd
 LIBHALGLUE_ROOT = ../../../lib/libhalglue
+LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
+SLIB_DIR = ../../../build/staticlib/stm32f0
+LD_DIR = ../../../build/linker
 
-PROTOCOL_ROOT = ../../../lib/protocol
-
-CUBEF1_HAL_SRC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Src
-CUBEF1_HAL_INC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Inc
-
-
-CFLAGS += -DSTM32F103xB
-CFLAGS += -mcpu=cortex-m3
-
-CFLAGS += --std=GNU11
-
-INC += -I$(PROTOCOL_ROOT)
-C_SOURCES += $(PROTOCOL_ROOT)/protocol.c
+CUBEF0_HAL_SRC_ROOT = $(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Src
+CUBEF0_HAL_INC_ROOT = $(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Inc
 
 
-INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
-INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
 
-C_SOURCES += $(LIBHALGLUE_ROOT)/hal/cubef1/clocksetup.c
+
+INC += -I$(CUBEF0_ROOT)/Drivers/CMSIS/Device/ST/STM32F0xx/Include/
+INC += -I$(CUBEF0_ROOT)/Drivers/CMSIS/Include/
+
+C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f0/clocksetup.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
 INC += -I$(LIBHALGLUE_ROOT)/common/
-
-
+INC += -I$(LIBHALGLUE_INC) -I$(LIBHALGLUE_INC)/stm32
 
 C_SOURCES += main.c
 C_SOURCES += ../demo.c
@@ -68,7 +59,7 @@ INC += -I $(LIBHLUSBD_ROOT)/
 INC += -I $(LIBHLUSBD_ROOT)/ConvertUTF
 
 # ASM sources
-ASM_SOURCES +=  $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
+# ASM +=
 
 
 #######################################
@@ -95,13 +86,14 @@ BIN = $(CP) -O binary -S
 # CFLAGS
 #######################################
 # cpu
-CPU = -mcpu=cortex-m3
+CPU = -mcpu=cortex-m0
 
 # fpu
 # NONE for Cortex-M0/M0+/M3
 
 # float-abi
 
+FLOAT_ABI = -mfloat-abi=soft
 
 # mcu
 MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
@@ -111,18 +103,18 @@ MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 AS_DEFS = 
 
 # C defines
-C_DEFS =  \
--DUSBD_LPM_ENABLED \
--DUSE_HAL_DRIVER \
--DSTM32F103xB
+C_DEFS +=  -DUSBD_LPM_ENABLED -DUSE_HAL_DRIVER -DSTM32F072xB
 
+OPT += --std=gnu11
 
 # AS includes
 AS_INCLUDES = 
 
 # C includes
 C_INCLUDES =  $(INC) -I. \
--I$(CUBEF1_HAL_INC_ROOT)
+-I$(CUBEF0_HAL_INC_ROOT)
+
+
 
 
 # compile gcc flags
@@ -143,11 +135,11 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32F103XB_FLASH.ld
+LDSCRIPT = stm32f072xb.ld
 
 # libraries
-LIBS = -lc -lm -lnosys -lstm32f103xb
-LIBDIR += -L$(STATIC_LIB_DIR)/stm32f1
+LIBS = -lc -lm -lnosys -lstm32f072xb
+LIBDIR = -L$(SLIB_DIR) -L$(LD_DIR)
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all

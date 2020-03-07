@@ -24,6 +24,9 @@ BUILD_DIR = build
 CUBEF3_ROOT =     ../../../ext/STM32CubeF3
 LIBHLUSBD_ROOT =  ../../../lib/libhlusbd
 LIBHALGLUE_ROOT = ../../../lib/libhalglue
+LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
+SLIB_DIR = ../../../build/staticlib/stm32f3
+LD_DIR = ../../../build/linker
 
 CUBEF3_HAL_SRC_ROOT = $(CUBEF3_ROOT)/Drivers/STM32F3xx_HAL_Driver/Src
 CUBEF3_HAL_INC_ROOT = $(CUBEF3_ROOT)/Drivers/STM32F3xx_HAL_Driver/Inc
@@ -31,63 +34,13 @@ CUBEF3_HAL_INC_ROOT = $(CUBEF3_ROOT)/Drivers/STM32F3xx_HAL_Driver/Inc
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
 INC += -I$(LIBHALGLUE_ROOT)/common/
-
+INC += -I$(LIBHALGLUE_INC) -I$(LIBHALGLUE_INC)/stm32
 
 INC += -I$(CUBEF3_ROOT)/Drivers/CMSIS/Device/ST/STM32F3xx/Include/
 INC += -I$(CUBEF3_ROOT)/Drivers/CMSIS/Include/
 
 
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_adc.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_adc_ex.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_can.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_cec.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_cortex.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_crc.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_dac.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_dac_ex.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_dma.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_exti.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_flash.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_flash_ex.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_gpio.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_i2c.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_i2s.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_irda.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_iwdg.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_nand.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_nor.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_pccard.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_pcd.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_pcd_ex.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_pwr.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_rcc.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_rcc_ex.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_rtc.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_rtc_ex.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_smartcard.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_spi.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_sram.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_tim.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_tim_ex.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_uart.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_usart.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_hal_wwdg.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_adc.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_crc.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_dac.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_dma.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_exti.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_gpio.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_i2c.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_pwr.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_rcc.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_rtc.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_spi.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_tim.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_usart.c
-C_SOURCES += $(CUBEF3_HAL_SRC_ROOT)/stm32f3xx_ll_usb.c
-C_SOURCES += $(CUBEF3_ROOT)/Drivers/CMSIS/Device/ST/STM32F3xx/Source/Templates/system_stm32f3xx.c
+
 
 C_SOURCES += main.c
 C_SOURCES += ../demo.c
@@ -132,13 +85,13 @@ BIN = $(CP) -O binary -S
 #######################################
 # CFLAGS
 #######################################
+# STM32F3x is an Cortex-M4F
 # cpu
 CPU = -mcpu=cortex-m4
-
 # fpu
-# NONE for Cortex-M0/M0+/M3
-
+FPU       = -mfpu=fpv4-sp-d16
 # float-abi
+FLOAT-ABI = -mfloat-abi=hard
 
 
 # mcu
@@ -184,11 +137,11 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32F303VCTx_FLASH.ld
+LDSCRIPT = stm32f303xc.ld
 
 # libraries
-LIBS = -lc -lm -lnosys 
-LIBDIR = 
+LIBS = -lc -lm -lnosys -lstm32f303xc
+LIBDIR = -L$(SLIB_DIR) -L$(LD_DIR)
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
