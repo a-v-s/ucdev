@@ -28,6 +28,7 @@ LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
 SLIB_DIR = ../../../build/staticlib/stm32f1
 LD_DIR = ../../../build/linker
 
+
 CUBEF1_HAL_SRC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Src
 CUBEF1_HAL_INC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Inc
 
@@ -39,6 +40,9 @@ CFLAGS += --std=GNU11
 
 INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
 INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
+
+INC += -I../../../lib/protocol/
+C_SOURCES += ../../../lib/protocol/protocol.c
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c

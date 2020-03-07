@@ -1,4 +1,4 @@
-TARGET = STM32DAP
+TARGET = STM32USB
 
 
 ######################################
@@ -23,8 +23,11 @@ BUILD_DIR = build
 # C sources
 CUBEF1_ROOT =     ../../../ext/STM32CubeF1
 LIBHLUSBD_ROOT =  ../../../lib/libhlusbd
-CMSIS_ROOT = ../../../ext/CMSIS_5/CMSIS/Core/
-CMSISDAP_ROOT = ../../../ext/CMSIS_5/CMSIS/DAP/Firmware
+LIBHALGLUE_ROOT = ../../../lib/libhalglue
+LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
+SLIB_DIR = ../../../build/staticlib/stm32f1
+LD_DIR = ../../../build/linker
+
 
 CUBEF1_HAL_SRC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Src
 CUBEF1_HAL_INC_ROOT = $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Inc
@@ -35,9 +38,12 @@ CFLAGS += -mcpu=cortex-m3
 
 CFLAGS += --std=GNU11
 
-
+INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
+INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
 
 ## CMSIS-DAP FILES  ############################################################
+CMSIS_ROOT = ../../../ext/CMSIS_5/CMSIS/Core/
+CMSISDAP_ROOT = ../../../ext/CMSIS_5/CMSIS/DAP/Firmware
 INC += -I$(CMSISDAP_ROOT)/Include
 
 C_SOURCES += $(CMSISDAP_ROOT)/Source/DAP.c
@@ -48,71 +54,10 @@ C_SOURCES += $(CMSISDAP_ROOT)/Source/SWO.c
 
 ################################################################################
 
-
-
-INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
-INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
-
-
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_adc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_adc_ex.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_can.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_cec.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_cortex.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_crc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_dac.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_dac_ex.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_dma.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_eth.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_exti.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_flash.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_flash_ex.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_gpio.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_gpio_ex.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_hcd.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_i2c.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_i2s.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_irda.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_iwdg.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_mmc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_nand.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_nor.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_pccard.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_pcd.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_pcd_ex.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_pwr.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_rcc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_rcc_ex.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_rtc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_rtc_ex.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_sd.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_smartcard.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_spi.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_sram.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_tim.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_tim_ex.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_uart.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_usart.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_wwdg.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_adc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_crc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_dac.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_dma.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_exti.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_fsmc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_gpio.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_i2c.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_pwr.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_rcc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_rtc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_sdmmc.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_spi.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_tim.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_usart.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_usb.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_utils.c
-C_SOURCES += $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
+C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
+C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
+INC += -I$(LIBHALGLUE_ROOT)/common/
+INC += -I$(LIBHALGLUE_INC) -I$(LIBHALGLUE_INC)/stm32
 
 C_SOURCES += main.c
 C_SOURCES += ../demo.c
@@ -131,7 +76,7 @@ INC += -I $(LIBHLUSBD_ROOT)/
 INC += -I $(LIBHLUSBD_ROOT)/ConvertUTF
 
 # ASM sources
-ASM_SOURCES +=  $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
+# ASM +=
 
 
 #######################################
@@ -165,6 +110,7 @@ CPU = -mcpu=cortex-m3
 
 # float-abi
 
+FLOAT_ABI = -mfloat-abi=soft
 
 # mcu
 MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
@@ -206,11 +152,12 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32F103XB_FLASH.ld
+#LDSCRIPT = STM32F103XB_FLASH.ld
+LDSCRIPT = stm32f103xb.ld
 
 # libraries
-LIBS = -lc -lm -lnosys 
-LIBDIR = 
+LIBS = -lc -lm -lnosys -lstm32f103xb
+LIBDIR = -L$(SLIB_DIR) -L$(LD_DIR)
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
