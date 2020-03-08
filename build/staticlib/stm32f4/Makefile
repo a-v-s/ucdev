@@ -14,9 +14,8 @@ CFLAGS += -D$(TARGET)
 # Build path
 BUILD_DIR = BUILD_$(TARGET)_$(BUILD_MODE)
 
-# For now... I need to see how I want to keep release/debug builds
-# OUT_DIR = out_$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
-OUT_DIR = .
+OUT_DIR = $(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+
 
 ######################################
 # source
@@ -31,16 +30,14 @@ HALGUE_INC = ../../../lib/libhalglue/hal
 
 CFLAGS += --std=gnu11
 
+INC += -I$(CUBEF4_HAL_INC_ROOT)
 INC += -I$(CUBEF4_ROOT)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/
 INC += -I$(CUBEF4_ROOT)/Drivers/CMSIS/Include/
 INC += -I$(HALGUE_INC)/stm32
 
 C_SOURCES 	+= $(CUBEF4_ROOT)/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
 
-
 ASM_SOURCES += $(CUBEF4_ROOT)/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).s
-
-
 
 C_SOURCES 	+= $(CUBEF4_HAL_SRC_ROOT)/stm32f4xx_hal_adc.c
 C_SOURCES 	+= $(CUBEF4_HAL_SRC_ROOT)/stm32f4xx_hal_adc_ex.c
@@ -184,8 +181,7 @@ C_DEFS =  -DUSBD_LPM_ENABLED -DUSE_HAL_DRIVER
 AS_INCLUDES = 
 
 # C includes
-C_INCLUDES =  $(INC) -I. \
--I$(CUBEF4_HAL_INC_ROOT)
+C_INCLUDES =  $(INC) -I. 
 
 
 # compile gcc flags
@@ -193,27 +189,15 @@ ASFLAGS += $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunct
 
 CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-ifeq ($(DEBUG), 1)
-CFLAGS += -g -gdwarf-2
-endif
-
-
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 
-
-#default action: build all
-
 all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
-
-
-
-
 #######################################
-# build the application
+# build the library
 #######################################
 # list of objects
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
@@ -235,19 +219,15 @@ $(BUILD_DIR):
 $(OUT_DIR):
 	mkdir $@		
 
-
 $(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
-
-
-
 
 #######################################
 # clean up
 #######################################
 clean:
 	rm -fR $(BUILD_DIR)
-	rm lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+	rm $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
   
 #######################################
 # dependencies

@@ -1,18 +1,8 @@
-#TARGET = stm32f103cb
-
-
-######################################
-# building variables
-######################################
-# debug build?
-DEBUG = 1
-# optimization
-#OPT = -Og
-OPT = -O0
-
-
-
 TARGET ?= STM32F103xB
+
+
+
+include ../../make/opt.mk
 
 CFLAGS += -D$(TARGET)
 
@@ -20,8 +10,10 @@ CFLAGS += -D$(TARGET)
 # paths
 #######################################
 # Build path
-BUILD_DIR = BUILD_$(TARGET)
-OUT_DIR = out
+BUILD_DIR = BUILD_$(TARGET)_$(BUILD_MODE)
+
+OUT_DIR = $(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+
 
 ######################################
 # source
@@ -175,17 +167,11 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 
 
-#default action: build all
-
-all: lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
-
-
-
-
+all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 #######################################
-# build the application
+# build the library
 #######################################
 # list of objects
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
@@ -193,10 +179,6 @@ vpath %.c $(sort $(dir $(C_SOURCES)))
 # list of ASM program objects
 OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
-
-
-
-
 
 
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
@@ -208,19 +190,18 @@ $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir $@		
 
+$(OUT_DIR):
+	mkdir $@		
 
-%.a: $(OBJECTS) Makefile
+$(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
-
-
-
 
 #######################################
 # clean up
 #######################################
 clean:
 	rm -fR $(BUILD_DIR)
-	rm lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+	rm $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
   
 #######################################
 # dependencies

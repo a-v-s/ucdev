@@ -67,33 +67,37 @@ ifeq ($(FAMILY), STM32)
 	ifneq (,$(findstring F0,$(MCU)))
 		SUBARCH?=M0
 		SERIES?=STM32F0
-		SLIB_DIR?=$(SLIB_ROOT)/stm32f0
+		INC += -I$(CUBEF0_HAL_INC_ROOT)
 	endif	
 
 	ifneq (,$(findstring F1,$(MCU)))
 		SUBARCH?=M3
 		SERIES?=STM32F1
-		SLIB_DIR?=$(SLIB_ROOT)/stm32f1
+		INC += -I$(CUBEF1_HAL_INC_ROOT)
 	endif
 
 	ifneq (,$(findstring F2,$(MCU)))
-		SUBARCH?=M4F
+		SUBARCH?=M3
 		SERIES?=STM32F2
-		SLIB_DIR?=$(SLIB_ROOT)/stm32f2
+		INC += -I$(CUBEF2_HAL_INC_ROOT)
 	endif
 
 	ifneq (,$(findstring F3,$(MCU)))
-		SUBARCH?=M3
+		SUBARCH?=M4F
 		SERIES?=STM32F3
-		SLIB_DIR?=$(SLIB_ROOT)/stm32f3
+		INC += -I$(CUBEF3_HAL_INC_ROOT)
 	endif
 
 
 	ifneq (,$(findstring F4,$(MCU)))
 		SUBARCH?=M4F
 		SERIES?=STM32F4
-		SLIB_DIR?=$(SLIB_ROOT)/stm32f4
+		INC += -I$(CUBEF4_HAL_INC_ROOT)
 	endif
+
+		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
+		SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+
 
 	LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
 endif

@@ -1,6 +1,5 @@
-BUILD_DIR = build_$(shell echo $(BUILD_MODE) | tr A-Z a-z)
-OUT_DIR = out_$(shell echo $(BUILD_MODE) | tr A-Z a-z)
-
+OUT_DIR =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)
+BUILD_DIR = $(OUT_DIR)/build
 
 #######################################
 # build the application
@@ -51,15 +50,21 @@ $(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
 	
 $(BUILD_DIR):
-	mkdir $@	
+	mkdir -p $@	
 
 $(OUT_DIR):
-	mkdir $@		
+	mkdir -p $@		
 	
-
-
+################################################################################
+# Build the HAL as a static library
 ################################################################################
 $(SLIB):
-	make -C $(SLIB_DIR) TARGET=$(MCU) 
+	make -C $(SLIB_BLD) TARGET=$(MCU) 
+
+################################################################################
+# Dependencies
+################################################################################
+-include $(wildcard $(BUILD_DIR)/*.d)
+
 
 
