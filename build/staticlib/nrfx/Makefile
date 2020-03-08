@@ -2,14 +2,19 @@ TARGET ?= NRF52840
 
 include ../../make/opt.mk
 
-CFLAGS += -D$(TARGET)
+
+include ../../make/opt.mk
+
+CFLAGS += -D$(TARGET) -D$(TARGET)_XXAA
 
 #######################################
 # paths
 #######################################
 # Build path
-BUILD_DIR = BUILD_$(TARGET)
-OUT_DIR = out
+BUILD_DIR = BUILD_$(TARGET)_$(BUILD_MODE)
+
+OUT_DIR = $(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+
 
 ######################################
 # source
@@ -168,20 +173,24 @@ CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
-
-
 all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 #######################################
 # build the library
 #######################################
-# list of objects
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
+
 # list of ASM program objects
-OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
+# Handle both .s (eg STM32Cube) and .S (eg nrfx) asm files 
+OBJ_ASM_TMP1 =  $(ASM_SOURCES:.s=.o)
+OBJ_ASM_TMP2 =  $(OBJ_ASM_TMP1:.S=.o)
+
+OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(OBJ_ASM_TMP2)  ))
+
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
+vpath %.S $(sort $(dir $(ASM_SOURCES)))
 
 
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 

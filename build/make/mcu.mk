@@ -6,12 +6,20 @@ ifneq (,$(findstring STM32,$(MCU)))
 	FAMILY?=STM32
 endif
 
+ifneq (,$(findstring STM8,$(MCU)))
+	FAMILY?=STM8
+endif
+
 ifneq (,$(findstring NRF5,$(MCU)))
 	FAMILY?=NRF5
 endif
 
-ifneq (,$(findstring GD32V,$(MCU)))
-	FAMILY?=GD32V
+ifneq (,$(findstring GD32,$(MCU)))
+	ifneq (,$(findstring GD32V,$(MCU)))
+		FAMILY?=GD32V
+	else 
+		FAMILY?=GD32
+	endif
 endif
 
 ifneq (,$(findstring FE310,$(MCU)))
@@ -25,28 +33,25 @@ endif
 ################################################################################
 ifeq ($(FAMILY), NRF5)
 	ARCH?=ARM
-
+	C_DEFS += -D$(MCU)_XXAA
+	
 	ifneq (,$(findstring 51,$(MCU)))
 		SUBARCH?=M0
-		SLIB_DIR?=$(SLIB_ROOT)/nrfx
 		SERIES=NRF51_SERIES
 	endif	
 
 	ifneq (,$(findstring 5281,$(MCU)))
 		SUBARCH?=M4
-		SLIB_DIR?=$(SLIB_ROOT)/nrfx
 		SERIES=NRF52_SERIES
 	endif
 
 	ifneq (,$(findstring 5283,$(MCU)))
 		SUBARCH?=M4F
-		SLIB_DIR?=$(SLIB_ROOT)/nrfx
 		SERIES=NRF52_SERIES
 	endif
 
 	ifneq (,$(findstring 5284,$(MCU)))
 		SUBARCH?=M4F
-		SLIB_DIR?=$(SLIB_ROOT)/nrfx
 		SERIES=NRF52_SERIES
 	endif
 
@@ -54,15 +59,20 @@ ifeq ($(FAMILY), NRF5)
 		# This is not correct. FPU is only present on the APPLICATION
  		# And lacking from the NETWORKING core. TODO: Set the right flags!
 		SUBARCH?=M33F
-		SLIB_DIR?=$(SLIB_ROOT)/nrfx
 		SERIES=NRF53_SERIES
 	endif
+
+	SLIB_BLD?=$(SLIB_ROOT)/nrfx
+	SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+	LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
+	SLIB=$(SLIB_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).a
 
 endif
 
 ifeq ($(FAMILY), STM32)
 	ARCH?=ARM
 	CFLAGS += -DUSBD_LPM_ENABLED -DUSE_HAL_DRIVER
+    
 
 	ifneq (,$(findstring F0,$(MCU)))
 		SUBARCH?=M0
@@ -98,14 +108,28 @@ ifeq ($(FAMILY), STM32)
 		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
 		SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
 
-
-	LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
+		LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
+		SLIB=$(SLIB_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).a
 endif
 
 
-ifeq ($(FAMILY), GD32VD)
+ifeq ($(FAMILY), GD32)
+	ARCH?=ARM
+
+	ifneq (,$(findstring F1,$(MCU)))
+		SUBARCH?=M3
+		SERIES?=GD32F1
+		INC += -I$(GD32F1_SP_INC_ROOT)
+	endif
+endif
+
+ifeq ($(FAMILY), GD32V)
 	ARCH?=RISCV
-	SUBARCH?=RV32IMAC
+	ifneq (,$(findstring F1,$(MCU)))
+		SUBARCH?=RV32IMAC
+		SERIES?=GD32FV1
+		INC += -I$(GD32VF1_SP_INC_ROOT)
+	endif
 endif
 
 ifeq ($(FAMILY), FE3)
@@ -113,7 +137,13 @@ ifeq ($(FAMILY), FE3)
 	SUBARCH?=RV32IMAC
 endif
 
+ifeq ($(FAMILY), STM8)
+	ARCH?=STM8
+endif
 
+ifeq ($(FAMILY), AVR)
+	ARCH?=AVR
+endif
 
 ################################################################################
 # Architectures:	Set the compiler and flags for the architecture
@@ -124,6 +154,8 @@ ifeq ($(ARCH), ARM)
 	SPECS ?=  -specs=nano.specs
 
 	LIBS += -lc -lm -lnosys
+
+	C_INCLUDES += -I$(CMSIS_ROOT)/Include
 
 
 	ifeq ($(SUBARCH), M0)
@@ -238,9 +270,11 @@ $(info DEBUG: Configuring GCC)
 	# libraries
 	LIBDIR = -L$(SLIB_DIR) -L$(LD_DIR)
 
+	C_DEFS += -D$(MCU)
+
 	# Flags for assembler, C compiler and linker
-	ASFLAGS  += $(CPU) $(FPU) $(ABI) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -D$(MCU)
-	CFLAGS   += $(CPU) $(FPU) $(ABI) $(C_DEFS)  $(C_INCLUDES)  $(OPT) -Wall -fdata-sections -ffunction-sections -D$(MCU)
+	ASFLAGS  += $(CPU) $(FPU) $(ABI) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections 
+	CFLAGS   += $(CPU) $(FPU) $(ABI) $(C_DEFS)  $(C_INCLUDES)  $(OPT) -Wall -fdata-sections -ffunction-sections 
 	LDFLAGS  += $(CPU) $(FPU) $(ABI) $(SPECS) -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(MCU).map,--cref -Wl,--gc-sections
 
 	# Generate dependency information

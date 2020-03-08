@@ -1,8 +1,11 @@
+LD_DIR = $(UCDEV_ROOT)/build/linker
+SLIB_ROOT = $(UCDEV_ROOT)/build/staticlib
+
 LIBHLUSBD_ROOT =  $(UCDEV_ROOT)/lib/libhlusbd
 LIBHALGLUE_ROOT = $(UCDEV_ROOT)/lib/libhalglue
 LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
-SLIB_ROOT = $(UCDEV_ROOT)/build/staticlib
-LD_DIR = $(UCDEV_ROOT)/build/linker
+
+CMSIS_ROOT = $(UCDEV_ROOT)/ext/CMSIS_5/CMSIS/Core/
 
 CUBEF0_ROOT =    		$(UCDEV_ROOT)/ext/STM32CubeF0
 CUBEF0_HAL_SRC_ROOT = 	$(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Src
@@ -23,3 +26,5 @@ CUBEF3_HAL_INC_ROOT = 	$(CUBEF3_ROOT)/Drivers/STM32F3xx_HAL_Driver/Inc
 CUBEF4_ROOT =     		$(UCDEV_ROOT)/ext/STM32CubeF4
 CUBEF4_HAL_SRC_ROOT = 	$(CUBEF4_ROOT)/Drivers/STM32F4xx_HAL_Driver/Src
 CUBEF4_HAL_INC_ROOT = 	$(CUBEF4_ROOT)/Drivers/STM32F4xx_HAL_Driver/Inc
+
+NRFX_ROOT =     		$(UCDEV_ROOT)/ext/nrfx
