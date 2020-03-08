@@ -1,0 +1,10 @@
+CUBEF4_ROOT =     $(UCDEV_ROOT)/ext/STM32CubeF4
+LIBHLUSBD_ROOT =  $(UCDEV_ROOT)/lib/libhlusbd
+LIBHALGLUE_ROOT = $(UCDEV_ROOT)/lib/libhalglue
+LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
+SLIB_ROOT = $(UCDEV_ROOT)/build/staticlib
+LD_DIR = $(UCDEV_ROOT)/build/linker
+
+
+CUBEF4_HAL_SRC_ROOT = $(CUBEF4_ROOT)/Drivers/STM32F4xx_HAL_Driver/Src
+CUBEF4_HAL_INC_ROOT = $(CUBEF4_ROOT)/Drivers/STM32F4xx_HAL_Driver/Inc

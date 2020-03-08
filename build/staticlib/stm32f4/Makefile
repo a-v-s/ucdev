@@ -1,18 +1,10 @@
-#TARGET = stm32f103cb
-
-
 ######################################
 # building variables
 ######################################
-# debug build?
-DEBUG = 1
-# optimization
-#OPT = -Og
-OPT = -O0
-
-
 
 TARGET ?= STM32F401xC
+
+include ../../make/opt.mk
 
 CFLAGS += -D$(TARGET)
 
@@ -20,8 +12,11 @@ CFLAGS += -D$(TARGET)
 # paths
 #######################################
 # Build path
-BUILD_DIR = BUILD_$(TARGET)
-OUT_DIR = out
+BUILD_DIR = BUILD_$(TARGET)_$(BUILD_MODE)
+
+# For now... I need to see how I want to keep release/debug builds
+# OUT_DIR = out_$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+OUT_DIR = .
 
 ######################################
 # source
@@ -210,7 +205,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 #default action: build all
 
-all: lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 
@@ -237,8 +232,11 @@ $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir $@		
 
+$(OUT_DIR):
+	mkdir $@		
 
-%.a: $(OBJECTS) Makefile
+
+$(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
 
 
