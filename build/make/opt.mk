@@ -14,6 +14,8 @@ ifeq (1,$(RELEASE_SPEED))
 	BUILD_MODE=RELEASE_SPEED
 endif
 
+BUILD_MODE?=DEBUG
+
 ifeq ($(COMPILER_TYPE), GCC)
 	ifeq ($(BUILD_MODE), DEBUG)
 		OPT ?= -O0 -g3
@@ -28,7 +30,6 @@ ifeq ($(COMPILER_TYPE), GCC)
 	endif
 endif 
 
-BUILD_MODE?=DEBUG
 
 
 ifeq ($(COMPILER_TYPE), SDCC)
@@ -44,3 +45,8 @@ ifeq ($(COMPILER_TYPE), SDCC)
 		OPT ?= --opt-code-speed
 	endif
 endif 
+
+
+
+$(info DEBUG: BUILD_MODE IN OPT 	   $(BUILD_MODE))
+$(info DEBUG: OPT IN OPT 	   		   $(OPT))

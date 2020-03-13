@@ -124,6 +124,12 @@ ifeq ($(FAMILY), GD32)
 		C_INCLUDES += -I$(GD32F1_CMSIS_INC)
 		C_INCLUDES += -I$(GD32F1_STDPH_INC)
 		C_INCLUDES += -I$(LIBHALGLUE_INC)/gd32
+
+		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
+		SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+
+		LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
+		SLIB=$(SLIB_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).a
 	endif
 endif
 
@@ -131,13 +137,19 @@ ifeq ($(FAMILY), GD32V)
 	ARCH?=RISCV
 	ifneq (,$(findstring F1,$(MCU)))
 		SUBARCH?=RV32IMAC
-		SERIES?=GD32FV1
+		SERIES?=GD32VF1
 		C_INCLUDES += -I$(GD32VF1_STDPH_ROOT)
 		C_INCLUDES += -I$(GD32VF1_USBFS_INC)
 		C_INCLUDES += -I$(GD32VF1_RISCV_DRV)
 		C_INCLUDES += -I$(GD32VF1_STDPH_INC)
 		C_INCLUDES += -I$(LIBHALGLUE_INC)/gd32
 		C_DEFS     +=  -DHXTAL_VALUE=8000000UL
+
+		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
+		SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+
+		LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
+		SLIB=$(SLIB_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).a
 	endif
 endif
 
@@ -257,6 +269,8 @@ ifeq ($(ARCH), AVR)
 endif
 
 
+
+
 ################################################################################
 # Compiler types: Configure the executables for the compiler
 ################################################################################
@@ -280,6 +294,8 @@ $(info DEBUG: Configuring GCC)
 	LIBDIR = -L$(SLIB_DIR) -L$(LD_DIR)
 
 	C_DEFS += -D$(MCU)
+
+$(info DEBUG: OPT IN MCU 	   $(OPT))
 
 	# Flags for assembler, C compiler and linker
 	ASFLAGS  += $(CPU) $(FPU) $(ABI) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections 

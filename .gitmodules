@@ -79,3 +79,6 @@
 [submodule "ext/GD32VF103_Firmware_Library"]
 	path = ext/GD32VF103_Firmware_Library
 	url = https://github.com/a-v-s/GD32VF103_Firmware_Library
+[submodule "ext/NMSIS"]
+	path = ext/NMSIS
+	url = https://github.com/Nuclei-Software/NMSIS

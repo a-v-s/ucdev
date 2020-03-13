@@ -23,32 +23,35 @@ OUT_DIR = $(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
 ######################################
 # C sources
 
-ASM_SOURCES += $(GD32F_CMSIS_SRC)/GCC/startup_$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).s
-C_SOURCES += $(GD32F_CMSIS_SRC)/system_gd32f10x.c
+ASM_SOURCES += $(GD32F1_CMSIS_SRC)/GCC/startup_$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).s
 
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_adc.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_bkp.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_can.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_crc.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_dac.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_dbg.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_dma.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_enet.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_exmc.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_exti.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_fmc.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_fwdgt.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_gpio.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_i2c.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_misc.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_pmu.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_rcu.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_rtc.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_sdio.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_spi.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_timer.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_usart.c
-C_SOURCES += $(GD32F_STDPH_SRC)/gd32f10x_wwdgt.c
+$(info DEBUG: ASM_SOURCES          $(ASM_SOURCES))
+
+C_SOURCES += $(GD32F1_CMSIS_SRC)/system_gd32f10x.c
+
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_adc.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_bkp.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_can.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_crc.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_dac.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_dbg.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_dma.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_enet.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_exmc.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_exti.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_fmc.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_fwdgt.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_gpio.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_i2c.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_misc.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_pmu.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_rcu.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_rtc.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_sdio.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_spi.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_timer.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_usart.c
+C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_wwdgt.c
 
 
 

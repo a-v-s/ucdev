@@ -30,14 +30,14 @@ CUBEF4_HAL_INC_ROOT =     $(CUBEF4_ROOT)/Drivers/STM32F4xx_HAL_Driver/Inc
 NRFX_ROOT =               $(UCDEV_ROOT)/ext/nrfx
 
 GD32F1_FWLIB_ROOT =       $(UCDEV_ROOT)/ext/GD32F10x_Firmware_Library/Firmware
-GD32F1_STDPH_INC  =       $(GD32F_FWLIB_ROOT)/GD32F10x_standard_peripheral/Include
-GD32F1_STDPH_SRC  =       $(GD32F_FWLIB_ROOT)/GD32F10x_standard_peripheral/Source
-GD32F1_USBFS_SRC  =       $(GD32F_FWLIB_ROOT)/GD32F10x_usbfs_driver/Source
-GD32F1_USBFS_INC  =       $(GD32F_FWLIB_ROOT)/GD32F10x_usbfs_driver/Include
-GD32F1_USBD_SRC   =       $(GD32F_FWLIB_ROOT)/GD32F10x_usbd_driver/Source
-GD32F1_USBD_INC   =       $(GD32F_FWLIB_ROOT)/GD32F10x_usbd_driver/Include
-GD32F1_CMSIS_SRC  =       $(GD32F_FWLIB_ROOT)/GD/GD32F10x/Source
-GD32F1_CMSIS_INC  =       $(GD32F_FWLIB_ROOT)/CMSIS/GD/GD32F10x/Include
+GD32F1_STDPH_INC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_standard_peripheral/Include
+GD32F1_STDPH_SRC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_standard_peripheral/Source
+GD32F1_USBFS_SRC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbfs_driver/Source
+GD32F1_USBFS_INC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbfs_driver/Include
+GD32F1_USBD_SRC   =       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbd_driver/Source
+GD32F1_USBD_INC   =       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbd_driver/Include
+GD32F1_CMSIS_SRC  =       $(GD32F1_FWLIB_ROOT)/CMSIS/GD/GD32F10x/Source
+GD32F1_CMSIS_INC  =       $(GD32F1_FWLIB_ROOT)/CMSIS/GD/GD32F10x/Include
 
 GD32VF1_FWLIB_ROOT =        $(UCDEV_ROOT)/ext/GD32VF103_Firmware_Library/Firmware
 GD32VF1_STDPH_ROOT =        $(GD32VF1_FWLIB_ROOT)/GD32VF103_standard_peripheral
