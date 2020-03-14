@@ -125,6 +125,7 @@ ifeq ($(FAMILY), GD32)
 		C_INCLUDES += -I$(GD32F1_CMSIS_INC)
 		C_INCLUDES += -I$(GD32F1_STDPH_INC)
 		C_INCLUDES += -I$(LIBHALGLUE_INC)/gd32
+		C_DEFS     += -DUSE_STDPERIPH_DRIVER
 
 		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
 		SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
@@ -144,7 +145,8 @@ ifeq ($(FAMILY), GD32V)
 		C_INCLUDES += -I$(GD32VF1_RISCV_DRV)
 		C_INCLUDES += -I$(GD32VF1_STDPH_INC)
 		C_INCLUDES += -I$(LIBHALGLUE_INC)/gd32
-		C_DEFS     +=  -DHXTAL_VALUE=8000000UL
+		C_DEFS     += -DHXTAL_VALUE=8000000UL
+		C_DEFS     += -DUSE_STDPERIPH_DRIVER
 
 		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
 		SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
