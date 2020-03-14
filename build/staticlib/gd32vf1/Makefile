@@ -1,5 +1,6 @@
 TARGET ?= GD32VF103xB
 MCU = $(TARGET)
+USB ?= OTG
 
 UCDEV_ROOT = ../../..
 
@@ -56,6 +57,17 @@ ASM_SOURCES += $(GD32VF1_ECLIPSE)/entry.S
 ASM_SOURCES += $(GD32VF1_ECLIPSE)/start.S
 
 
+ifeq ($(USB),OTG)
+	USB_SRC = $(GD32VF1_USBOTG_SRC)
+	USB_INC = $(GD32VF1_USBOTG_SRC)
+endif
+
+C_SOURCES += $(USB_SRC)/usbd_core.c
+#C_SOURCES += $(USB_SRC)/usbd_int.c
+#C_SOURCES += $(USB_SRC)/usbd_pwr.c
+# It seems from usbd_std.c we have GigaDevice's High Level part, we'll need to
+# replace with out own
+#C_SOURCES += $(USB_SRC)/usbd_std.c
 
 
 

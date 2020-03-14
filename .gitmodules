@@ -82,3 +82,6 @@
 [submodule "ext/NMSIS"]
 	path = ext/NMSIS
 	url = https://github.com/Nuclei-Software/NMSIS
+[submodule "ext/freedom-metal"]
+	path = ext/freedom-metal
+	url = https://github.com/sifive/freedom-metal

@@ -1,6 +1,8 @@
 TARGET ?= GD32F10X_MD
 MCU = $(TARGET)
 
+USB ?= D
+
 UCDEV_ROOT = ../../..
 
 include ../../make/dir.mk
@@ -54,7 +56,22 @@ C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_usart.c
 C_SOURCES += $(GD32F1_STDPH_SRC)/gd32f10x_wwdgt.c
 
 
+ifeq ($(USB),D)
+	USB_SRC = $(GD32F1_USBD_SRC)
+	USB_INC = $(GD32F1_USBD_INC)
+endif
 
+ifeq ($(USB),OTG)
+	USB_SRC = $(GD32F1_USBOTG_SRC)
+	USB_INC = $(GD32F1_USBOTG_INC)
+endif
+
+C_SOURCES += $(USB_SRC)/usbd_core.c
+C_SOURCES += $(USB_SRC)/usbd_int.c
+C_SOURCES += $(USB_SRC)/usbd_pwr.c
+# It seems from usbd_std.c we have GigaDevice's High Level part, we'll need to
+# replace with out own
+#C_SOURCES += $(USB_SRC)/usbd_std.c
 
 #######################################
 # binaries

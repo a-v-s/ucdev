@@ -23,7 +23,7 @@ vpath %.S $(sort $(dir $(ASM_SOURCES)))
 all: $(SLIB) $(OUT_DIR)/$(TARGET).elf $(OUT_DIR)/$(TARGET).hex $(OUT_DIR)/$(TARGET).bin
 
 clean: 
-	rm -rf $(BUILD_DIR) $(OUT_DIR)
+	-rm -rf $(BUILD_DIR) $(OUT_DIR)
 
 
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
