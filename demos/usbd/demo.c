@@ -34,6 +34,8 @@ void transfer_in_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data,
 void transfer_out_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data,
 		size_t size) {
 
+	if (!size)
+		__asm__ __volatile__ ("bkpt #0");
 	// This is a test to reply the data increased by 1;
 	((uint8_t*) (data))[0]++;
 	bscp_usbd_transmit(handle, 0x80 | epnum, data, size);
