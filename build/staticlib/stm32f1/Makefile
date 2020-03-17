@@ -1,7 +1,7 @@
 TARGET ?= STM32F103xB
 
-
-
+MCU = $(TARGET)
+include ../../make/mcu.mk
 include ../../make/opt.mk
 
 CFLAGS += -D$(TARGET)

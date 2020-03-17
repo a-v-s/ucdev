@@ -1,3 +1,5 @@
+BUILD_MODE?=DEBUG
+
 ifeq (1,$(DEBUG))
 	BUILD_MODE=DEBUG
 endif
@@ -14,7 +16,7 @@ ifeq (1,$(RELEASE_SPEED))
 	BUILD_MODE=RELEASE_SPEED
 endif
 
-BUILD_MODE?=DEBUG
+
 
 ifeq ($(COMPILER_TYPE), GCC)
 	ifeq ($(BUILD_MODE), DEBUG)

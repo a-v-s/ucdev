@@ -112,8 +112,8 @@ void SystemClock_HSI_OUT84_Config(void) {
 }
 
 void SystemClock_Config() {
-	//SystemClock_HSE25_OUT84_Config();
-	SystemClock_HSI_OUT84_Config();
+	SystemClock_HSE25_OUT84_Config();
+	//SystemClock_HSI_OUT84_Config();
 }
 int main() {
 	HAL_Init();

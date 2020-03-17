@@ -3,8 +3,10 @@
 ######################################
 
 TARGET ?= STM32F401xC
-
+MCU = $(TARGET)
+include ../../make/mcu.mk
 include ../../make/opt.mk
+
 
 CFLAGS += -D$(TARGET)
 

@@ -35,7 +35,8 @@ void transfer_out_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data
 		size_t size) {
 
 	if (!size)
-		__asm__ __volatile__ ("bkpt #0");
+		return;
+		//__asm__ __volatile__ ("bkpt #0");
 	// This is a test to reply the data increased by 1;
 	((uint8_t*) (data))[0]++;
 	bscp_usbd_transmit(handle, 0x80 | epnum, data, size);
@@ -87,7 +88,7 @@ void bscp_usbd_demo_setup_descriptors(bscp_usbd_handle_t *handle) {
 	handle->descriptor_string[1] = add_string_descriptor_utf16(handle, u"BlaatSchaap");
 
 	// The u"string" prefix encodes it as UTF16 from the start
-	handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"USB Device Demo");
+	handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"USB Device Demo | Some long string to test it that works");
 
 	uint16_t serial_number[9] = {0};
 	GetSerialStringUTF16(serial_number,8);
