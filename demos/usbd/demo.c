@@ -89,6 +89,7 @@ void bscp_usbd_demo_setup_descriptors(bscp_usbd_handle_t *handle) {
 
 	// The u"string" prefix encodes it as UTF16 from the start
 	handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"USB Device Demo | Some long string to test it that works");
+	//handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"USB Device Demo");
 
 	uint16_t serial_number[9] = {0};
 	GetSerialStringUTF16(serial_number,8);
