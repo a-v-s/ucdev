@@ -22,36 +22,29 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
  */
-
-#include "usbd_descriptors.h"
 #include "usbd.h"
-
 #include "serialnumber.h"
-#include "protocol.h"
-
-
-itph_handler_status_t ping_handler(itph_protocol_packet_t *data, protocol_transport_t transport, uint32_t param){
-	data->head.sub = ITPH_SUB_SSTA;
-	usbd_transmit((usbd_handle_t*)param,0x80|transport,data, data->head.size);
-	return ITPH_HANDLER_STATUS_OK;
-}
-
 
 uint8_t temp_recv_buffer[256];
-void transfer_in_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
+void transfer_in_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data,
 		size_t size) {
 
 }
 
-void transfer_out_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
+void transfer_out_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data,
 		size_t size) {
 
-	ping_handler(data,epnum,(uint32_t)handle);
+	if (!size)
+		return;
+		//__asm__ __volatile__ ("bkpt #0");
+	// This is a test to reply the data increased by 1;
+	((uint8_t*) (data))[0]++;
+	bscp_usbd_transmit(handle, 0x80 | epnum, data, size);
 
 }
 
 
-void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
+void bscp_usbd_demo_setup_descriptors(bscp_usbd_handle_t *handle) {
 	handle->descriptor_device = add_descriptor(handle,
 			sizeof(usb_descriptor_device_t));
 	handle->descriptor_device->bDescriptorType = USB_DT_DEVICE;
@@ -86,22 +79,21 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 	iface->bInterfaceNumber = 0;
 	iface->bAlternateSetting = 0;
 
-	usbd_add_endpoint_in(handle, 1, 1, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
-			(usbd_transfer_cb_f) &transfer_in_complete);
-	usbd_add_endpoint_out(handle, 1, 1, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
-			temp_recv_buffer, sizeof(temp_recv_buffer), (usbd_transfer_cb_f) &transfer_out_complete);
+	bscp_usbd_add_endpoint_in(handle, 1, 1, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
+			(bscp_usbd_transfer_cb_f) &transfer_in_complete);
+	bscp_usbd_add_endpoint_out(handle, 1, 1, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
+			temp_recv_buffer, sizeof(temp_recv_buffer), (bscp_usbd_transfer_cb_f) &transfer_out_complete);
 
 	// Be sure to save the file as UTF-8. ;)
 	handle->descriptor_string[1] = add_string_descriptor_utf16(handle, u"BlaatSchaap");
 
 	// The u"string" prefix encodes it as UTF16 from the start
-	handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"USB Device Demo");
+	handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"USB Device Demo | Some long string to test it that works");
+	//handle->descriptor_string[2] = add_string_descriptor_utf16(handle, u"USB Device Demo");
 
 	uint16_t serial_number[9] = {0};
 	GetSerialStringUTF16(serial_number,8);
 	handle->descriptor_string[3] = add_string_descriptor_utf16(handle, serial_number);
 
-
-	protocol_register_command(ping_handler,ITPH_CMD_PING);
 
 }

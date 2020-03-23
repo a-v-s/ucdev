@@ -1,7 +1,7 @@
 ################################################################################
 # Set the MCU
 ################################################################################
-MCU = STM32F072xB
+MCU = STM32F401xC
 
 ################################################################################
 # Set Output Filename 
@@ -16,8 +16,6 @@ UCDEV_ROOT=../../..
 ################################################################################
 # Sources
 ################################################################################
-C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f0/clocksetup.c
-
 C_SOURCES += main.c
 C_SOURCES += ../demo.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
@@ -35,9 +33,9 @@ INC += -I $(LIBHLUSBD_ROOT)/
 INC += -I $(LIBHLUSBD_ROOT)/ConvertUTF
 INC += -I$(LIBHALGLUE_ROOT)/common/
 INC += -I$(LIBHALGLUE_INC) -I$(LIBHALGLUE_INC)/stm32
-INC += -I$(CUBEF0_ROOT)/Drivers/CMSIS/Device/ST/STM32F0xx/Include/
-INC += -I$(CUBEF0_ROOT)/Drivers/CMSIS/Include/
-INC += -I$(CUBEF0_HAL_INC_ROOT)
+INC += -I$(CUBEF4_ROOT)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/
+INC += -I$(CUBEF4_ROOT)/Drivers/CMSIS/Include/
+INC += -I$(CUBEF4_HAL_INC_ROOT)
 
 # C includes
 C_INCLUDES =  $(INC) -I. 

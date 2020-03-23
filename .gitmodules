@@ -70,3 +70,18 @@
 [submodule "ext/STM32CubeL5"]
 	path = ext/STM32CubeL5
 	url = https://github.com/STMicroelectronics/STM32CubeL5
+[submodule "ext/mm32_fds"]
+	path = ext/mm32_fds
+	url = https://github.com/a-v-s/mm32_fds
+[submodule "ext/GD32F10x_Firmware_Library"]
+	path = ext/GD32F10x_Firmware_Library
+	url = https://github.com/a-v-s/GD32F10x_Firmware_Library
+[submodule "ext/GD32VF103_Firmware_Library"]
+	path = ext/GD32VF103_Firmware_Library
+	url = https://github.com/a-v-s/GD32VF103_Firmware_Library
+[submodule "ext/NMSIS"]
+	path = ext/NMSIS
+	url = https://github.com/Nuclei-Software/NMSIS
+[submodule "ext/freedom-metal"]
+	path = ext/freedom-metal
+	url = https://github.com/sifive/freedom-metal

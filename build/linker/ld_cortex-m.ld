@@ -1,4 +1,4 @@
-/* Linker script for Nordic Semiconductor nRF devices
+/* Linker script for Cortex-M microcontrollers
  *
  * Version: Sourcery G++ 4.5-1
  * Support: https://support.codesourcery.com/GNUToolchain/
@@ -43,6 +43,15 @@ OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
  *   __StackLimit
  *   __StackTop
  *   __stack
+ *
+ * Additionally providing the following symbols to provide STM32Cube 
+ * startup file compatibility:
+ *  _estack    
+ *  _sidata     
+ *  _sdata      
+ *  _edata      
+ *  _sbss       
+ *  _ebss       
  */
 ENTRY(Reset_Handler)
 
@@ -166,3 +175,13 @@ SECTIONS
     ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
     
 }
+
+
+
+/* Some patching around to make it work with the STM32 startup code */
+_estack     = __StackTop;
+_sidata     = LOADADDR(.data);
+_sdata      = __data_start__;
+_edata      = __data_end__;
+_sbss       = __bss_start__;
+_ebss       = __bss_end__;

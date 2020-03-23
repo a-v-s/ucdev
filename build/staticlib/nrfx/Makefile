@@ -1,27 +1,20 @@
-#TARGET = stm32f103cb
-
-
-######################################
-# building variables
-######################################
-# debug build?
-DEBUG = 1
-# optimization
-#OPT = -Og
-OPT = -O0
-
-
-
 TARGET ?= NRF52840
 
-CFLAGS += -D$(TARGET)
+include ../../make/opt.mk
+
+
+include ../../make/opt.mk
+
+CFLAGS += -D$(TARGET) -D$(TARGET)_XXAA
 
 #######################################
 # paths
 #######################################
 # Build path
-BUILD_DIR = BUILD_$(TARGET)
-OUT_DIR = out
+BUILD_DIR = BUILD_$(TARGET)_$(BUILD_MODE)
+
+OUT_DIR = $(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+
 
 ######################################
 # source
@@ -176,35 +169,20 @@ ASFLAGS += $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunct
 
 CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-ifeq ($(DEBUG), 1)
-CFLAGS += -g -gdwarf-2
-endif
-
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
-
-
-#default action: build all
-
-all: Makefile lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
-
-
-
-
+all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 #######################################
-# build the application
+# build the library
 #######################################
-# list of objects
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
+
 # list of ASM program objects
-
-#OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
-
 # Handle both .s (eg STM32Cube) and .S (eg nrfx) asm files 
 OBJ_ASM_TMP1 =  $(ASM_SOURCES:.s=.o)
 OBJ_ASM_TMP2 =  $(OBJ_ASM_TMP1:.S=.o)
@@ -215,35 +193,27 @@ vpath %.s $(sort $(dir $(ASM_SOURCES)))
 vpath %.S $(sort $(dir $(ASM_SOURCES)))
 
 
-
-
-
-
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
 	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 	
-$(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
-	$(AS) -c $(CFLAGS) $< -o $@
-
 $(BUILD_DIR):
 	mkdir $@		
 
+$(OUT_DIR):
+	mkdir $@		
 
-%.a: $(OBJECTS) Makefile
+$(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
-
-
-
 
 #######################################
 # clean up
 #######################################
 clean:
 	rm -fR $(BUILD_DIR)
-	rm lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+	rm $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
   
 #######################################
 # dependencies
