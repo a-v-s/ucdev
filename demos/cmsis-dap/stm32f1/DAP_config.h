@@ -110,7 +110,7 @@
  */
 __STATIC_INLINE uint8_t DAP_GetVendorString(char *str) {
 	static char bs[]  = "BlaatSchaap";
-	*str=bs;
+	str=bs;
 	return strlen(bs);
 	//(void) str;
 	//return (0U);

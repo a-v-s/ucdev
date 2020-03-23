@@ -4,6 +4,7 @@
  *  Created on: 24 dec. 2019
  *      Author: andre
  */
+#include <string.h>
 
 #include "usbd.h"
 
@@ -12,12 +13,12 @@ uint8_t temp_send_buffer[64];
 
 
 
-void transfer_in_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
+void transfer_in_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data,
 		size_t size) {
 
 }
 
-void transfer_out_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
+void transfer_out_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data,
 		size_t size) {
 
 	// Execute DAP command (process request and prepare response)
@@ -29,7 +30,7 @@ void transfer_out_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
 	if (size) {
 		memset(temp_send_buffer,0,sizeof(temp_send_buffer));
 		int result = DAP_ExecuteCommand(data, temp_send_buffer);
-		usbd_transmit(handle, 0x80 | epnum, temp_send_buffer, result & 0xFFFF);
+		bscp_usbd_transmit(handle, 0x80 | epnum, temp_send_buffer, result & 0xFFFF);
 
 		// When we're running in CMSIS-DAP v1 HID-based mode
 		// Are we required to send 64 bytes regardless the actual lenghth?
@@ -37,7 +38,7 @@ void transfer_out_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
 	}
 }
 
-void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
+void bscp_usbd_demo_setup_descriptors(bscp_usbd_handle_t *handle) {
 	handle->descriptor_device = add_descriptor(handle,
 			sizeof(usb_descriptor_device_t));
 	handle->descriptor_device->bDescriptorType = USB_DT_DEVICE;
@@ -89,11 +90,11 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 
 	// HID Uses Interrupt End Points
 
-	usbd_add_endpoint_in(handle, 1, 0x81, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
-			(usbd_transfer_cb_f) &transfer_in_complete);
+	bscp_usbd_add_endpoint_in(handle, 1, 0x81, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
+			(bscp_usbd_transfer_cb_f) &transfer_in_complete);
 
-	usbd_add_endpoint_out(handle, 1, 0x01, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
-			temp_recv_buffer, sizeof(temp_recv_buffer), (usbd_transfer_cb_f) &transfer_out_complete);
+	bscp_usbd_add_endpoint_out(handle, 1, 0x01, USB_EP_ATTR_TYPE_INTERRUPT, 64, 1,
+			temp_recv_buffer, sizeof(temp_recv_buffer), (bscp_usbd_transfer_cb_f) &transfer_out_complete);
 
 	// Is there a size limit to USB Strings? They appear to get truncated at 32 characters
 	// I swear I've seen longer strings, or am I imagining things?
