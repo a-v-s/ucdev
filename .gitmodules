@@ -85,3 +85,9 @@
 [submodule "ext/freedom-metal"]
 	path = ext/freedom-metal
 	url = https://github.com/sifive/freedom-metal
+[submodule "ext/ucglib"]
+	path = ext/ucglib
+	url = https://github.com/olikraus/ucglib.git
+[submodule "ext/u8g2"]
+	path = ext/u8g2
+	url = https://github.com/olikraus/u8g2
