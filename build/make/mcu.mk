@@ -222,7 +222,7 @@ ifeq ($(ARCH), ARM)
 	ifeq ($(SUBARCH), M4F)
 			CPU?=	-mcpu=cortex-m4
 			FPU?=	-mfpu=fpv4-sp-d16
-			ABI?=	-mfloat-abi=hard
+			ABI?=	-mfloat-abi=hard 
 	endif
 
 	ifeq ($(SUBARCH), M23)

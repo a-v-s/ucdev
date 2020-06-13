@@ -1,5 +1,6 @@
 TARGET ?= NRF52840
 
+COMPILER_TYPE=GCC
 include ../../make/opt.mk
 
 
