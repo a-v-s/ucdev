@@ -112,8 +112,8 @@ void usbd_reenumerate() {
 }
 
 void ClockSetup(void) {
-	//ClockSetup_HSE8_SYS72();
-	ClockSetup_HSE8_SYS48();
+	ClockSetup_HSE8_SYS72();
+	//ClockSetup_HSE8_SYS48();
 	//ClockSetup_HSI_SYS48();
 }
 
