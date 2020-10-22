@@ -242,7 +242,7 @@ ifeq ($(ARCH), ARM)
 	endif
 
 	ifeq ($(SUBARCH), M33)
-			CPU?=	-mcpu=cortex-m33
+			CPU?=	-mcpu=cortex-m33+nodsp+nofp
 			FPU?=	
 			ABI?=	-mfloat-abi=soft
 	endif
