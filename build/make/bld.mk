@@ -5,13 +5,13 @@ BUILD_DIR = $(OUT_DIR)/build
 # build the application
 #######################################
 # list of objects
-OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
+OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.c.o)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
 
 # list of ASM program objects
 # Handle both .s (eg STM32Cube) and .S (eg nrfx) asm files 
-OBJ_ASM_TMP1 =  $(ASM_SOURCES:.s=.o)
-OBJ_ASM_TMP2 =  $(OBJ_ASM_TMP1:.S=.o)
+OBJ_ASM_TMP1 =  $(ASM_SOURCES:.s=.s.o)
+OBJ_ASM_TMP2 =  $(OBJ_ASM_TMP1:.S=.S.o)
 
 OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(OBJ_ASM_TMP2)  ))
 
@@ -26,13 +26,13 @@ clean:
 	-rm -rf $(BUILD_DIR) $(OUT_DIR)
 
 
-$(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
+$(BUILD_DIR)/%.c.o: %.c Makefile | $(BUILD_DIR) 
 	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
-$(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
+$(BUILD_DIR)/%.s.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 	
-$(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
+$(BUILD_DIR)/%.S.o: %.S Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 
 
