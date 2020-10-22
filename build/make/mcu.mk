@@ -33,33 +33,43 @@ endif
 ################################################################################
 ifeq ($(FAMILY), NRF5)
 	ARCH?=ARM
-	C_DEFS += -D$(MCU)_XXAA
+	
 	
 	ifneq (,$(findstring 51,$(MCU)))
 		SUBARCH?=M0
 		SERIES=NRF51_SERIES
+        C_DEFS += -D$(MCU)_XXAA
 	endif	
 
 	ifneq (,$(findstring 5281,$(MCU)))
 		SUBARCH?=M4
 		SERIES=NRF52_SERIES
+        C_DEFS += -D$(MCU)_XXAA
 	endif
 
 	ifneq (,$(findstring 5283,$(MCU)))
 		SUBARCH?=M4F
 		SERIES=NRF52_SERIES
+        C_DEFS += -D$(MCU)_XXAA
 	endif
 
 	ifneq (,$(findstring 5284,$(MCU)))
 		SUBARCH?=M4F
 		SERIES=NRF52_SERIES
+        C_DEFS += -D$(MCU)_XXAA
 	endif
 
 	ifneq (,$(findstring 53,$(MCU)))
-		# This is not correct. FPU is only present on the APPLICATION
- 		# And lacking from the NETWORKING core. TODO: Set the right flags!
-		SUBARCH?=M33F
-		SERIES=NRF53_SERIES
+        ifneq (,$(findstring APP,$(MCU)))
+		    SUBARCH?=M33F
+		    SERIES=NRF53_SERIES
+            C_DEFS += -DNRF5340_XXAA_APPLICATION
+        endif
+        ifneq (,$(findstring NET,$(MCU)))
+		    SUBARCH?=M33
+		    SERIES=NRF53_SERIES
+            C_DEFS += -DNRF5340_XXAA_NETWORK
+        endif
 	endif
 
 	SLIB_BLD?=$(SLIB_ROOT)/nrfx
@@ -178,7 +188,7 @@ ifeq ($(ARCH), ARM)
 	PREFIX?=arm-none-eabi-
 	SPECS ?=  -specs=nano.specs
 
-	LIBS += -lc -lm -lnosys
+	LIBS += -lc -lm -lnosys -L$(NRFX_ROOT)/mdk/
 
 	C_INCLUDES += -I$(CMSIS_ROOT)/Include
 

@@ -6,7 +6,21 @@ include ../../make/opt.mk
 
 include ../../make/opt.mk
 
-CFLAGS += -D$(TARGET) -D$(TARGET)_XXAA
+CFLAGS += -D$(TARGET) 
+
+
+ifneq (,$(findstring 53,$(TARGET)))
+    ifneq (,$(findstring APP,$(TARGET)))
+        C_DEFS += -DNRF5340_XXAA_APPLICATION
+    endif
+    ifneq (,$(findstring NET,$(TARGET)))
+        C_DEFS += -DNRF5340_XXAA_NETWORK
+    endif
+else 
+    C_DEFS += -D$(TARGET)_XXAA
+endif
+
+
 
 #######################################
 # paths
@@ -126,9 +140,13 @@ A = $(AR)
 
 ifeq ($(TARGET),$(filter $(TARGET),NRF51))
 	CPU = -mcpu=cortex-m0	
+else ifeq ($(TARGET),$(filter $(TARGET),NRF5340_APPLICATION))
+	CPU = -mcpu=cortex-m33
+else ifeq ($(TARGET),$(filter $(TARGET),NRF5340_NETWORK))
+		CPU = -mcpu=cortex-m33+nofp+nodsp
 else
 	CPU = -mcpu=cortex-m4	
-endif
+endif endif
 
 # fpu
 # float-abi
@@ -136,9 +154,13 @@ endif
 ifeq ($(TARGET),$(filter $(TARGET),NRF52832 NRF52833 NRF52840))
 	FLOAT-ABI = -mfloat-abi=hard
 	FPU       = -mfpu=fpv4-sp-d16
+else ifeq ($(TARGET),$(filter $(TARGET),NRF5340_APPLICATION))
+    FLOAT-ABI = -mfloat-abi=hard
+	FPU       = -mfpu=fpv5-sp-d16
 else
 	FLOAT-ABI = -mfloat-abi=soft
-endif
+endif endif
+
 
 
 
