@@ -1,6 +1,20 @@
 OUT_DIR =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)
 BUILD_DIR = $(OUT_DIR)/build
 
+
+################################################################################
+## Add verbose option													       #
+## https://stackoverflow.com/questions/9314322/controlling-verbosity-of-make   #
+################################################################################
+V ?= 0
+ACTUAL_CC := $(CC)
+CC_0 = @echo "Compiling $<..."; $(ACTUAL_CC)
+CC_1 = $(ACTUAL_CC)
+CC = $(CC_$(V))
+
+
+
+
 #######################################
 # build the application
 #######################################
