@@ -259,7 +259,11 @@ endif
 
 ifeq ($(ARCH), RISCV)
 	COMPILER_TYPE?=GCC
-	PREFIX?=riscv64-unknown-elf-
+	
+	# Older toolchains use riscv64-unknown-elf-  	(built from AUR)
+	# Newer toolchains use riscv64-elf-				(community repo)
+	#PREFIX?=riscv64-unknown-elf-
+	PREFIX?=riscv64-elf-
 
 	ifeq ($(SUBARCH), RV32IMAC)
 		CPU?=	-march=rv32imac
