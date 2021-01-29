@@ -26,6 +26,7 @@ CUBEF3_HAL_INC_ROOT =     $(CUBEF3_ROOT)/Drivers/STM32F3xx_HAL_Driver/Inc
 CUBEF4_ROOT =             $(UCDEV_ROOT)/ext/STM32CubeF4
 CUBEF4_HAL_SRC_ROOT =     $(CUBEF4_ROOT)/Drivers/STM32F4xx_HAL_Driver/Src
 CUBEF4_HAL_INC_ROOT =     $(CUBEF4_ROOT)/Drivers/STM32F4xx_HAL_Driver/Inc
+CUBEF4_CMSIS_INC_ROOT =   $(CUBEF4_ROOT)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/
 
 NRFX_ROOT =               $(UCDEV_ROOT)/ext/nrfx
 

@@ -113,6 +113,7 @@ ifeq ($(FAMILY), STM32)
 		SUBARCH?=M4F
 		SERIES?=STM32F4
 		INC += -I$(CUBEF4_HAL_INC_ROOT)
+		INC += -I$(CUBEF4_CMSIS_INC_ROOT)
 	endif
 
 		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
@@ -191,6 +192,10 @@ ifeq ($(ARCH), ARM)
 	LIBS += -lc -lm -lnosys -L$(NRFX_ROOT)/mdk/
 
 	C_INCLUDES += -I$(CMSIS_ROOT)/Include
+
+    C_INCLUDES += -I$(NRFX_ROOT) -I$(NRFX_ROOT)/mdk 
+    C_INCLUDES += -I$(NRFX_ROOT)/hal -I$(NRFX_ROOT)/soc
+    C_INCLUDES += -I$(NRFX_ROOT)/drivers -I$(NRFX_ROOT)/drivers/include
 
 
 	ifeq ($(SUBARCH), M0)
