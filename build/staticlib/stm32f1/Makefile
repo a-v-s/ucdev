@@ -97,6 +97,8 @@ C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_utils.c
 
 
 
+
+
 #######################################
 # binaries
 #######################################
@@ -167,7 +169,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 
 
-all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+all: $(ASM_SOURCES) $(C_SOURCES) $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 #######################################
@@ -195,6 +197,10 @@ $(OUT_DIR):
 
 $(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
+
+$(C_SOURCES) $(ASM_SOURCES):
+	git submodule init $(CUBEF1_ROOT)
+	git submodule update $(CUBEF1_ROOT)
 
 #######################################
 # clean up
