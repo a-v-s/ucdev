@@ -5,7 +5,7 @@ LIBHLUSBD_ROOT =  $(UCDEV_ROOT)/lib/libhlusbd
 LIBHALGLUE_ROOT = $(UCDEV_ROOT)/lib/libhalglue
 LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
 
-CMSIS_ROOT = $(UCDEV_ROOT)/ext/CMSIS_5/CMSIS/Core/
+CMSIS_ROOT =                $(UCDEV_ROOT)/ext/CMSIS_5/
 
 CUBEF0_ROOT =             $(UCDEV_ROOT)/ext/STM32CubeF0
 CUBEF0_HAL_SRC_ROOT =     $(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Src
@@ -30,7 +30,8 @@ CUBEF4_CMSIS_INC_ROOT =   $(CUBEF4_ROOT)/Drivers/CMSIS/Device/ST/STM32F4xx/Inclu
 
 NRFX_ROOT =               $(UCDEV_ROOT)/ext/nrfx
 
-GD32F1_FWLIB_ROOT =       $(UCDEV_ROOT)/ext/GD32F10x_Firmware_Library/Firmware
+GD32F1_ROOT =               $(UCDEV_ROOT)/ext/GD32F10x_Firmware_Library
+GD32F1_FWLIB_ROOT =       $(GD32F1_ROOT)/Firmware
 GD32F1_STDPH_INC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_standard_peripheral/Include
 GD32F1_STDPH_SRC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_standard_peripheral/Source
 GD32F1_USBOTG_SRC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbfs_driver/Source

@@ -73,6 +73,12 @@ C_SOURCES += $(USB_SRC)/usbd_pwr.c
 # replace with out own
 #C_SOURCES += $(USB_SRC)/usbd_std.c
 
+
+
+
+CFLAGS += -I.
+
+
 #######################################
 # binaries
 #######################################
@@ -97,7 +103,7 @@ BIN = $(CP) -O binary -S
 A = $(AR)
  
 
-all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+all: CMSIS $(C_SOURCES) $(ASM_SOURCES) $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 #######################################
@@ -126,6 +132,13 @@ $(OUT_DIR):
 $(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
 
+$(C_SOURCES) $(ASM_SOURCES):
+	git submodule init $(GD32F1_ROOT)
+	git submodule update $(GD32F1_ROOT)
+
+CMSIS:
+	git submodule init $(CMSIS_ROOT)
+	git submodule update $(CMSIS_ROOT)
 
 
 #######################################

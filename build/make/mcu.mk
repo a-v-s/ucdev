@@ -191,7 +191,7 @@ ifeq ($(ARCH), ARM)
 
 	LIBS += -lc -lm -lnosys -L$(NRFX_ROOT)/mdk/
 
-	C_INCLUDES += -I$(CMSIS_ROOT)/Include
+	C_INCLUDES += -I$(CMSIS_ROOT)/CMSIS/Core/Include
 
     C_INCLUDES += -I$(NRFX_ROOT) -I$(NRFX_ROOT)/mdk 
     C_INCLUDES += -I$(NRFX_ROOT)/hal -I$(NRFX_ROOT)/soc
