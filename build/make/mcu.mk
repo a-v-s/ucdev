@@ -88,24 +88,28 @@ ifeq ($(FAMILY), STM32)
 		SUBARCH?=M0
 		SERIES?=STM32F0
 		INC += -I$(CUBEF0_HAL_INC_ROOT)
+		INC += -I$(LIBHALGLUE_INC)/stm32f0
 	endif	
 
 	ifneq (,$(findstring F1,$(MCU)))
 		SUBARCH?=M3
 		SERIES?=STM32F1
 		INC += -I$(CUBEF1_HAL_INC_ROOT)
+		INC += -I$(LIBHALGLUE_INC)/stm32f1
 	endif
 
 	ifneq (,$(findstring F2,$(MCU)))
 		SUBARCH?=M3
 		SERIES?=STM32F2
 		INC += -I$(CUBEF2_HAL_INC_ROOT)
+		INC += -I$(LIBHALGLUE_INC)/stm32f2
 	endif
 
 	ifneq (,$(findstring F3,$(MCU)))
 		SUBARCH?=M4F
 		SERIES?=STM32F3
 		INC += -I$(CUBEF3_HAL_INC_ROOT)
+		INC += -I$(LIBHALGLUE_INC)/stm32f3
 	endif
 
 
@@ -114,6 +118,7 @@ ifeq ($(FAMILY), STM32)
 		SERIES?=STM32F4
 		INC += -I$(CUBEF4_HAL_INC_ROOT)
 		INC += -I$(CUBEF4_CMSIS_INC_ROOT)
+		INC += -I$(LIBHALGLUE_INC)/stm32f4
 	endif
 
 		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))

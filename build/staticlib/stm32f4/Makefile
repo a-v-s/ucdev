@@ -195,7 +195,7 @@ CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 
-all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+all: $(C_SOURCES) $(ASM_SOURCES) $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 #######################################
@@ -223,6 +223,10 @@ $(OUT_DIR):
 
 $(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
+
+$(C_SOURCES) $(ASM_SOURCES):
+	git submodule init $(CUBEF4_ROOT)
+	git submodule update $(CUBEF4_ROOT)
 
 #######################################
 # clean up

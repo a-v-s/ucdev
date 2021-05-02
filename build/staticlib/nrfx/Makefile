@@ -198,7 +198,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 CFLAGS += --specs=nano.specs
 
-all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+all: LIBHALGLUE CMSIS $(C_SOURCES) $(ASM_SOURCES) $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 #######################################
@@ -232,6 +232,19 @@ $(OUT_DIR):
 
 $(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
+
+$(C_SOURCES) $(ASM_SOURCES):
+	git submodule init $(NRFX_ROOT)
+	git submodule update $(NRFX_ROOT)
+
+CMSIS:
+	git submodule init $(CMSIS)
+	git submodule update $(CMSIS)
+
+LIBHALGLUE:
+	git submodule init $(LIBHALGLUE_ROOT)
+	git submodule update $(LIBHALGLUE_ROOT)
+
 
 #######################################
 # clean up

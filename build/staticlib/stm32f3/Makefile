@@ -1,6 +1,11 @@
 TARGET ?= STM32F303xC
 
-include ../../make/opt.mk
+
+UCDEV_ROOT = ../../..
+include $(UCDEV_ROOT)/build/make/opt.mk
+include $(UCDEV_ROOT)/build/make/dir.mk
+
+
 
 CFLAGS += -D$(TARGET)
 
@@ -18,18 +23,12 @@ OUT_DIR = $(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
 # source
 ######################################
 # C sources
-CUBEF3_ROOT =     ../../../ext/STM32CubeF3
-
-CUBEF3_HAL_SRC_ROOT = $(CUBEF3_ROOT)/Drivers/STM32F3xx_HAL_Driver/Src
-CUBEF3_HAL_INC_ROOT = $(CUBEF3_ROOT)/Drivers/STM32F3xx_HAL_Driver/Inc
-
-HALGUE_INC = ../../../lib/libhalglue/hal
 
 CFLAGS += --std=gnu11
 
 INC += -I$(CUBEF3_ROOT)/Drivers/CMSIS/Device/ST/STM32F3xx/Include/
 INC += -I$(CUBEF3_ROOT)/Drivers/CMSIS/Include/
-INC += -I$(HALGUE_INC)/stm32
+INC += -I$(LIBHALGLUE_INC)/stm32
 
 C_SOURCES 	+= $(CUBEF3_ROOT)/Drivers/CMSIS/Device/ST/STM32F3xx/Source/Templates/system_stm32f3xx.c
 
@@ -175,7 +174,7 @@ CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 
-all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+all: LIBHALGLUE $(C_SOURCES) $(ASM_SOURCES) $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 #######################################
@@ -203,6 +202,14 @@ $(OUT_DIR):
 
 $(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
+
+$(C_SOURCES) $(ASM_SOURCES):
+	git submodule init $(CUBEF3_ROOT)
+	git submodule update $(CUBEF3_ROOT)
+
+LIBHALGLUE:
+	git submodule init $(LIBHALGLUE_ROOT)
+	git submodule update $(LIBHALGLUE_ROOT)
 
 #######################################
 # clean up
