@@ -171,7 +171,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 #default action: build all
 
 
-all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
+all: $(C_SOURCES) $(ASM_SOURCES) $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
 
 
 #######################################
@@ -199,6 +199,10 @@ $(OUT_DIR):
 
 $(OUT_DIR)/%.a: $(OBJECTS) Makefile
 	$(AR) rcs $@ $(OBJECTS)
+
+$(C_SOURCES) $(ASM_SOURCES):
+	git submodule init $(CUBEF0_ROOT)
+	git submodule update $(CUBEF0_ROOT)
 
 #######################################
 # clean up
