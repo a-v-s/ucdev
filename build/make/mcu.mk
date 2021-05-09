@@ -349,18 +349,24 @@ endif
 
 # For now there is no support for SDCC MCUs. These are untested placeholders.
 ifeq ($(COMPILER_TYPE), SDCC)
-	AR?=sdar
-	#AS?=
-	CC?=sdcc
-	#CXX?=
-	LD?=sdlc
+
+$(info DEBUG: Configuring SDCC)
+
+	AR=sdar
+	CC=sdcc
+	LD=sdlc
+    SZ=size
+    CP=sdobjcopy
+    BIN=$(CP) -O binary -S
 
 	ifeq ($(ARCH), MCS51)
-		AS?=sdas8051
+		AS=sdas8051
 	endif
 
 	ifeq ($(ARCH), STM8)
-		AS?=asstm8
+		AS=asstm8
+		CFLAGS += -mstm8 
+        LDFLAGS += -mstm8  --out-fmt-elf
 	endif
 
 endif
