@@ -77,48 +77,65 @@ ifeq ($(FAMILY), NRF5)
 	LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
 	SLIB=$(SLIB_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).a
 
+	LIBS += -lc -lm -lnosys -L$(NRFX_ROOT)/mdk/
+
+	C_INCLUDES += -I$(CMSIS_ROOT)/CMSIS/Core/Include
+
+    C_INCLUDES += -I$(NRFX_ROOT) -I$(NRFX_ROOT)/mdk 
+    C_INCLUDES += -I$(NRFX_ROOT)/hal -I$(NRFX_ROOT)/soc
+    C_INCLUDES += -I$(NRFX_ROOT)/drivers -I$(NRFX_ROOT)/drivers/include
+
 endif
 
 ifeq ($(FAMILY), STM32)
 	ARCH?=ARM
 	CFLAGS += -DUSBD_LPM_ENABLED -DUSE_HAL_DRIVER
-    
+    C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32
 
 	ifneq (,$(findstring F0,$(MCU)))
 		SUBARCH?=M0
 		SERIES?=STM32F0
-		INC += -I$(CUBEF0_HAL_INC_ROOT)
-		INC += -I$(LIBHALGLUE_INC)/stm32f0
+		C_INCLUDES += -I$(CUBEF0_HAL_INC_ROOT)
+		C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f0
+		C_INCLUDES += -I$(CUBEF0_CMSIS_INC_DEV)
+		C_INCLUDES += -I$(CUBEF0_CMSIS_INC_CORE)
 	endif	
 
 	ifneq (,$(findstring F1,$(MCU)))
 		SUBARCH?=M3
 		SERIES?=STM32F1
-		INC += -I$(CUBEF1_HAL_INC_ROOT)
-		INC += -I$(LIBHALGLUE_INC)/stm32f1
+		C_INCLUDES += -I$(CUBEF1_HAL_INC_ROOT)
+		C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f1
+		C_INCLUDES += -I$(CUBEF1_CMSIS_INC_DEV)
+		C_INCLUDES += -I$(CUBEF1_CMSIS_INC_CORE)
 	endif
 
 	ifneq (,$(findstring F2,$(MCU)))
 		SUBARCH?=M3
 		SERIES?=STM32F2
-		INC += -I$(CUBEF2_HAL_INC_ROOT)
-		INC += -I$(LIBHALGLUE_INC)/stm32f2
+		C_INCLUDES += -I$(CUBEF2_HAL_INC_ROOT)
+		C_INCLUDES += -I$(CUBEF2_CMSIS_INC_DEV)
+		C_INCLUDES += -I$(CUBEF2_CMSIS_INC_CORE)
+		C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f2
 	endif
 
 	ifneq (,$(findstring F3,$(MCU)))
 		SUBARCH?=M4F
 		SERIES?=STM32F3
-		INC += -I$(CUBEF3_HAL_INC_ROOT)
-		INC += -I$(LIBHALGLUE_INC)/stm32f3
+		C_INCLUDES += -I$(CUBEF3_HAL_INC_ROOT)
+		C_INCLUDES += -I$(CUBEF3_CMSIS_INC_DEV)
+		C_INCLUDES += -I$(CUBEF3_CMSIS_INC_CORE)
+		C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f3
 	endif
 
 
 	ifneq (,$(findstring F4,$(MCU)))
 		SUBARCH?=M4F
 		SERIES?=STM32F4
-		INC += -I$(CUBEF4_HAL_INC_ROOT)
-		INC += -I$(CUBEF4_CMSIS_INC_ROOT)
-		INC += -I$(LIBHALGLUE_INC)/stm32f4
+		C_INCLUDES += -I$(CUBEF4_HAL_INC_ROOT)
+		C_INCLUDES += -I$(CUBEF4_CMSIS_INC_DEV)
+		C_INCLUDES += -I$(CUBEF4_CMSIS_INC_CORE)
+		C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f4
 	endif
 
 		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
@@ -193,15 +210,6 @@ ifeq ($(ARCH), ARM)
 	COMPILER_TYPE?=GCC
 	PREFIX?=arm-none-eabi-
 	SPECS ?=  -specs=nano.specs
-
-	LIBS += -lc -lm -lnosys -L$(NRFX_ROOT)/mdk/
-
-	C_INCLUDES += -I$(CMSIS_ROOT)/CMSIS/Core/Include
-
-    C_INCLUDES += -I$(NRFX_ROOT) -I$(NRFX_ROOT)/mdk 
-    C_INCLUDES += -I$(NRFX_ROOT)/hal -I$(NRFX_ROOT)/soc
-    C_INCLUDES += -I$(NRFX_ROOT)/drivers -I$(NRFX_ROOT)/drivers/include
-
 
 	ifeq ($(SUBARCH), M0)
 			CPU?=	-mcpu=cortex-m0
