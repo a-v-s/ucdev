@@ -66,4 +66,6 @@ GD32VF1_USBOTG_INC  =        $(GD32VF1_FWLIB_ROOT)/GD32VF103_usbfs_driver/Includ
 GD32VF1_RISCV_DRV  =        $(GD32VF1_FWLIB_ROOT)/RISCV/drivers
 GD32VF1_RISCV_STUB =        $(GD32VF1_FWLIB_ROOT)/RISCV/stubs
 GD32VF1_ECLIPSE    =        $(GD32VF1_FWLIB_ROOT)/RISCV/env_Eclipse
+
+STM8S_INC           =    $(UCDEV_ROOT)/ext/stm8-header
  

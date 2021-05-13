@@ -59,8 +59,10 @@ $(BUILD_DIR)/%.c.o: %.c Makefile | $(BUILD_DIR)
 $(BUILD_DIR)/%.s.o $(BUILD_DIR)/%.S.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 	
+
+
 $(BUILD_DIR)/%.c.rel: %.c Makefile | $(BUILD_DIR) 
-	$(CC) -c $(CFLAGS) $< -l $(BUILD_DIR)/$<.lst -o $@
+	$(CC) -c $(CFLAGS) $(OPT) $< -l $(BUILD_DIR)/$<.lst -o $@
 
 
 

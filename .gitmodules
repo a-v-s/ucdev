@@ -7,9 +7,6 @@
 [submodule "ext/Gecko_SDK"]
 	path = ext/Gecko_SDK
 	url = git@github.com:BlaatSchaapCode/Gecko_SDK.git
-[submodule "ext/stm8s-header"]
-	path = ext/stm8s-header
-	url = https://github.com/the-cave/stm8s-header
 [submodule "ext/stm8-header"]
 	path = ext/stm8-header
 	url = https://github.com/midnight-wonderer/stm8-header

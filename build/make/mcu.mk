@@ -197,6 +197,8 @@ endif
 
 ifeq ($(FAMILY), STM8)
 	ARCH?=STM8
+
+	C_INCLUDES += -I$(STM8S_INC)
 endif
 
 ifeq ($(FAMILY), AVR)
@@ -365,8 +367,8 @@ $(info DEBUG: Configuring SDCC)
 
 	ifeq ($(ARCH), STM8)
 		AS=asstm8
-		CFLAGS += -mstm8 
-        LDFLAGS += -mstm8  --out-fmt-elf
+		CFLAGS += -mstm8 --debug $(C_INCLUDES)  --out-fmt-elf 
+        LDFLAGS += -mstm8 --debug --out-fmt-elf 
 	endif
 
 endif
