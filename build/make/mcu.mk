@@ -96,18 +96,18 @@ ifeq ($(FAMILY), STM32)
 		SUBARCH?=M0
 		SERIES?=STM32F0
 		C_INCLUDES += -I$(CUBEF0_HAL_INC_ROOT)
-		C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f0
 		C_INCLUDES += -I$(CUBEF0_CMSIS_INC_DEV)
 		C_INCLUDES += -I$(CUBEF0_CMSIS_INC_CORE)
+        #C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f0
 	endif	
 
 	ifneq (,$(findstring F1,$(MCU)))
 		SUBARCH?=M3
 		SERIES?=STM32F1
 		C_INCLUDES += -I$(CUBEF1_HAL_INC_ROOT)
-		C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f1
 		C_INCLUDES += -I$(CUBEF1_CMSIS_INC_DEV)
 		C_INCLUDES += -I$(CUBEF1_CMSIS_INC_CORE)
+        #C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f1
 	endif
 
 	ifneq (,$(findstring F2,$(MCU)))
@@ -116,7 +116,7 @@ ifeq ($(FAMILY), STM32)
 		C_INCLUDES += -I$(CUBEF2_HAL_INC_ROOT)
 		C_INCLUDES += -I$(CUBEF2_CMSIS_INC_DEV)
 		C_INCLUDES += -I$(CUBEF2_CMSIS_INC_CORE)
-		C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f2
+		#C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f2
 	endif
 
 	ifneq (,$(findstring F3,$(MCU)))
@@ -135,7 +135,7 @@ ifeq ($(FAMILY), STM32)
 		C_INCLUDES += -I$(CUBEF4_HAL_INC_ROOT)
 		C_INCLUDES += -I$(CUBEF4_CMSIS_INC_DEV)
 		C_INCLUDES += -I$(CUBEF4_CMSIS_INC_CORE)
-		C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f4
+		#C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f4
 	endif
 
 		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
@@ -331,13 +331,14 @@ $(info DEBUG: Configuring GCC)
 	# libraries
 	LIBDIR = -L$(SLIB_DIR) -L$(LD_DIR)
 
-	C_DEFS += -D$(MCU) -D$(SERIES)
+	C_DEFS += -D$(MCU) -D$(SERIES) -I$(SLIB_BLD)
 
 $(info DEBUG: OPT IN MCU 	   $(OPT))
 
 	# Flags for assembler, C compiler and linker
 	ASFLAGS  += $(CPU) $(FPU) $(ABI) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections 
 	CFLAGS   += $(CPU) $(FPU) $(ABI) $(C_DEFS)  $(C_INCLUDES)  $(OPT) -Wall -fdata-sections -ffunction-sections 
+	CXXFLAGS   += $(CPU) $(FPU) $(ABI) $(CXX_DEFS)  $(CXX_INCLUDES)  $(OPT) -Wall -fdata-sections -ffunction-sections 
 	LDFLAGS  += $(CPU) $(FPU) $(ABI) $(SPECS) -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(MCU).map,--cref -Wl,--gc-sections
 
 	# Generate dependency information
