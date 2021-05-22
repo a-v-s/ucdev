@@ -6,7 +6,7 @@
 	url = https://github.com/NordicSemiconductor/nrfx
 [submodule "ext/Gecko_SDK"]
 	path = ext/Gecko_SDK
-	url = git@github.com:BlaatSchaapCode/Gecko_SDK.git
+	url = https://github.com/BlaatSchaapCode/Gecko_SDK.git
 [submodule "ext/stm8-header"]
 	path = ext/stm8-header
 	url = https://github.com/midnight-wonderer/stm8-header
@@ -15,13 +15,13 @@
 	url = https://github.com/ARM-software/CMSIS_5
 [submodule "lib/halglue"]
 	path = lib/halglue
-	url = git@github.com:BlaatSchaapCode/halglue.git
+	url = https://github.com/BlaatSchaapCode/halglue.git
 [submodule "ext/lufa"]
 	path = ext/lufa
 	url = https://github.com/abcminiuser/lufa
 [submodule "lib/libhalglue"]
 	path = lib/libhalglue
-	url = git@github.com:a-v-s/libhalglue.git
+	url = https://github.com/a-v-s/libhalglue.git
 [submodule "ext/STM32CubeF0"]
 	path = ext/STM32CubeF0
 	url = https://github.com/STMicroelectronics/STM32CubeF0
@@ -60,10 +60,10 @@
 	url = https://github.com/STMicroelectronics/STM32CubeWB
 [submodule "lib/libhlusbd"]
 	path = lib/libhlusbd
-	url = git@github.com:a-v-s/libhlusbd.git
+	url = https://github.com/a-v-s/libhlusbd.git
 [submodule "lib/libws2812dma"]
 	path = lib/libws2812dma
-	url = git@github.com:a-v-s/libws2812dma.git
+	url = https://github.com/a-v-s/libws2812dma.git
 [submodule "ext/STM32CubeL5"]
 	path = ext/STM32CubeL5
 	url = https://github.com/STMicroelectronics/STM32CubeL5
