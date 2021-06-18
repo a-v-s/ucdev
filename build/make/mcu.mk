@@ -73,9 +73,9 @@ ifeq ($(FAMILY), NRF5)
 	endif
 
 	SLIB_BLD?=$(SLIB_ROOT)/nrfx
-	SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
-	LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
-	SLIB=$(SLIB_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).a
+	SLIB_DIR?=$(SLIB_BLD)/$(shell echo $(BUILD_MODE) | tr A-Z a-z)
+	LIBS += -l$(shell echo $(MCU) | tr A-Z a-z)
+	SLIB=$(SLIB_DIR)/lib$(shell echo $(MCU) | tr A-Z a-z).a
 
 	LIBS += -lc -lm -lnosys -L$(NRFX_ROOT)/mdk/
 
@@ -138,11 +138,21 @@ ifeq ($(FAMILY), STM32)
 		#C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f4
 	endif
 
-		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
-		SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+	ifneq (,$(findstring L4,$(MCU)))
+		SUBARCH?=M4F
+		SERIES?=STM32L4
+		C_INCLUDES += -I$(CUBEL4_HAL_INC_ROOT)
+		C_INCLUDES += -I$(CUBEL4_CMSIS_INC_DEV)
+		C_INCLUDES += -I$(CUBEL4_CMSIS_INC_CORE)
+		#C_INCLUDES += -I$(LIBHALGLUE_INC)/stm32f4
+	endif
 
-		LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
-		SLIB=$(SLIB_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).a
+
+		SLIB_BLD?=$(SLIB_ROOT)/$(shell echo $(SERIES) | tr A-Z a-z)
+		SLIB_DIR?=$(SLIB_BLD)/$(shell echo $(BUILD_MODE) | tr A-Z a-z)
+
+		LIBS += -l$(shell echo $(MCU) | tr A-Z a-z)
+		SLIB=$(SLIB_DIR)/lib$(shell echo $(MCU) | tr A-Z a-z).a
 endif
 
 
@@ -161,11 +171,11 @@ ifeq ($(FAMILY), GD32)
 		C_DEFS     += -DUSE_STDPERIPH_DRIVER
 		C_DEFS     += -DGD32USBFS
 
-		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
-		SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+		SLIB_BLD?=$(SLIB_ROOT)/$(shell echo $(SERIES) | tr A-Z a-z)
+		SLIB_DIR?=$(SLIB_BLD)/$(shell echo $(BUILD_MODE) | tr A-Z a-z)
 
-		LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
-		SLIB=$(SLIB_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).a
+		LIBS += -l$(shell echo $(MCU) | tr A-Z a-z)
+		SLIB=$(SLIB_DIR)/lib$(shell echo $(MCU) | tr A-Z a-z).a
 	endif
 endif
 
@@ -182,11 +192,11 @@ ifeq ($(FAMILY), GD32V)
 		C_DEFS     += -DHXTAL_VALUE=8000000UL
 		C_DEFS     += -DUSE_STDPERIPH_DRIVER
 		C_DEFS     += -DGD32USBOTG
-		SLIB_BLD?=$(SLIB_ROOT)/$(shell tr '[:upper:]' '[:lower:]' <<< $(SERIES))
-		SLIB_DIR?=$(SLIB_BLD)/$(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+		SLIB_BLD?=$(SLIB_ROOT)/$(shell echo $(SERIES) | tr A-Z a-z)
+		SLIB_DIR?=$(SLIB_BLD)/$(shell echo $(BUILD_MODE) | tr A-Z a-z)
 
-		LIBS += -l$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
-		SLIB=$(SLIB_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).a
+		LIBS += -l$(shell echo $(MCU) | tr A-Z a-z)
+		SLIB=$(SLIB_DIR)/lib$(shell echo $(MCU) | tr A-Z a-z).a
 	endif
 endif
 
