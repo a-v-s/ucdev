@@ -1,5 +1,5 @@
-OUT_DIR =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)
-BUILD_DIR = $(OUT_DIR)/build
+OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)/$(shell echo $(MCU) | tr A-Z a-z)
+BUILD_DIR   =   $(OUT_DIR)/build
 
 
 ################################################################################
