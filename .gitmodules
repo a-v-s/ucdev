@@ -1,93 +1,93 @@
 [submodule "mod/libopencm3"]
 	path = ext/libopencm3
-	url = https://github.com/libopencm3/libopencm3
+	url = ../../libopencm3/libopencm3
 [submodule "mod/nrfx"]
 	path = ext/nrfx
-	url = https://github.com/NordicSemiconductor/nrfx
+	url = ../../NordicSemiconductor/nrfx
 [submodule "ext/Gecko_SDK"]
 	path = ext/Gecko_SDK
-	url = git@github.com:BlaatSchaapCode/Gecko_SDK.git
+	url = ../../BlaatSchaapCode/Gecko_SDK.git
 [submodule "ext/stm8-header"]
 	path = ext/stm8-header
-	url = https://github.com/midnight-wonderer/stm8-header
+	url = ../../midnight-wonderer/stm8-header
 [submodule "ext/CMSIS_5"]
 	path = ext/CMSIS_5
-	url = https://github.com/ARM-software/CMSIS_5
+	url = ../../ARM-software/CMSIS_5
 [submodule "lib/halglue"]
 	path = lib/halglue
-	url = git@github.com:BlaatSchaapCode/halglue.git
+	url = ../../BlaatSchaapCode/halglue.git
 [submodule "ext/lufa"]
 	path = ext/lufa
-	url = https://github.com/abcminiuser/lufa
+	url = ../../abcminiuser/lufa
 [submodule "lib/libhalglue"]
 	path = lib/libhalglue
-	url = git@github.com:a-v-s/libhalglue.git
+	url = ../libhalglue.git
 [submodule "ext/STM32CubeF0"]
 	path = ext/STM32CubeF0
-	url = https://github.com/STMicroelectronics/STM32CubeF0
+	url = ../../STMicroelectronics/STM32CubeF0
 [submodule "ext/STM32CubeF1"]
 	path = ext/STM32CubeF1
-	url = https://github.com/STMicroelectronics/STM32CubeF1
+	url = ../../STMicroelectronics/STM32CubeF1
 [submodule "ext/STM32CubeF2"]
 	path = ext/STM32CubeF2
-	url = https://github.com/STMicroelectronics/STM32CubeF2
+	url = ../../STMicroelectronics/STM32CubeF2
 [submodule "ext/STM32CubeF3"]
 	path = ext/STM32CubeF3
-	url = https://github.com/STMicroelectronics/STM32CubeF3
+	url = ../../STMicroelectronics/STM32CubeF3
 [submodule "ext/STM32CubeF4"]
 	path = ext/STM32CubeF4
-	url = https://github.com/STMicroelectronics/STM32CubeF4
+	url = ../../STMicroelectronics/STM32CubeF4
 [submodule "ext/STM32CubeF7"]
 	path = ext/STM32CubeF7
-	url = https://github.com/STMicroelectronics/STM32CubeF7
+	url = ../../STMicroelectronics/STM32CubeF7
 [submodule "ext/ST/STM32CubeG0"]
 	path = ext/STM32CubeG0
-	url = https://github.com/STMicroelectronics/STM32CubeG0
+	url = ../../STMicroelectronics/STM32CubeG0
 [submodule "ext/ST/STM32CubeG4"]
 	path = ext/STM32CubeG4
-	url = https://github.com/STMicroelectronics/STM32CubeG4
+	url = ../../STMicroelectronics/STM32CubeG4
 [submodule "ext/ST/STM32CubeL0"]
 	path = ext/STM32CubeL0
-	url = https://github.com/STMicroelectronics/STM32CubeL0
+	url = ../../STMicroelectronics/STM32CubeL0
 [submodule "ext/ST/STM32CubeL1"]
 	path = ext/STM32CubeL1
-	url = https://github.com/STMicroelectronics/STM32CubeL1
+	url = ../../STMicroelectronics/STM32CubeL1
 [submodule "ext/ST/STM32CubeL4"]
 	path = ext/STM32CubeL4
-	url = https://github.com/STMicroelectronics/STM32CubeL4
+	url = ../../STMicroelectronics/STM32CubeL4
 [submodule "ext/ST/STM32CubeWB"]
 	path = ext/STM32CubeWB
-	url = https://github.com/STMicroelectronics/STM32CubeWB
+	url = ../../STMicroelectronics/STM32CubeWB
 [submodule "lib/libhlusbd"]
 	path = lib/libhlusbd
-	url = git@github.com:a-v-s/libhlusbd.git
+	url = ../libhlusbd.git
 [submodule "lib/libws2812dma"]
 	path = lib/libws2812dma
-	url = git@github.com:a-v-s/libws2812dma.git
+	url = ../libws2812dma.git
 [submodule "ext/STM32CubeL5"]
 	path = ext/STM32CubeL5
-	url = https://github.com/STMicroelectronics/STM32CubeL5
+	url = ../../STMicroelectronics/STM32CubeL5
 [submodule "ext/mm32_fds"]
 	path = ext/mm32_fds
-	url = https://github.com/a-v-s/mm32_fds
+	url = ../mm32_fds
 [submodule "ext/GD32F10x_Firmware_Library"]
 	path = ext/GD32F10x_Firmware_Library
-	url = https://github.com/a-v-s/GD32F10x_Firmware_Library
+	url = ../GD32F10x_Firmware_Library
 [submodule "ext/GD32VF103_Firmware_Library"]
 	path = ext/GD32VF103_Firmware_Library
-	url = https://github.com/a-v-s/GD32VF103_Firmware_Library
+	url = ../GD32VF103_Firmware_Library
 [submodule "ext/NMSIS"]
 	path = ext/NMSIS
-	url = https://github.com/Nuclei-Software/NMSIS
+	url = ../../Nuclei-Software/NMSIS
 [submodule "ext/freedom-metal"]
 	path = ext/freedom-metal
-	url = https://github.com/sifive/freedom-metal
+	url = ../../sifive/freedom-metal
 [submodule "ext/ucglib"]
 	path = ext/ucglib
-	url = https://github.com/olikraus/ucglib.git
+	url = ../../olikraus/ucglib.git
 [submodule "ext/u8g2"]
 	path = ext/u8g2
-	url = https://github.com/olikraus/u8g2
+	url = ../../olikraus/u8g2
 [submodule "ext/pico-sdk"]
 	path = ext/pico-sdk
-	url = https://github.com/raspberrypi/pico-sdk
+	url = ../../raspberrypi/pico-sdk
