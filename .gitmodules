@@ -91,3 +91,6 @@
 [submodule "ext/pico-sdk"]
 	path = ext/pico-sdk
 	url = ../../raspberrypi/pico-sdk
+[submodule "lib/bsrfid"]
+	path = lib/bsrfid
+	url = ../bsrfid
