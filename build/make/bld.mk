@@ -1,5 +1,12 @@
+ifeq ($(BUILD_LIBRARY),1)
+OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)/$(shell echo $(ARCH) | tr A-Z a-z)_$(shell echo $(SUBARCH) | tr A-Z a-z)
+BUILD_DIR 	= 	$(OUT_DIR)/build
+else
 OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)/$(shell echo $(MCU) | tr A-Z a-z)
 BUILD_DIR   =   $(OUT_DIR)/build
+endif
+
+
 
 
 ################################################################################
@@ -46,8 +53,11 @@ vpath %.s $(sort $(dir $(ASM_SOURCES)))
 vpath %.S $(sort $(dir $(ASM_SOURCES)))
 
 
-
+ifeq ($(BUILD_LIBRARY),1)
+all: $(SLIB) $(OUT_DIR)/lib$(TARGET).a
+else
 all: $(SLIB) $(OUT_DIR)/$(TARGET).elf $(OUT_DIR)/$(TARGET).hex $(OUT_DIR)/$(TARGET).bin
+endif
 
 clean: 
 	-rm -rf $(BUILD_DIR) $(OUT_DIR)
@@ -58,15 +68,6 @@ $(BUILD_DIR)/%.c.o: %.c Makefile | $(BUILD_DIR)
 
 $(BUILD_DIR)/%.s.o $(BUILD_DIR)/%.S.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
-	
-
-
-$(BUILD_DIR)/%.c.rel: %.c Makefile | $(BUILD_DIR) 
-	$(CC) -c $(CFLAGS) $(OPT) $< -l $(BUILD_DIR)/$<.lst -o $@
-
-
-
-
 
 ifeq ($(COMPILER_TYPE),GCC)
 $(OUT_DIR)/%.hex: $(OUT_DIR)/%.elf | $(OUT_DIR)
@@ -78,9 +79,16 @@ $(OUT_DIR)/%.bin: $(OUT_DIR)/%.elf | $(OUT_DIR)
 $(OUT_DIR)/$(TARGET).elf: $(OBJECTS) Makefile $(OUT_DIR)
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 	$(SZ) $@
+
+$(OUT_DIR)/lib$(TARGET).a: $(OBJECTS) Makefile $(OUT_DIR)
+	$(AR) rcs $@ $(OBJECTS)
 endif
 
 ifeq ($(COMPILER_TYPE),SDCC)
+$(BUILD_DIR)/%.c.rel: %.c Makefile | $(BUILD_DIR) 
+	$(CC) -c $(CFLAGS) $(OPT) $< -l $(BUILD_DIR)/$<.lst -o $@
+
+
 $(OUT_DIR)/%.hex: $(OBJECTS) Makefile $(OUT_DIR)
 	$(CC) $(OBJECTS) $(LDFLAGS) --out-fmt-ihx -o $@
 	
@@ -93,8 +101,6 @@ $(OUT_DIR)/$(TARGET).elf: $(OBJECTS) Makefile $(OUT_DIR)
 endif
 
 
-$(OUT_DIR)/%.a: $(OBJECTS) Makefile
-	$(AR) rcs $@ $(OBJECTS)
 	
 $(BUILD_DIR):
 	mkdir -p $@	

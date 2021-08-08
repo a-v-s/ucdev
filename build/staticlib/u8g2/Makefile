@@ -1,27 +1,10 @@
 ARCH?=ARM
 SUBARCH?=M3
-
-LIBRARY = u8g2
-
-TARGET =  $(shell echo $(LIBRARY) | tr A-Z a-z)_$(shell echo $(ARCH) | tr A-Z a-z)_$(shell echo $(SUBARCH) | tr A-Z a-z)
+TARGET =  u8g2
 
 UCDEV_ROOT = ../../../
 
 U8G2_DIR 	= $(UCDEV_ROOT)/ext/u8g2/csrc
-
-MCU 		= m_$(ARCH)_$(SUBARCH)
-#SERIES 		= s_$(MCU)
-LIB_BLD 	= l_$(U8G2_DIR)
-
-OUT_DIR 	= 	$(TARGET)_$(shell echo $(BUILD_MODE) | tr A-Z a-z)
-BUILD_DIR 	= 	$(OUT_DIR)/build
-OUT 		= 	$(OUT_DIR)/lib$(TARGET).a
-
-include $(UCDEV_ROOT)/build/make/mcu.mk
-include $(UCDEV_ROOT)/build/make/opt.mk
-
-
-
 
 #######################################
 # source of the library
@@ -131,49 +114,10 @@ C_SOURCES += $(U8G2_DIR)/u8x8_string.c
 C_SOURCES += $(U8G2_DIR)/u8x8_u16toa.c
 C_SOURCES += $(U8G2_DIR)/u8x8_u8toa.c
 
+BUILD_LIBRARY = 1
 
-all: $(ASM_SOURCES) $(C_SOURCES) $(OUT_DIR) $(OUT)
+include $(UCDEV_ROOT)/build/make/arch.mk
+include $(UCDEV_ROOT)/build/make/opt.mk
+include $(UCDEV_ROOT)/build/make/bld.mk
 
-
-#######################################
-# build the library
-#######################################
-# list of objects
-OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
-vpath %.c $(sort $(dir $(C_SOURCES)))
-# list of ASM program objects
-OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
-vpath %.s $(sort $(dir $(ASM_SOURCES)))
-
-
-$(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
-	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
-
-$(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
-	$(AS) -c $(CFLAGS) $< -o $@
-	
-$(BUILD_DIR):
-	mkdir $@		
-
-$(OUT_DIR):
-	mkdir $@		
-
-$(OUT_DIR)/%.a: $(OBJECTS) Makefile
-	$(AR) rcs $@ $(OBJECTS)
-
-$(C_SOURCES) $(ASM_SOURCES):
-	git submodule init $(U8G2_DIR)
-	git submodule update $(U8G2_DIR)
-
-#######################################
-# clean up
-#######################################
-clean:
-	rm -fR $(BUILD_DIR)
-	rm $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
-  
-#######################################
-# dependencies
-#######################################
--include $(wildcard $(BUILD_DIR)/*.d)
 
