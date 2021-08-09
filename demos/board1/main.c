@@ -42,6 +42,8 @@
 #include "lm75b.h"
 #include "sht3x.h"
 #include "bh1750.h"
+#include "hcd1080.h"
+#include "si70xx.h"
 
 bshal_i2cm_instance_t * gp_i2c = NULL;
 
@@ -93,9 +95,11 @@ int main() {
 
 	gp_i2c = i2c_init();
 
-	lm75b_t lm75b;
-	sht3x_t sht3x;
-	bh1750_t bh1750;
+	lm75b_t lm75b = {0};
+	sht3x_t sht3x = {0};
+	bh1750_t bh1750 = {0};
+	si70xx_t si70xx = {0};
+	hcd1080_t hcd1080 = {0};
 
 	if (0 == bshal_i2cm_isok(gp_i2c, LM75B_ADDR)) {
 		lm75b.addr = LM75B_ADDR;
@@ -112,7 +116,24 @@ int main() {
 		bh1750.p_i2c = gp_i2c;
 	}
 
+	if (0 == bshal_i2cm_isok(gp_i2c, SI7021_ADDR)) {
+		// either si7021 or hcd1080
+		bool identify;
+		si70xx.addr = SI7021_ADDR;
+		si70xx.p_i2c = gp_i2c;
+		si70xx_identify(&si70xx , &identify) ;
+		if (!identify) {
+			si70xx.addr = 0;
+		}
 
+		hcd1080.addr = SI7021_ADDR;
+		hcd1080.p_i2c = gp_i2c;
+		hcd1080_identify( &hcd1080 , &identify) ;
+		if (!identify) {
+			hcd1080.addr = 0;
+		}
+
+	}
 
 
 
@@ -168,12 +189,12 @@ int main() {
 			if (sht3x.addr) {
 				accum temperature_a;
 				sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
-				sprintf(buff, "SHT3X: TEMP: %3d.%02d °C  ", (int)temperature_a, (int)(100*temperature_a)%100);
+				sprintf(buff, "SHT3X: TEMP: %3d.%02d °C  ", (int)temperature_a, abs((int)(100*temperature_a))%100);
 				print(buff, 2);
 
 				accum huminity_a;
 				sht3x_get_humidity_accum(&sht3x, &huminity_a);
-				sprintf(buff, "SHT3X:  HUM: %3d.%02d %%  ", (int)huminity_a, (int)(100*huminity_a)%100);
+				sprintf(buff, "SHT3X:  HUM: %3d.%02d %%  ", (int)huminity_a, abs((int)(100*huminity_a))%100);
 				print(buff, 3);
 			} else {
 				print("NOT PRESENT", 2);
@@ -189,6 +210,36 @@ int main() {
 			} else {
 				print("NOT PRESENT", 2);
 			}
+			break;
+
+		case 4:
+
+			if (hcd1080.addr) {
+				print("HCD1080" , 1);
+				accum temperature_a=-99.99;
+				hcd1080_get_temperature_C_accum(&hcd1080, &temperature_a);
+				sprintf(buff, "SHT3X: TEMP: %3d.%02d °C  ", (int)temperature_a, abs((int)(100*temperature_a)%100));
+				print(buff, 2);
+
+				accum huminity_a=-1;
+				hcd1080_get_humidity_accum(&hcd1080, &huminity_a);
+				sprintf(buff, "SHT3X:  HUM: %3d.%02d %%  ", (int)huminity_a, abs((int)(100*huminity_a)%100));
+				print(buff, 3);
+			}
+			if (si70xx.addr) {
+				print("SI70XX" , 1);
+				accum temperature_a;
+				si70xx_get_temperature_C_accum(&si70xx, &temperature_a);
+				sprintf(buff, "SI70XX: TEMP: %3d.%02d °C  ", (int)temperature_a, abs((int)(100*temperature_a)%100));
+				print(buff, 2);
+
+				accum huminity_a;
+				si70xx_get_humidity_accum(&si70xx, &huminity_a);
+				sprintf(buff, "SI70XX:  HUM: %3d.%02d %%  ", (int)huminity_a, abs((int)(100*huminity_a)%100));
+				print(buff, 3);
+			}
+
+
 			break;
 
 
