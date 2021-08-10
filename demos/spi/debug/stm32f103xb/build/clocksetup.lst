@@ -1,0 +1,599 @@
+ARM GAS  /tmp/cccJEZrd.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 6
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"clocksetup.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.ClockSetup_HSE8_SYS72,"ax",%progbits
+  16              		.align	1
+  17              		.global	ClockSetup_HSE8_SYS72
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	ClockSetup_HSE8_SYS72:
+  25              	.LFB65:
+  26              		.file 1 "../../lib/libhalglue/hal/stm32f1/clocksetup.c"
+   1:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** /*
+   2:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+   3:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  File: 		clocksetup.c
+   4:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  Author:	André van Schoubroeck
+   5:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  License:	MIT
+   6:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+   7:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+   8:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  MIT License
+   9:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  10:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  Copyright (c) 2020 André van Schoubroeck
+  11:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  12:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  of this software and associated documentation files (the "Software"), to deal
+  14:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  in the Software without restriction, including without limitation the rights
+  15:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  copies of the Software, and to permit persons to whom the Software is
+  17:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  furnished to do so, subject to the following conditions:
+  18:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  The above copyright notice and this permission notice shall be included in all
+  19:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  copies or substantial portions of the Software.
+  20:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  21:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  22:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  23:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  24:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  25:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  26:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  27:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  SOFTWARE.
+  28:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  29:../../lib/libhalglue/hal/stm32f1/clocksetup.c ****  */
+  30:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** //----------------------------------------------------------------------------
+  31:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** // Clock Setup for STM32F1xxx
+  32:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** //
+ARM GAS  /tmp/cccJEZrd.s 			page 2
+
+
+  33:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** // ClockSetup_HSE8_SYS72 : 8 MHZ Xtal, 72 MHz clock speed, USB capable
+  34:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** // ClockSetup_HSE8_SYS48 : 8 MHZ Xtal, 48 MHz clock speed, USB capable
+  35:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** // ClockSetup_HSI_SYS48  : No Xtal, 48 MHz clock speed, unofficial USB capable
+  36:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** //------------------------------------------------------------------------------
+  37:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** #include "stm32f1xx.h"
+  38:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** //#include "stm32f1xx_hal_rcc.h"
+  39:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** //#include "stm32f1xx_hal_rcc_ex.h"
+  40:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  41:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** // Configure for external HSE 8 Mhz Xtal, System speed to 72 MHz
+  42:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** void ClockSetup_HSE8_SYS72(void) {
+  27              		.loc 1 42 34
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 80
+  30              		@ frame_needed = 1, uses_anonymous_args = 0
+  31 0000 80B5     		push	{r7, lr}
+  32              		.cfi_def_cfa_offset 8
+  33              		.cfi_offset 7, -8
+  34              		.cfi_offset 14, -4
+  35 0002 94B0     		sub	sp, sp, #80
+  36              		.cfi_def_cfa_offset 88
+  37 0004 00AF     		add	r7, sp, #0
+  38              		.cfi_def_cfa_register 7
+  43:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	RCC_ClkInitTypeDef clkinitstruct = { 0 };
+  39              		.loc 1 43 21
+  40 0006 07F13C03 		add	r3, r7, #60
+  41 000a 0022     		movs	r2, #0
+  42 000c 1A60     		str	r2, [r3]
+  43 000e 5A60     		str	r2, [r3, #4]
+  44 0010 9A60     		str	r2, [r3, #8]
+  45 0012 DA60     		str	r2, [r3, #12]
+  46 0014 1A61     		str	r2, [r3, #16]
+  44:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	RCC_OscInitTypeDef oscinitstruct = { 0 };
+  47              		.loc 1 44 21
+  48 0016 07F11403 		add	r3, r7, #20
+  49 001a 2822     		movs	r2, #40
+  50 001c 0021     		movs	r1, #0
+  51 001e 1846     		mov	r0, r3
+  52 0020 FFF7FEFF 		bl	memset
+  45:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	RCC_PeriphCLKInitTypeDef rccperiphclkinit = { 0 };
+  53              		.loc 1 45 27
+  54 0024 3B1D     		adds	r3, r7, #4
+  55 0026 0022     		movs	r2, #0
+  56 0028 1A60     		str	r2, [r3]
+  57 002a 5A60     		str	r2, [r3, #4]
+  58 002c 9A60     		str	r2, [r3, #8]
+  59 002e DA60     		str	r2, [r3, #12]
+  46:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  47:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// Configure HSE Oscillator for use with 8 MHz Xtal
+  48:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// PLL Freq 72 MHz	( 9 * 8 = 72 )
+  49:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  60              		.loc 1 49 31
+  61 0030 0123     		movs	r3, #1
+  62 0032 7B61     		str	r3, [r7, #20]
+  50:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.HSEState = RCC_HSE_ON;
+  63              		.loc 1 50 25
+  64 0034 4FF48033 		mov	r3, #65536
+  65 0038 BB61     		str	r3, [r7, #24]
+ARM GAS  /tmp/cccJEZrd.s 			page 3
+
+
+  51:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  66              		.loc 1 51 31
+  67 003a 0023     		movs	r3, #0
+  68 003c FB61     		str	r3, [r7, #28]
+  52:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.PLL.PLLMUL = RCC_PLL_MUL9;
+  69              		.loc 1 52 27
+  70 003e 4FF4E013 		mov	r3, #1835008
+  71 0042 BB63     		str	r3, [r7, #56]
+  53:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.PLL.PLLState = RCC_PLL_ON;
+  72              		.loc 1 53 29
+  73 0044 0223     		movs	r3, #2
+  74 0046 3B63     		str	r3, [r7, #48]
+  54:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  75              		.loc 1 54 30
+  76 0048 4FF48033 		mov	r3, #65536
+  77 004c 7B63     		str	r3, [r7, #52]
+  55:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	HAL_RCC_OscConfig(&oscinitstruct);
+  78              		.loc 1 55 2
+  79 004e 07F11403 		add	r3, r7, #20
+  80 0052 1846     		mov	r0, r3
+  81 0054 FFF7FEFF 		bl	HAL_RCC_OscConfig
+  56:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  57:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// USB clock configuration: 72 / 1.5 = 48
+  58:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	rccperiphclkinit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+  82              		.loc 1 58 40
+  83 0058 1023     		movs	r3, #16
+  84 005a 7B60     		str	r3, [r7, #4]
+  59:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	rccperiphclkinit.UsbClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
+  85              		.loc 1 59 37
+  86 005c 0023     		movs	r3, #0
+  87 005e 3B61     		str	r3, [r7, #16]
+  60:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	HAL_RCCEx_PeriphCLKConfig(&rccperiphclkinit);
+  88              		.loc 1 60 2
+  89 0060 3B1D     		adds	r3, r7, #4
+  90 0062 1846     		mov	r0, r3
+  91 0064 FFF7FEFF 		bl	HAL_RCCEx_PeriphCLKConfig
+  61:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  62:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// SYS  Clock to 72 MHz  (Max 72 MHz)
+  63:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// AHB  Clock to 72 MHz  (Max 72 MHz)
+  64:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// APB1 Clock to 36      (Max 36 MHz)
+  65:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// APB2 Clock to 72      (Max 72 MHz)
+  66:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// Flash Latency to 2. 
+  67:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// Flash Latency should be increased for each 24 MHz of clock speed. 
+  68:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// ( 72 / 24 ) - 1 = 2.
+  69:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK
+  92              		.loc 1 69 26
+  93 0068 0F23     		movs	r3, #15
+  94 006a FB63     		str	r3, [r7, #60]
+  70:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+  71:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  95              		.loc 1 71 29
+  96 006c 0223     		movs	r3, #2
+  97 006e 3B64     		str	r3, [r7, #64]
+  72:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  98              		.loc 1 72 30
+  99 0070 0023     		movs	r3, #0
+ 100 0072 7B64     		str	r3, [r7, #68]
+ARM GAS  /tmp/cccJEZrd.s 			page 4
+
+
+  73:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.APB1CLKDivider = RCC_HCLK_DIV2;
+ 101              		.loc 1 73 31
+ 102 0074 4FF48063 		mov	r3, #1024
+ 103 0078 BB64     		str	r3, [r7, #72]
+  74:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 104              		.loc 1 74 31
+ 105 007a 0023     		movs	r3, #0
+ 106 007c FB64     		str	r3, [r7, #76]
+  75:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	HAL_RCC_ClockConfig(&clkinitstruct, FLASH_LATENCY_2);
+ 107              		.loc 1 75 2
+ 108 007e 07F13C03 		add	r3, r7, #60
+ 109 0082 0221     		movs	r1, #2
+ 110 0084 1846     		mov	r0, r3
+ 111 0086 FFF7FEFF 		bl	HAL_RCC_ClockConfig
+  76:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	SystemCoreClockUpdate();
+ 112              		.loc 1 76 2
+ 113 008a FFF7FEFF 		bl	SystemCoreClockUpdate
+  77:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** }
+ 114              		.loc 1 77 1
+ 115 008e 00BF     		nop
+ 116 0090 5037     		adds	r7, r7, #80
+ 117              		.cfi_def_cfa_offset 8
+ 118 0092 BD46     		mov	sp, r7
+ 119              		.cfi_def_cfa_register 13
+ 120              		@ sp needed
+ 121 0094 80BD     		pop	{r7, pc}
+ 122              		.cfi_endproc
+ 123              	.LFE65:
+ 125              		.section	.text.ClockSetup_HSE8_SYS48,"ax",%progbits
+ 126              		.align	1
+ 127              		.global	ClockSetup_HSE8_SYS48
+ 128              		.syntax unified
+ 129              		.thumb
+ 130              		.thumb_func
+ 131              		.fpu softvfp
+ 133              	ClockSetup_HSE8_SYS48:
+ 134              	.LFB66:
+  78:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  79:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** //------------------------------------------------------------------------------
+  80:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  81:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** // Configure for external HSE 8 Mhz Xtal, System speed to 48 MHz
+  82:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** void ClockSetup_HSE8_SYS48(void) {
+ 135              		.loc 1 82 34
+ 136              		.cfi_startproc
+ 137              		@ args = 0, pretend = 0, frame = 80
+ 138              		@ frame_needed = 1, uses_anonymous_args = 0
+ 139 0000 80B5     		push	{r7, lr}
+ 140              		.cfi_def_cfa_offset 8
+ 141              		.cfi_offset 7, -8
+ 142              		.cfi_offset 14, -4
+ 143 0002 94B0     		sub	sp, sp, #80
+ 144              		.cfi_def_cfa_offset 88
+ 145 0004 00AF     		add	r7, sp, #0
+ 146              		.cfi_def_cfa_register 7
+  83:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	RCC_ClkInitTypeDef clkinitstruct = { 0 };
+ 147              		.loc 1 83 21
+ 148 0006 07F13C03 		add	r3, r7, #60
+ARM GAS  /tmp/cccJEZrd.s 			page 5
+
+
+ 149 000a 0022     		movs	r2, #0
+ 150 000c 1A60     		str	r2, [r3]
+ 151 000e 5A60     		str	r2, [r3, #4]
+ 152 0010 9A60     		str	r2, [r3, #8]
+ 153 0012 DA60     		str	r2, [r3, #12]
+ 154 0014 1A61     		str	r2, [r3, #16]
+  84:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	RCC_OscInitTypeDef oscinitstruct = { 0 };
+ 155              		.loc 1 84 21
+ 156 0016 07F11403 		add	r3, r7, #20
+ 157 001a 2822     		movs	r2, #40
+ 158 001c 0021     		movs	r1, #0
+ 159 001e 1846     		mov	r0, r3
+ 160 0020 FFF7FEFF 		bl	memset
+  85:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	RCC_PeriphCLKInitTypeDef rccperiphclkinit = { 0 };
+ 161              		.loc 1 85 27
+ 162 0024 3B1D     		adds	r3, r7, #4
+ 163 0026 0022     		movs	r2, #0
+ 164 0028 1A60     		str	r2, [r3]
+ 165 002a 5A60     		str	r2, [r3, #4]
+ 166 002c 9A60     		str	r2, [r3, #8]
+ 167 002e DA60     		str	r2, [r3, #12]
+  86:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  87:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// Configure HSE Oscillator for use with 8 MHz Xtal
+  88:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// PLL Freq 72 MHz	( 6 * 8 = 48 )
+  89:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// PLL Freq 48 MHz
+  90:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+ 168              		.loc 1 90 31
+ 169 0030 0123     		movs	r3, #1
+ 170 0032 7B61     		str	r3, [r7, #20]
+  91:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.HSEState = RCC_HSE_ON;
+ 171              		.loc 1 91 25
+ 172 0034 4FF48033 		mov	r3, #65536
+ 173 0038 BB61     		str	r3, [r7, #24]
+  92:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+ 174              		.loc 1 92 31
+ 175 003a 0023     		movs	r3, #0
+ 176 003c FB61     		str	r3, [r7, #28]
+  93:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.PLL.PLLMUL = RCC_PLL_MUL6;
+ 177              		.loc 1 93 27
+ 178 003e 4FF48013 		mov	r3, #1048576
+ 179 0042 BB63     		str	r3, [r7, #56]
+  94:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.PLL.PLLState = RCC_PLL_ON;
+ 180              		.loc 1 94 29
+ 181 0044 0223     		movs	r3, #2
+ 182 0046 3B63     		str	r3, [r7, #48]
+  95:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 183              		.loc 1 95 30
+ 184 0048 4FF48033 		mov	r3, #65536
+ 185 004c 7B63     		str	r3, [r7, #52]
+  96:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	HAL_RCC_OscConfig(&oscinitstruct);
+ 186              		.loc 1 96 2
+ 187 004e 07F11403 		add	r3, r7, #20
+ 188 0052 1846     		mov	r0, r3
+ 189 0054 FFF7FEFF 		bl	HAL_RCC_OscConfig
+  97:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+  98:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// USB clock configuration: 48 = 48
+  99:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	rccperiphclkinit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+ARM GAS  /tmp/cccJEZrd.s 			page 6
+
+
+ 190              		.loc 1 99 40
+ 191 0058 1023     		movs	r3, #16
+ 192 005a 7B60     		str	r3, [r7, #4]
+ 100:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	rccperiphclkinit.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
+ 193              		.loc 1 100 37
+ 194 005c 4FF48003 		mov	r3, #4194304
+ 195 0060 3B61     		str	r3, [r7, #16]
+ 101:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	HAL_RCCEx_PeriphCLKConfig(&rccperiphclkinit);
+ 196              		.loc 1 101 2
+ 197 0062 3B1D     		adds	r3, r7, #4
+ 198 0064 1846     		mov	r0, r3
+ 199 0066 FFF7FEFF 		bl	HAL_RCCEx_PeriphCLKConfig
+ 102:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+ 103:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// SYS  Clock to 48 MHz (Max 72 MHz)
+ 104:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// AHB  Clock to 48 MHz (Max 72 MHz)
+ 105:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// APB1 Clock to 24     (Max 36 MHz)
+ 106:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// APB2 Clock to 48     (Max 72 MHz)
+ 107:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// Flash Latency to 1. 
+ 108:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// Flash Latency should be increased for each 24 MHz of clock speed. 
+ 109:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// ( 48 / 24 ) - 1 = 1.
+ 110:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK
+ 200              		.loc 1 110 26
+ 201 006a 0F23     		movs	r3, #15
+ 202 006c FB63     		str	r3, [r7, #60]
+ 111:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+ 112:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 203              		.loc 1 112 29
+ 204 006e 0223     		movs	r3, #2
+ 205 0070 3B64     		str	r3, [r7, #64]
+ 113:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 206              		.loc 1 113 30
+ 207 0072 0023     		movs	r3, #0
+ 208 0074 7B64     		str	r3, [r7, #68]
+ 114:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.APB1CLKDivider = RCC_HCLK_DIV2;
+ 209              		.loc 1 114 31
+ 210 0076 4FF48063 		mov	r3, #1024
+ 211 007a BB64     		str	r3, [r7, #72]
+ 115:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 212              		.loc 1 115 31
+ 213 007c 0023     		movs	r3, #0
+ 214 007e FB64     		str	r3, [r7, #76]
+ 116:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	HAL_RCC_ClockConfig(&clkinitstruct, FLASH_LATENCY_1);
+ 215              		.loc 1 116 2
+ 216 0080 07F13C03 		add	r3, r7, #60
+ 217 0084 0121     		movs	r1, #1
+ 218 0086 1846     		mov	r0, r3
+ 219 0088 FFF7FEFF 		bl	HAL_RCC_ClockConfig
+ 117:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	SystemCoreClockUpdate();
+ 220              		.loc 1 117 2
+ 221 008c FFF7FEFF 		bl	SystemCoreClockUpdate
+ 118:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** }
+ 222              		.loc 1 118 1
+ 223 0090 00BF     		nop
+ 224 0092 5037     		adds	r7, r7, #80
+ 225              		.cfi_def_cfa_offset 8
+ 226 0094 BD46     		mov	sp, r7
+ 227              		.cfi_def_cfa_register 13
+ARM GAS  /tmp/cccJEZrd.s 			page 7
+
+
+ 228              		@ sp needed
+ 229 0096 80BD     		pop	{r7, pc}
+ 230              		.cfi_endproc
+ 231              	.LFE66:
+ 233              		.section	.text.ClockSetup_HSI_SYS48,"ax",%progbits
+ 234              		.align	1
+ 235              		.global	ClockSetup_HSI_SYS48
+ 236              		.syntax unified
+ 237              		.thumb
+ 238              		.thumb_func
+ 239              		.fpu softvfp
+ 241              	ClockSetup_HSI_SYS48:
+ 242              	.LFB67:
+ 119:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** //------------------------------------------------------------------------------
+ 120:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+ 121:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** // Configure for internal HSI 8 Mhz Xtal, System speed to 48 MHz
+ 122:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** void ClockSetup_HSI_SYS48(void) {
+ 243              		.loc 1 122 33
+ 244              		.cfi_startproc
+ 245              		@ args = 0, pretend = 0, frame = 80
+ 246              		@ frame_needed = 1, uses_anonymous_args = 0
+ 247 0000 80B5     		push	{r7, lr}
+ 248              		.cfi_def_cfa_offset 8
+ 249              		.cfi_offset 7, -8
+ 250              		.cfi_offset 14, -4
+ 251 0002 94B0     		sub	sp, sp, #80
+ 252              		.cfi_def_cfa_offset 88
+ 253 0004 00AF     		add	r7, sp, #0
+ 254              		.cfi_def_cfa_register 7
+ 123:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	RCC_ClkInitTypeDef clkinitstruct = { 0 };
+ 255              		.loc 1 123 21
+ 256 0006 07F13C03 		add	r3, r7, #60
+ 257 000a 0022     		movs	r2, #0
+ 258 000c 1A60     		str	r2, [r3]
+ 259 000e 5A60     		str	r2, [r3, #4]
+ 260 0010 9A60     		str	r2, [r3, #8]
+ 261 0012 DA60     		str	r2, [r3, #12]
+ 262 0014 1A61     		str	r2, [r3, #16]
+ 124:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	RCC_OscInitTypeDef oscinitstruct = { 0 };
+ 263              		.loc 1 124 21
+ 264 0016 07F11403 		add	r3, r7, #20
+ 265 001a 2822     		movs	r2, #40
+ 266 001c 0021     		movs	r1, #0
+ 267 001e 1846     		mov	r0, r3
+ 268 0020 FFF7FEFF 		bl	memset
+ 125:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	RCC_PeriphCLKInitTypeDef rccperiphclkinit = { 0 };
+ 269              		.loc 1 125 27
+ 270 0024 3B1D     		adds	r3, r7, #4
+ 271 0026 0022     		movs	r2, #0
+ 272 0028 1A60     		str	r2, [r3]
+ 273 002a 5A60     		str	r2, [r3, #4]
+ 274 002c 9A60     		str	r2, [r3, #8]
+ 275 002e DA60     		str	r2, [r3, #12]
+ 126:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+ 127:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// Configure HSI Internal RC Oscillator. It runs at 8 MHz, but when used
+ 128:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// as an PLL input, it is divided by 2, so this gives 4 MHz
+ 129:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// 12 * 4 = 48
+ARM GAS  /tmp/cccJEZrd.s 			page 8
+
+
+ 130:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+ 276              		.loc 1 130 31
+ 277 0030 0223     		movs	r3, #2
+ 278 0032 7B61     		str	r3, [r7, #20]
+ 131:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.HSIState = RCC_HSI_ON;
+ 279              		.loc 1 131 25
+ 280 0034 0123     		movs	r3, #1
+ 281 0036 7B62     		str	r3, [r7, #36]
+ 132:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+ 282              		.loc 1 132 36
+ 283 0038 1023     		movs	r3, #16
+ 284 003a BB62     		str	r3, [r7, #40]
+ 133:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.PLL.PLLMUL = RCC_PLL_MUL12;
+ 285              		.loc 1 133 27
+ 286 003c 4FF42013 		mov	r3, #2621440
+ 287 0040 BB63     		str	r3, [r7, #56]
+ 134:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.PLL.PLLState = RCC_PLL_ON;
+ 288              		.loc 1 134 29
+ 289 0042 0223     		movs	r3, #2
+ 290 0044 3B63     		str	r3, [r7, #48]
+ 135:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	oscinitstruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
+ 291              		.loc 1 135 30
+ 292 0046 0023     		movs	r3, #0
+ 293 0048 7B63     		str	r3, [r7, #52]
+ 136:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	HAL_RCC_OscConfig(&oscinitstruct);
+ 294              		.loc 1 136 2
+ 295 004a 07F11403 		add	r3, r7, #20
+ 296 004e 1846     		mov	r0, r3
+ 297 0050 FFF7FEFF 		bl	HAL_RCC_OscConfig
+ 137:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+ 138:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// USB clock configuration: 48 = 48
+ 139:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	rccperiphclkinit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+ 298              		.loc 1 139 40
+ 299 0054 1023     		movs	r3, #16
+ 300 0056 7B60     		str	r3, [r7, #4]
+ 140:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	rccperiphclkinit.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
+ 301              		.loc 1 140 37
+ 302 0058 4FF48003 		mov	r3, #4194304
+ 303 005c 3B61     		str	r3, [r7, #16]
+ 141:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	HAL_RCCEx_PeriphCLKConfig(&rccperiphclkinit);
+ 304              		.loc 1 141 2
+ 305 005e 3B1D     		adds	r3, r7, #4
+ 306 0060 1846     		mov	r0, r3
+ 307 0062 FFF7FEFF 		bl	HAL_RCCEx_PeriphCLKConfig
+ 142:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 
+ 143:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// SYS  Clock to 48 MHz (Max 72 MHz)
+ 144:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// AHB  Clock to 48 MHz (Max 72 MHz)
+ 145:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// APB1 Clock to 24     (Max 36 MHz)
+ 146:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// APB2 Clock to 48     (Max 72 MHz)
+ 147:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// Flash Latency to 1. 
+ 148:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// Flash Latency should be increased for each 24 MHz of clock speed. 
+ 149:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	// ( 48 / 24 ) - 1 = 1.
+ 150:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK
+ 308              		.loc 1 150 26
+ 309 0066 0F23     		movs	r3, #15
+ 310 0068 FB63     		str	r3, [r7, #60]
+ 151:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+ARM GAS  /tmp/cccJEZrd.s 			page 9
+
+
+ 152:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 311              		.loc 1 152 29
+ 312 006a 0223     		movs	r3, #2
+ 313 006c 3B64     		str	r3, [r7, #64]
+ 153:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 314              		.loc 1 153 30
+ 315 006e 0023     		movs	r3, #0
+ 316 0070 7B64     		str	r3, [r7, #68]
+ 154:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.APB1CLKDivider = RCC_HCLK_DIV2;
+ 317              		.loc 1 154 31
+ 318 0072 4FF48063 		mov	r3, #1024
+ 319 0076 BB64     		str	r3, [r7, #72]
+ 155:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	clkinitstruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 320              		.loc 1 155 31
+ 321 0078 0023     		movs	r3, #0
+ 322 007a FB64     		str	r3, [r7, #76]
+ 156:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	HAL_RCC_ClockConfig(&clkinitstruct, FLASH_LATENCY_1);
+ 323              		.loc 1 156 2
+ 324 007c 07F13C03 		add	r3, r7, #60
+ 325 0080 0121     		movs	r1, #1
+ 326 0082 1846     		mov	r0, r3
+ 327 0084 FFF7FEFF 		bl	HAL_RCC_ClockConfig
+ 157:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** 	SystemCoreClockUpdate();
+ 328              		.loc 1 157 2
+ 329 0088 FFF7FEFF 		bl	SystemCoreClockUpdate
+ 158:../../lib/libhalglue/hal/stm32f1/clocksetup.c **** }
+ 330              		.loc 1 158 1
+ 331 008c 00BF     		nop
+ 332 008e 5037     		adds	r7, r7, #80
+ 333              		.cfi_def_cfa_offset 8
+ 334 0090 BD46     		mov	sp, r7
+ 335              		.cfi_def_cfa_register 13
+ 336              		@ sp needed
+ 337 0092 80BD     		pop	{r7, pc}
+ 338              		.cfi_endproc
+ 339              	.LFE67:
+ 341              		.text
+ 342              	.Letext0:
+ 343              		.file 2 "/usr/arm-none-eabi/include/machine/_default_types.h"
+ 344              		.file 3 "/usr/arm-none-eabi/include/sys/_stdint.h"
+ 345              		.file 4 "../../ext/STM32CubeF1/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 346              		.file 5 "../../ext/STM32CubeF1/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h"
+ 347              		.file 6 "../../ext/STM32CubeF1/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc_ex.h"
+ 348              		.file 7 "../../ext/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h"
+ARM GAS  /tmp/cccJEZrd.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 clocksetup.c
+     /tmp/cccJEZrd.s:16     .text.ClockSetup_HSE8_SYS72:0000000000000000 $t
+     /tmp/cccJEZrd.s:24     .text.ClockSetup_HSE8_SYS72:0000000000000000 ClockSetup_HSE8_SYS72
+     /tmp/cccJEZrd.s:126    .text.ClockSetup_HSE8_SYS48:0000000000000000 $t
+     /tmp/cccJEZrd.s:133    .text.ClockSetup_HSE8_SYS48:0000000000000000 ClockSetup_HSE8_SYS48
+     /tmp/cccJEZrd.s:234    .text.ClockSetup_HSI_SYS48:0000000000000000 $t
+     /tmp/cccJEZrd.s:241    .text.ClockSetup_HSI_SYS48:0000000000000000 ClockSetup_HSI_SYS48
+                           .group:0000000000000000 wm4.0.1098e563ef56396ca346ad6c5e97276e
+                           .group:0000000000000000 wm4.stm32f1xx.h.39.e8c98c5ce2cd95856eed179966374e12
+                           .group:0000000000000000 wm4.stm32f103xb.h.38.ec967d5ad9d3269cb0788eebda048e38
+                           .group:0000000000000000 wm4._newlib_version.h.4.bfdf54b0af045d4a71376ae00f63a22c
+                           .group:0000000000000000 wm4.features.h.33.318b64d71e0957639cfb30f1db1f7ec8
+                           .group:0000000000000000 wm4._default_types.h.15.247e5cd201eca3442cbf5404108c4935
+                           .group:0000000000000000 wm4._intsup.h.10.48bafbb683905c4daa4565a85aeeb264
+                           .group:0000000000000000 wm4._stdint.h.10.c24fa3af3bc1706662bb5593a907e841
+                           .group:0000000000000000 wm4.stdint.h.23.d53047a68f4a85177f80b422d52785ed
+                           .group:0000000000000000 wm4.cmsis_version.h.32.4d5822004c01a829a975260e854b5f8e
+                           .group:0000000000000000 wm4.core_cm3.h.66.fc46cac19810db8f98d67da7ef88f42c
+                           .group:0000000000000000 wm4.cmsis_gcc.h.26.4f5798e999d5690b80e6ded3ecc94b37
+                           .group:0000000000000000 wm4.core_cm3.h.127.f4474120f1a7524deb56f9d74ff175da
+                           .group:0000000000000000 wm4.stm32f103xb.h.573.10249aa7473ca93be896fed94046a725
+                           .group:0000000000000000 wm4.stm32f1xx.h.162.96b09079a093c34dbd7f0b85cbd0ddee
+                           .group:0000000000000000 wm4.stm32f1xx_hal_conf.h.24.fb218a6cd2ee35d840b3eac0f5fb4119
+                           .group:0000000000000000 wm4.stm32_hal_legacy.h.23.91ba5b544a4c2be2620a1e7ff0049e10
+                           .group:0000000000000000 wm4.stddef.h.39.144cf5ddcd53cbfdac30259dc1a6c87f
+                           .group:0000000000000000 wm4.stm32f1xx_hal_def.h.57.18d01ce1aa74e9fb44dbf16f821a574a
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rcc.h.95.21591bbc513aaa813c0b8640c3b32517
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rcc_ex.h.22.8763f99bc1e3e2dcf0febe9161d81b37
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rcc.h.1202.f8e5f9e0cf4eef7840facf5396029056
+                           .group:0000000000000000 wm4.stm32f1xx_hal_gpio.h.22.fa638d688dcc57ca806fe6a7831b0d04
+                           .group:0000000000000000 wm4.stm32f1xx_hal_gpio_ex.h.22.51a50ef3512cd78017ce666a32d364bf
+                           .group:0000000000000000 wm4.stm32f1xx_hal_gpio.h.263.f5ebf2f545ade59412ab9261c8e35dc4
+                           .group:0000000000000000 wm4.stm32f1xx_hal_exti.h.22.e26491d042c8079c3ca67eca341af862
+                           .group:0000000000000000 wm4.stm32f1xx_hal_dma.h.22.3c14338534886827bf3aeaa2a7f412a1
+                           .group:0000000000000000 wm4.stm32f1xx_hal_dma_ex.h.22.001ac4d7f81ccbdcae49bd65c13858c8
+                           .group:0000000000000000 wm4.stm32f1xx_hal_dma.h.409.cafcd2cfe701091535636be537c18293
+                           .group:0000000000000000 wm4.stm32f1xx_hal_can.h.22.9c5cbafab9070e25b2f93744f73f31d3
+                           .group:0000000000000000 wm4.stm32f1xx_hal_cortex.h.22.b5f4174bb6a50d95405567b8f50e0900
+                           .group:0000000000000000 wm4.stm32f1xx_hal_adc.h.23.7d9534ac2977bed50266ba8246ab0e90
+                           .group:0000000000000000 wm4.stm32f1xx_hal_adc_ex.h.22.3f3261b879b4e7059748d94dd89f7d18
+                           .group:0000000000000000 wm4.stm32f1xx_hal_crc.h.22.87a86a55c6bcf304cab68a78bda4e4b0
+                           .group:0000000000000000 wm4.stm32f1xx_hal_flash.h.22.5cea9a7210e6315b41724b47b5fdf203
+                           .group:0000000000000000 wm4.stm32f1xx_hal_flash_ex.h.22.d4e19c21f2a86fa2f8ec2c2d5f1ab2af
+                           .group:0000000000000000 wm4.stm32f1xx_hal_i2c.h.22.ad52786857e2aa8ebdf15f14f11ce081
+                           .group:0000000000000000 wm4.stm32f1xx_hal_iwdg.h.22.fb89d7d74008a11634b49f24b2a7251c
+                           .group:0000000000000000 wm4.stm32f1xx_hal_pwr.h.22.3438c476faafc3240bf146f143df3fcd
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rtc.h.22.2e6c4901b3fecdb0d30ea29b38e42312
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rtc_ex.h.22.7132215fff3c2f214804b30db0033252
+                           .group:0000000000000000 wm4.stm32f1xx_hal_spi.h.22.b31d455e8b6e1263b36c3848e181fcd3
+                           .group:0000000000000000 wm4.stm32f1xx_hal_tim.h.22.a16e206564e97dbace9faae59a0d6008
+                           .group:0000000000000000 wm4.stm32f1xx_hal_uart.h.22.5f7992e497faa36aa98f09f7214f4dbb
+                           .group:0000000000000000 wm4.stm32f1xx_hal_usart.h.22.2faa5f38db3b50ec6d148ec053db51df
+                           .group:0000000000000000 wm4.stm32f1xx_hal_irda.h.22.d5842d01b8e511da8aab9dac5eab084d
+                           .group:0000000000000000 wm4.stm32f1xx_hal_smartcard.h.22.910d31efb108bad068ed688d89837f4b
+                           .group:0000000000000000 wm4.stm32f1xx_hal_wwdg.h.22.b35f34e70a149b77d65030a8695a70d2
+                           .group:0000000000000000 wm4.stm32f1xx_ll_usb.h.22.573a89b5589ed8d93ea72c39c5d12974
+ARM GAS  /tmp/cccJEZrd.s 			page 11
+
+
+                           .group:0000000000000000 wm4.stm32f1xx_hal_pcd.h.161.76733d98d42c8efa1b20a15947173729
+                           .group:0000000000000000 wm4.stm32f1xx_hal.h.88.91065c0692bed6019c34f1e9c00589fd
+
+UNDEFINED SYMBOLS
+memset
+HAL_RCC_OscConfig
+HAL_RCCEx_PeriphCLKConfig
+HAL_RCC_ClockConfig
+SystemCoreClockUpdate

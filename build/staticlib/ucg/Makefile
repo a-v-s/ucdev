@@ -8,6 +8,9 @@ UCDEV_ROOT = ../../../
 
 U8G2_DIR 	= $(UCDEV_ROOT)/ext/ucglib/csrc
 
+#  library compile time configuration
+
+CFLAGS += -DU8X8_WITH_USER_POINTER
 
 #  source of the library
 

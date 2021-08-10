@@ -6,7 +6,7 @@ MCU = STM32F103xB
 ################################################################################
 # Set Output Filename 
 ################################################################################
-TARGET = board1
+TARGET = spi_demo
 
 ################################################################################
 # Set the root directory of the ucdev enviorement 
@@ -21,14 +21,7 @@ U8G2_DIR = $(UCDEV_ROOT)/ext/u8g2/csrc
 ################################################################################
 C_SOURCES += main.c
 C_SOURCES += dis2.c
-C_SOURCES += i2c.c
 
-C_SOURCES += lm75b.c
-C_SOURCES += sht3x.c
-C_SOURCES += bh1750.c
-C_SOURCES += pcf8574.c
-C_SOURCES += si70xx.c
-C_SOURCES += hcd1080.c
 
 
 
@@ -39,10 +32,10 @@ C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_gpio_stm32.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f1.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/bshal_i2cm.c
-#C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/bshal_spim.c
+C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/bshal_spim.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/extlib/u8x8_i2c.c
-
-
+C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/extlib/u8x8_spi.c
+C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/extlib/u8x8_gpio_delay.c
 
 C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x_transport.c
 C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x.c
@@ -63,6 +56,8 @@ C_INCLUDES += $(LIBHALGLUE_ROOT)/bshal/
 C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/
 C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/drivers/
 C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/cards
+
+CFLAGS += -DU8X8_WITH_USER_PTR
 
 # link script
 LDSCRIPT = $(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).ld

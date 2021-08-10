@@ -1,0 +1,706 @@
+ARM GAS  /tmp/ccv5hTw6.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 6
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"rc66x_transport.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.rc66x_recv,"ax",%progbits
+  16              		.align	1
+  17              		.global	rc66x_recv
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	rc66x_recv:
+  25              	.LFB0:
+  26              		.file 1 "../../lib/bsrfid/drivers/rc66x_transport.c"
+   1:../../lib/bsrfid/drivers/rc66x_transport.c **** /******************************************************************************
+   2:../../lib/bsrfid/drivers/rc66x_transport.c ****  File:         mfrc66x_transport.c
+   3:../../lib/bsrfid/drivers/rc66x_transport.c ****  Author:       André van Schoubroeck
+   4:../../lib/bsrfid/drivers/rc66x_transport.c ****  License:      MIT
+   5:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+   6:../../lib/bsrfid/drivers/rc66x_transport.c ****  This implements the transport protocols for MFRC52x family of RFID reader ICs.
+   7:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+   8:../../lib/bsrfid/drivers/rc66x_transport.c ****  * SPI
+   9:../../lib/bsrfid/drivers/rc66x_transport.c ****  * I²C
+  10:../../lib/bsrfid/drivers/rc66x_transport.c ****  * UART
+  11:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  12:../../lib/bsrfid/drivers/rc66x_transport.c ****  The PN512 furthermore supports, but there won't be initially supported:
+  13:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  14:../../lib/bsrfid/drivers/rc66x_transport.c ****  * Parallel 8080 (Intel) style
+  15:../../lib/bsrfid/drivers/rc66x_transport.c ****  * Parallel 6800 (Motorola) style
+  16:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  17:../../lib/bsrfid/drivers/rc66x_transport.c ****  ********************************************************************************
+  18:../../lib/bsrfid/drivers/rc66x_transport.c ****  MIT License
+  19:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  20:../../lib/bsrfid/drivers/rc66x_transport.c ****  Copyright (c) 2020 André van Schoubroeck <andre@blaatschaap.be>
+  21:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  22:../../lib/bsrfid/drivers/rc66x_transport.c ****  Permission is hereby granted, free of charge, to any person obtaining a copy
+  23:../../lib/bsrfid/drivers/rc66x_transport.c ****  of this software and associated documentation files (the "Software"), to deal
+  24:../../lib/bsrfid/drivers/rc66x_transport.c ****  in the Software without restriction, including without limitation the rights
+  25:../../lib/bsrfid/drivers/rc66x_transport.c ****  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  26:../../lib/bsrfid/drivers/rc66x_transport.c ****  copies of the Software, and to permit persons to whom the Software is
+  27:../../lib/bsrfid/drivers/rc66x_transport.c ****  furnished to do so, subject to the following conditions:
+  28:../../lib/bsrfid/drivers/rc66x_transport.c ****  The above copyright notice and this permission notice shall be included in all
+  29:../../lib/bsrfid/drivers/rc66x_transport.c ****  copies or substantial portions of the Software.
+  30:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  31:../../lib/bsrfid/drivers/rc66x_transport.c ****  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  32:../../lib/bsrfid/drivers/rc66x_transport.c ****  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ARM GAS  /tmp/ccv5hTw6.s 			page 2
+
+
+  33:../../lib/bsrfid/drivers/rc66x_transport.c ****  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  34:../../lib/bsrfid/drivers/rc66x_transport.c ****  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  35:../../lib/bsrfid/drivers/rc66x_transport.c ****  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  36:../../lib/bsrfid/drivers/rc66x_transport.c ****  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  37:../../lib/bsrfid/drivers/rc66x_transport.c ****  SOFTWARE.
+  38:../../lib/bsrfid/drivers/rc66x_transport.c ****  *******************************************************************************/
+  39:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  40:../../lib/bsrfid/drivers/rc66x_transport.c **** #include <stdlib.h>
+  41:../../lib/bsrfid/drivers/rc66x_transport.c **** #include <stdint.h>
+  42:../../lib/bsrfid/drivers/rc66x_transport.c **** #include <stdbool.h>
+  43:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  44:../../lib/bsrfid/drivers/rc66x_transport.c **** #include "rc66x.h"
+  45:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  46:../../lib/bsrfid/drivers/rc66x_transport.c **** int rc66x_recv(rc66x_t *rc66x, uint8_t reg, uint8_t *data, size_t amount) {
+  27              		.loc 1 46 75
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 24
+  30              		@ frame_needed = 1, uses_anonymous_args = 0
+  31 0000 80B5     		push	{r7, lr}
+  32              		.cfi_def_cfa_offset 8
+  33              		.cfi_offset 7, -8
+  34              		.cfi_offset 14, -4
+  35 0002 86B0     		sub	sp, sp, #24
+  36              		.cfi_def_cfa_offset 32
+  37 0004 00AF     		add	r7, sp, #0
+  38              		.cfi_def_cfa_register 7
+  39 0006 F860     		str	r0, [r7, #12]
+  40 0008 7A60     		str	r2, [r7, #4]
+  41 000a 3B60     		str	r3, [r7]
+  42 000c 0B46     		mov	r3, r1
+  43 000e FB72     		strb	r3, [r7, #11]
+  47:../../lib/bsrfid/drivers/rc66x_transport.c **** 	uint8_t addr;
+  48:../../lib/bsrfid/drivers/rc66x_transport.c **** 	int result = 0;
+  44              		.loc 1 48 6
+  45 0010 0023     		movs	r3, #0
+  46 0012 7B61     		str	r3, [r7, #20]
+  49:../../lib/bsrfid/drivers/rc66x_transport.c **** 	if (!rc66x->transport_config)
+  47              		.loc 1 49 12
+  48 0014 FB68     		ldr	r3, [r7, #12]
+  49 0016 5B68     		ldr	r3, [r3, #4]
+  50              		.loc 1 49 5
+  51 0018 002B     		cmp	r3, #0
+  52 001a 02D1     		bne	.L2
+  50:../../lib/bsrfid/drivers/rc66x_transport.c **** 		return -1;
+  53              		.loc 1 50 10
+  54 001c 4FF0FF33 		mov	r3, #-1
+  55 0020 3CE0     		b	.L10
+  56              	.L2:
+  51:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  52:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  53:../../lib/bsrfid/drivers/rc66x_transport.c **** 		switch (rc66x->transport) {
+  57              		.loc 1 53 16
+  58 0022 FB68     		ldr	r3, [r7, #12]
+  59 0024 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  60              		.loc 1 53 3
+  61 0026 032B     		cmp	r3, #3
+  62 0028 06D0     		beq	.L4
+ARM GAS  /tmp/ccv5hTw6.s 			page 3
+
+
+  63 002a 032B     		cmp	r3, #3
+  64 002c 16DC     		bgt	.L5
+  65 002e 012B     		cmp	r3, #1
+  66 0030 02D0     		beq	.L4
+  67 0032 022B     		cmp	r3, #2
+  68 0034 0FD0     		beq	.L6
+  69 0036 11E0     		b	.L5
+  70              	.L4:
+  71              	.LBB2:
+  54:../../lib/bsrfid/drivers/rc66x_transport.c **** 		case mfrc_transport_spi:
+  55:../../lib/bsrfid/drivers/rc66x_transport.c **** 		case mfrc_transport_uart:
+  56:../../lib/bsrfid/drivers/rc66x_transport.c **** 			addr = (reg << RC66X_SPI_REG_SHIFT) | RC66X_DIR_RECV;
+  72              		.loc 1 56 16
+  73 0038 FB7A     		ldrb	r3, [r7, #11]	@ zero_extendqisi2
+  74 003a 5B00     		lsls	r3, r3, #1
+  75              		.loc 1 56 40
+  76 003c 5BB2     		sxtb	r3, r3
+  77 003e 43F00103 		orr	r3, r3, #1
+  78 0042 5BB2     		sxtb	r3, r3
+  79 0044 DBB2     		uxtb	r3, r3
+  80              		.loc 1 56 9
+  81 0046 FB74     		strb	r3, [r7, #19]
+  57:../../lib/bsrfid/drivers/rc66x_transport.c **** 			memset(data, addr, amount);
+  82              		.loc 1 57 4
+  83 0048 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+  84 004a 3A68     		ldr	r2, [r7]
+  85 004c 1946     		mov	r1, r3
+  86 004e 7868     		ldr	r0, [r7, #4]
+  87 0050 FFF7FEFF 		bl	memset
+  58:../../lib/bsrfid/drivers/rc66x_transport.c **** 			break;
+  88              		.loc 1 58 4
+  89 0054 05E0     		b	.L7
+  90              	.L6:
+  59:../../lib/bsrfid/drivers/rc66x_transport.c **** 		case mfrc_transport_i2c:
+  60:../../lib/bsrfid/drivers/rc66x_transport.c **** 			addr = reg;
+  91              		.loc 1 60 9
+  92 0056 FB7A     		ldrb	r3, [r7, #11]
+  93 0058 FB74     		strb	r3, [r7, #19]
+  61:../../lib/bsrfid/drivers/rc66x_transport.c **** 			break;
+  94              		.loc 1 61 4
+  95 005a 02E0     		b	.L7
+  96              	.L5:
+  62:../../lib/bsrfid/drivers/rc66x_transport.c **** 		default:
+  63:../../lib/bsrfid/drivers/rc66x_transport.c **** 			return -1;
+  97              		.loc 1 63 11
+  98 005c 4FF0FF33 		mov	r3, #-1
+  99 0060 1CE0     		b	.L10
+ 100              	.L7:
+ 101              	.LBE2:
+  64:../../lib/bsrfid/drivers/rc66x_transport.c **** 		}
+  65:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  66:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  67:../../lib/bsrfid/drivers/rc66x_transport.c **** 	switch (rc66x->transport) {
+ 102              		.loc 1 67 15
+ 103 0062 FB68     		ldr	r3, [r7, #12]
+ 104 0064 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 105              		.loc 1 67 2
+ARM GAS  /tmp/ccv5hTw6.s 			page 4
+
+
+ 106 0066 012B     		cmp	r3, #1
+ 107 0068 16D1     		bne	.L8
+ 108              	.LBB3:
+  68:../../lib/bsrfid/drivers/rc66x_transport.c **** 	case mfrc_transport_spi:
+  69:../../lib/bsrfid/drivers/rc66x_transport.c **** 		result = bshal_spim_transmit(rc66x->transport_config, &addr, 1, true);
+ 109              		.loc 1 69 12
+ 110 006a FB68     		ldr	r3, [r7, #12]
+ 111 006c 5868     		ldr	r0, [r3, #4]
+ 112 006e 07F11301 		add	r1, r7, #19
+ 113 0072 0123     		movs	r3, #1
+ 114 0074 0122     		movs	r2, #1
+ 115 0076 FFF7FEFF 		bl	bshal_spim_transmit
+ 116 007a 7861     		str	r0, [r7, #20]
+  70:../../lib/bsrfid/drivers/rc66x_transport.c **** 		if (result)
+ 117              		.loc 1 70 6
+ 118 007c 7B69     		ldr	r3, [r7, #20]
+ 119 007e 002B     		cmp	r3, #0
+ 120 0080 01D0     		beq	.L9
+  71:../../lib/bsrfid/drivers/rc66x_transport.c **** 			return result;
+ 121              		.loc 1 71 11
+ 122 0082 7B69     		ldr	r3, [r7, #20]
+ 123 0084 0AE0     		b	.L10
+ 124              	.L9:
+  72:../../lib/bsrfid/drivers/rc66x_transport.c **** 		return bshal_spim_transceive(rc66x->transport_config, data, amount);
+ 125              		.loc 1 72 10
+ 126 0086 FB68     		ldr	r3, [r7, #12]
+ 127 0088 5B68     		ldr	r3, [r3, #4]
+ 128 008a 3A68     		ldr	r2, [r7]
+ 129 008c 7968     		ldr	r1, [r7, #4]
+ 130 008e 1846     		mov	r0, r3
+ 131 0090 FFF7FEFF 		bl	bshal_spim_transceive
+ 132 0094 0346     		mov	r3, r0
+ 133 0096 01E0     		b	.L10
+ 134              	.L8:
+  73:../../lib/bsrfid/drivers/rc66x_transport.c **** 		break;
+  74:../../lib/bsrfid/drivers/rc66x_transport.c **** 	default:
+  75:../../lib/bsrfid/drivers/rc66x_transport.c **** 		return -1;
+ 135              		.loc 1 75 10
+ 136 0098 4FF0FF33 		mov	r3, #-1
+ 137              	.L10:
+ 138              	.LBE3:
+  76:../../lib/bsrfid/drivers/rc66x_transport.c **** 	}
+  77:../../lib/bsrfid/drivers/rc66x_transport.c **** }
+ 139              		.loc 1 77 1 discriminator 1
+ 140 009c 1846     		mov	r0, r3
+ 141 009e 1837     		adds	r7, r7, #24
+ 142              		.cfi_def_cfa_offset 8
+ 143 00a0 BD46     		mov	sp, r7
+ 144              		.cfi_def_cfa_register 13
+ 145              		@ sp needed
+ 146 00a2 80BD     		pop	{r7, pc}
+ 147              		.cfi_endproc
+ 148              	.LFE0:
+ 150              		.section	.text.rc66x_send,"ax",%progbits
+ 151              		.align	1
+ 152              		.global	rc66x_send
+ 153              		.syntax unified
+ARM GAS  /tmp/ccv5hTw6.s 			page 5
+
+
+ 154              		.thumb
+ 155              		.thumb_func
+ 156              		.fpu softvfp
+ 158              	rc66x_send:
+ 159              	.LFB1:
+  78:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  79:../../lib/bsrfid/drivers/rc66x_transport.c **** int rc66x_send(rc66x_t *rc66x, uint8_t reg, uint8_t *data, size_t amount) {
+ 160              		.loc 1 79 75
+ 161              		.cfi_startproc
+ 162              		@ args = 0, pretend = 0, frame = 24
+ 163              		@ frame_needed = 1, uses_anonymous_args = 0
+ 164 0000 80B5     		push	{r7, lr}
+ 165              		.cfi_def_cfa_offset 8
+ 166              		.cfi_offset 7, -8
+ 167              		.cfi_offset 14, -4
+ 168 0002 86B0     		sub	sp, sp, #24
+ 169              		.cfi_def_cfa_offset 32
+ 170 0004 00AF     		add	r7, sp, #0
+ 171              		.cfi_def_cfa_register 7
+ 172 0006 F860     		str	r0, [r7, #12]
+ 173 0008 7A60     		str	r2, [r7, #4]
+ 174 000a 3B60     		str	r3, [r7]
+ 175 000c 0B46     		mov	r3, r1
+ 176 000e FB72     		strb	r3, [r7, #11]
+  80:../../lib/bsrfid/drivers/rc66x_transport.c **** 	int result = 0;
+ 177              		.loc 1 80 6
+ 178 0010 0023     		movs	r3, #0
+ 179 0012 7B61     		str	r3, [r7, #20]
+  81:../../lib/bsrfid/drivers/rc66x_transport.c **** 	uint8_t addr;
+  82:../../lib/bsrfid/drivers/rc66x_transport.c **** 	if (!rc66x->transport_config)
+ 180              		.loc 1 82 12
+ 181 0014 FB68     		ldr	r3, [r7, #12]
+ 182 0016 5B68     		ldr	r3, [r3, #4]
+ 183              		.loc 1 82 5
+ 184 0018 002B     		cmp	r3, #0
+ 185 001a 02D1     		bne	.L12
+  83:../../lib/bsrfid/drivers/rc66x_transport.c **** 		return -1;
+ 186              		.loc 1 83 10
+ 187 001c 4FF0FF33 		mov	r3, #-1
+ 188 0020 31E0     		b	.L20
+ 189              	.L12:
+  84:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+  85:../../lib/bsrfid/drivers/rc66x_transport.c **** 	switch (rc66x->transport) {
+ 190              		.loc 1 85 15
+ 191 0022 FB68     		ldr	r3, [r7, #12]
+ 192 0024 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 193              		.loc 1 85 2
+ 194 0026 032B     		cmp	r3, #3
+ 195 0028 25D0     		beq	.L14
+ 196 002a 032B     		cmp	r3, #3
+ 197 002c 26DC     		bgt	.L15
+ 198 002e 012B     		cmp	r3, #1
+ 199 0030 02D0     		beq	.L16
+ 200 0032 022B     		cmp	r3, #2
+ 201 0034 1CD0     		beq	.L17
+ 202 0036 21E0     		b	.L15
+ 203              	.L16:
+ARM GAS  /tmp/ccv5hTw6.s 			page 6
+
+
+ 204              	.LBB4:
+  86:../../lib/bsrfid/drivers/rc66x_transport.c **** 	case mfrc_transport_spi:
+  87:../../lib/bsrfid/drivers/rc66x_transport.c **** 		addr = (reg << RC66X_SPI_REG_SHIFT) | RC66X_DIR_SEND;
+ 205              		.loc 1 87 39
+ 206 0038 FB7A     		ldrb	r3, [r7, #11]
+ 207 003a 5B00     		lsls	r3, r3, #1
+ 208 003c DBB2     		uxtb	r3, r3
+ 209              		.loc 1 87 8
+ 210 003e FB74     		strb	r3, [r7, #19]
+  88:../../lib/bsrfid/drivers/rc66x_transport.c **** 		result = bshal_spim_transmit(rc66x->transport_config, &addr, 1, true);
+ 211              		.loc 1 88 12
+ 212 0040 FB68     		ldr	r3, [r7, #12]
+ 213 0042 5868     		ldr	r0, [r3, #4]
+ 214 0044 07F11301 		add	r1, r7, #19
+ 215 0048 0123     		movs	r3, #1
+ 216 004a 0122     		movs	r2, #1
+ 217 004c FFF7FEFF 		bl	bshal_spim_transmit
+ 218 0050 7861     		str	r0, [r7, #20]
+  89:../../lib/bsrfid/drivers/rc66x_transport.c **** 		if (result)
+ 219              		.loc 1 89 6
+ 220 0052 7B69     		ldr	r3, [r7, #20]
+ 221 0054 002B     		cmp	r3, #0
+ 222 0056 01D0     		beq	.L18
+  90:../../lib/bsrfid/drivers/rc66x_transport.c **** 			return result;
+ 223              		.loc 1 90 11
+ 224 0058 7B69     		ldr	r3, [r7, #20]
+ 225 005a 14E0     		b	.L20
+ 226              	.L18:
+  91:../../lib/bsrfid/drivers/rc66x_transport.c **** 		result = bshal_spim_transmit(rc66x->transport_config, data, amount,
+ 227              		.loc 1 91 12
+ 228 005c FB68     		ldr	r3, [r7, #12]
+ 229 005e 5868     		ldr	r0, [r3, #4]
+ 230 0060 0023     		movs	r3, #0
+ 231 0062 3A68     		ldr	r2, [r7]
+ 232 0064 7968     		ldr	r1, [r7, #4]
+ 233 0066 FFF7FEFF 		bl	bshal_spim_transmit
+ 234 006a 7861     		str	r0, [r7, #20]
+  92:../../lib/bsrfid/drivers/rc66x_transport.c **** 				false);
+  93:../../lib/bsrfid/drivers/rc66x_transport.c **** 		return result;
+ 235              		.loc 1 93 10
+ 236 006c 7B69     		ldr	r3, [r7, #20]
+ 237 006e 0AE0     		b	.L20
+ 238              	.L17:
+  94:../../lib/bsrfid/drivers/rc66x_transport.c **** 		break;
+  95:../../lib/bsrfid/drivers/rc66x_transport.c **** 	case mfrc_transport_i2c:
+  96:../../lib/bsrfid/drivers/rc66x_transport.c **** 		addr = reg;
+ 239              		.loc 1 96 8
+ 240 0070 FB7A     		ldrb	r3, [r7, #11]
+ 241 0072 FB74     		strb	r3, [r7, #19]
+  97:../../lib/bsrfid/drivers/rc66x_transport.c **** 		break;
+ 242              		.loc 1 97 3
+ 243 0074 05E0     		b	.L19
+ 244              	.L14:
+  98:../../lib/bsrfid/drivers/rc66x_transport.c **** 	case mfrc_transport_uart:
+  99:../../lib/bsrfid/drivers/rc66x_transport.c **** 		addr = reg | RC66X_DIR_SEND;
+ 245              		.loc 1 99 8
+ 246 0076 FB7A     		ldrb	r3, [r7, #11]
+ARM GAS  /tmp/ccv5hTw6.s 			page 7
+
+
+ 247 0078 FB74     		strb	r3, [r7, #19]
+ 100:../../lib/bsrfid/drivers/rc66x_transport.c **** 		break;
+ 248              		.loc 1 100 3
+ 249 007a 02E0     		b	.L19
+ 250              	.L15:
+ 101:../../lib/bsrfid/drivers/rc66x_transport.c **** 	default:
+ 102:../../lib/bsrfid/drivers/rc66x_transport.c **** 		return -1;
+ 251              		.loc 1 102 10
+ 252 007c 4FF0FF33 		mov	r3, #-1
+ 253 0080 01E0     		b	.L20
+ 254              	.L19:
+ 255              	.LBE4:
+ 103:../../lib/bsrfid/drivers/rc66x_transport.c **** 	}
+ 104:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+ 105:../../lib/bsrfid/drivers/rc66x_transport.c **** 	return -1;
+ 256              		.loc 1 105 9
+ 257 0082 4FF0FF33 		mov	r3, #-1
+ 258              	.L20:
+ 106:../../lib/bsrfid/drivers/rc66x_transport.c **** }
+ 259              		.loc 1 106 1 discriminator 1
+ 260 0086 1846     		mov	r0, r3
+ 261 0088 1837     		adds	r7, r7, #24
+ 262              		.cfi_def_cfa_offset 8
+ 263 008a BD46     		mov	sp, r7
+ 264              		.cfi_def_cfa_register 13
+ 265              		@ sp needed
+ 266 008c 80BD     		pop	{r7, pc}
+ 267              		.cfi_endproc
+ 268              	.LFE1:
+ 270              		.section	.text.rc66x_get_reg8,"ax",%progbits
+ 271              		.align	1
+ 272              		.global	rc66x_get_reg8
+ 273              		.syntax unified
+ 274              		.thumb
+ 275              		.thumb_func
+ 276              		.fpu softvfp
+ 278              	rc66x_get_reg8:
+ 279              	.LFB2:
+ 107:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+ 108:../../lib/bsrfid/drivers/rc66x_transport.c **** int rc66x_get_reg8(rc66x_t *rc66x, uint8_t reg, uint8_t *value) {
+ 280              		.loc 1 108 65
+ 281              		.cfi_startproc
+ 282              		@ args = 0, pretend = 0, frame = 16
+ 283              		@ frame_needed = 1, uses_anonymous_args = 0
+ 284 0000 80B5     		push	{r7, lr}
+ 285              		.cfi_def_cfa_offset 8
+ 286              		.cfi_offset 7, -8
+ 287              		.cfi_offset 14, -4
+ 288 0002 84B0     		sub	sp, sp, #16
+ 289              		.cfi_def_cfa_offset 24
+ 290 0004 00AF     		add	r7, sp, #0
+ 291              		.cfi_def_cfa_register 7
+ 292 0006 F860     		str	r0, [r7, #12]
+ 293 0008 0B46     		mov	r3, r1
+ 294 000a 7A60     		str	r2, [r7, #4]
+ 295 000c FB72     		strb	r3, [r7, #11]
+ 109:../../lib/bsrfid/drivers/rc66x_transport.c **** 	return rc66x_recv(rc66x, reg, value, 1);
+ARM GAS  /tmp/ccv5hTw6.s 			page 8
+
+
+ 296              		.loc 1 109 9
+ 297 000e F97A     		ldrb	r1, [r7, #11]	@ zero_extendqisi2
+ 298 0010 0123     		movs	r3, #1
+ 299 0012 7A68     		ldr	r2, [r7, #4]
+ 300 0014 F868     		ldr	r0, [r7, #12]
+ 301 0016 FFF7FEFF 		bl	rc66x_recv
+ 302 001a 0346     		mov	r3, r0
+ 110:../../lib/bsrfid/drivers/rc66x_transport.c **** }
+ 303              		.loc 1 110 1
+ 304 001c 1846     		mov	r0, r3
+ 305 001e 1037     		adds	r7, r7, #16
+ 306              		.cfi_def_cfa_offset 8
+ 307 0020 BD46     		mov	sp, r7
+ 308              		.cfi_def_cfa_register 13
+ 309              		@ sp needed
+ 310 0022 80BD     		pop	{r7, pc}
+ 311              		.cfi_endproc
+ 312              	.LFE2:
+ 314              		.section	.text.rc66x_set_reg8,"ax",%progbits
+ 315              		.align	1
+ 316              		.global	rc66x_set_reg8
+ 317              		.syntax unified
+ 318              		.thumb
+ 319              		.thumb_func
+ 320              		.fpu softvfp
+ 322              	rc66x_set_reg8:
+ 323              	.LFB3:
+ 111:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+ 112:../../lib/bsrfid/drivers/rc66x_transport.c **** int rc66x_set_reg8(rc66x_t *rc66x, uint8_t reg, uint8_t value) {
+ 324              		.loc 1 112 64
+ 325              		.cfi_startproc
+ 326              		@ args = 0, pretend = 0, frame = 8
+ 327              		@ frame_needed = 1, uses_anonymous_args = 0
+ 328 0000 80B5     		push	{r7, lr}
+ 329              		.cfi_def_cfa_offset 8
+ 330              		.cfi_offset 7, -8
+ 331              		.cfi_offset 14, -4
+ 332 0002 82B0     		sub	sp, sp, #8
+ 333              		.cfi_def_cfa_offset 16
+ 334 0004 00AF     		add	r7, sp, #0
+ 335              		.cfi_def_cfa_register 7
+ 336 0006 7860     		str	r0, [r7, #4]
+ 337 0008 0B46     		mov	r3, r1
+ 338 000a FB70     		strb	r3, [r7, #3]
+ 339 000c 1346     		mov	r3, r2
+ 340 000e BB70     		strb	r3, [r7, #2]
+ 113:../../lib/bsrfid/drivers/rc66x_transport.c **** 	return rc66x_send(rc66x, reg, &value, 1);
+ 341              		.loc 1 113 9
+ 342 0010 BA1C     		adds	r2, r7, #2
+ 343 0012 F978     		ldrb	r1, [r7, #3]	@ zero_extendqisi2
+ 344 0014 0123     		movs	r3, #1
+ 345 0016 7868     		ldr	r0, [r7, #4]
+ 346 0018 FFF7FEFF 		bl	rc66x_send
+ 347 001c 0346     		mov	r3, r0
+ 114:../../lib/bsrfid/drivers/rc66x_transport.c **** }
+ 348              		.loc 1 114 1
+ 349 001e 1846     		mov	r0, r3
+ARM GAS  /tmp/ccv5hTw6.s 			page 9
+
+
+ 350 0020 0837     		adds	r7, r7, #8
+ 351              		.cfi_def_cfa_offset 8
+ 352 0022 BD46     		mov	sp, r7
+ 353              		.cfi_def_cfa_register 13
+ 354              		@ sp needed
+ 355 0024 80BD     		pop	{r7, pc}
+ 356              		.cfi_endproc
+ 357              	.LFE3:
+ 359              		.section	.text.rc66x_or_reg8,"ax",%progbits
+ 360              		.align	1
+ 361              		.global	rc66x_or_reg8
+ 362              		.syntax unified
+ 363              		.thumb
+ 364              		.thumb_func
+ 365              		.fpu softvfp
+ 367              	rc66x_or_reg8:
+ 368              	.LFB4:
+ 115:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+ 116:../../lib/bsrfid/drivers/rc66x_transport.c **** int rc66x_or_reg8(rc66x_t *rc66x, uint8_t reg, uint8_t value) {
+ 369              		.loc 1 116 63
+ 370              		.cfi_startproc
+ 371              		@ args = 0, pretend = 0, frame = 16
+ 372              		@ frame_needed = 1, uses_anonymous_args = 0
+ 373 0000 80B5     		push	{r7, lr}
+ 374              		.cfi_def_cfa_offset 8
+ 375              		.cfi_offset 7, -8
+ 376              		.cfi_offset 14, -4
+ 377 0002 84B0     		sub	sp, sp, #16
+ 378              		.cfi_def_cfa_offset 24
+ 379 0004 00AF     		add	r7, sp, #0
+ 380              		.cfi_def_cfa_register 7
+ 381 0006 7860     		str	r0, [r7, #4]
+ 382 0008 0B46     		mov	r3, r1
+ 383 000a FB70     		strb	r3, [r7, #3]
+ 384 000c 1346     		mov	r3, r2
+ 385 000e BB70     		strb	r3, [r7, #2]
+ 117:../../lib/bsrfid/drivers/rc66x_transport.c **** 	uint8_t tmpval;
+ 118:../../lib/bsrfid/drivers/rc66x_transport.c **** 	int result;
+ 119:../../lib/bsrfid/drivers/rc66x_transport.c **** 	result = rc66x_get_reg8(rc66x, reg, &tmpval);
+ 386              		.loc 1 119 11
+ 387 0010 07F10B02 		add	r2, r7, #11
+ 388 0014 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 389 0016 1946     		mov	r1, r3
+ 390 0018 7868     		ldr	r0, [r7, #4]
+ 391 001a FFF7FEFF 		bl	rc66x_get_reg8
+ 392 001e F860     		str	r0, [r7, #12]
+ 120:../../lib/bsrfid/drivers/rc66x_transport.c **** 	if (result)
+ 393              		.loc 1 120 5
+ 394 0020 FB68     		ldr	r3, [r7, #12]
+ 395 0022 002B     		cmp	r3, #0
+ 396 0024 01D0     		beq	.L26
+ 121:../../lib/bsrfid/drivers/rc66x_transport.c **** 		return result;
+ 397              		.loc 1 121 10
+ 398 0026 FB68     		ldr	r3, [r7, #12]
+ 399 0028 0BE0     		b	.L28
+ 400              	.L26:
+ 122:../../lib/bsrfid/drivers/rc66x_transport.c **** 	tmpval |= value;
+ARM GAS  /tmp/ccv5hTw6.s 			page 10
+
+
+ 401              		.loc 1 122 9
+ 402 002a FA7A     		ldrb	r2, [r7, #11]	@ zero_extendqisi2
+ 403 002c BB78     		ldrb	r3, [r7, #2]
+ 404 002e 1343     		orrs	r3, r3, r2
+ 405 0030 DBB2     		uxtb	r3, r3
+ 406 0032 FB72     		strb	r3, [r7, #11]
+ 123:../../lib/bsrfid/drivers/rc66x_transport.c **** 	return rc66x_set_reg8(rc66x, reg, tmpval);
+ 407              		.loc 1 123 9
+ 408 0034 FA7A     		ldrb	r2, [r7, #11]	@ zero_extendqisi2
+ 409 0036 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 410 0038 1946     		mov	r1, r3
+ 411 003a 7868     		ldr	r0, [r7, #4]
+ 412 003c FFF7FEFF 		bl	rc66x_set_reg8
+ 413 0040 0346     		mov	r3, r0
+ 414              	.L28:
+ 124:../../lib/bsrfid/drivers/rc66x_transport.c **** }
+ 415              		.loc 1 124 1 discriminator 1
+ 416 0042 1846     		mov	r0, r3
+ 417 0044 1037     		adds	r7, r7, #16
+ 418              		.cfi_def_cfa_offset 8
+ 419 0046 BD46     		mov	sp, r7
+ 420              		.cfi_def_cfa_register 13
+ 421              		@ sp needed
+ 422 0048 80BD     		pop	{r7, pc}
+ 423              		.cfi_endproc
+ 424              	.LFE4:
+ 426              		.section	.text.rc66x_and_reg8,"ax",%progbits
+ 427              		.align	1
+ 428              		.global	rc66x_and_reg8
+ 429              		.syntax unified
+ 430              		.thumb
+ 431              		.thumb_func
+ 432              		.fpu softvfp
+ 434              	rc66x_and_reg8:
+ 435              	.LFB5:
+ 125:../../lib/bsrfid/drivers/rc66x_transport.c **** 
+ 126:../../lib/bsrfid/drivers/rc66x_transport.c **** int rc66x_and_reg8(rc66x_t *rc66x, uint8_t reg, uint8_t value) {
+ 436              		.loc 1 126 64
+ 437              		.cfi_startproc
+ 438              		@ args = 0, pretend = 0, frame = 16
+ 439              		@ frame_needed = 1, uses_anonymous_args = 0
+ 440 0000 80B5     		push	{r7, lr}
+ 441              		.cfi_def_cfa_offset 8
+ 442              		.cfi_offset 7, -8
+ 443              		.cfi_offset 14, -4
+ 444 0002 84B0     		sub	sp, sp, #16
+ 445              		.cfi_def_cfa_offset 24
+ 446 0004 00AF     		add	r7, sp, #0
+ 447              		.cfi_def_cfa_register 7
+ 448 0006 7860     		str	r0, [r7, #4]
+ 449 0008 0B46     		mov	r3, r1
+ 450 000a FB70     		strb	r3, [r7, #3]
+ 451 000c 1346     		mov	r3, r2
+ 452 000e BB70     		strb	r3, [r7, #2]
+ 127:../../lib/bsrfid/drivers/rc66x_transport.c **** 	uint8_t tmpval;
+ 128:../../lib/bsrfid/drivers/rc66x_transport.c **** 	int result;
+ 129:../../lib/bsrfid/drivers/rc66x_transport.c **** 	result = rc66x_get_reg8(rc66x, reg, &tmpval);
+ARM GAS  /tmp/ccv5hTw6.s 			page 11
+
+
+ 453              		.loc 1 129 11
+ 454 0010 07F10B02 		add	r2, r7, #11
+ 455 0014 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 456 0016 1946     		mov	r1, r3
+ 457 0018 7868     		ldr	r0, [r7, #4]
+ 458 001a FFF7FEFF 		bl	rc66x_get_reg8
+ 459 001e F860     		str	r0, [r7, #12]
+ 130:../../lib/bsrfid/drivers/rc66x_transport.c **** 	if (result)
+ 460              		.loc 1 130 5
+ 461 0020 FB68     		ldr	r3, [r7, #12]
+ 462 0022 002B     		cmp	r3, #0
+ 463 0024 01D0     		beq	.L30
+ 131:../../lib/bsrfid/drivers/rc66x_transport.c **** 		return result;
+ 464              		.loc 1 131 10
+ 465 0026 FB68     		ldr	r3, [r7, #12]
+ 466 0028 0BE0     		b	.L32
+ 467              	.L30:
+ 132:../../lib/bsrfid/drivers/rc66x_transport.c **** 	tmpval &= value;
+ 468              		.loc 1 132 9
+ 469 002a FA7A     		ldrb	r2, [r7, #11]	@ zero_extendqisi2
+ 470 002c BB78     		ldrb	r3, [r7, #2]
+ 471 002e 1340     		ands	r3, r3, r2
+ 472 0030 DBB2     		uxtb	r3, r3
+ 473 0032 FB72     		strb	r3, [r7, #11]
+ 133:../../lib/bsrfid/drivers/rc66x_transport.c **** 	return rc66x_set_reg8(rc66x, reg, tmpval);
+ 474              		.loc 1 133 9
+ 475 0034 FA7A     		ldrb	r2, [r7, #11]	@ zero_extendqisi2
+ 476 0036 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 477 0038 1946     		mov	r1, r3
+ 478 003a 7868     		ldr	r0, [r7, #4]
+ 479 003c FFF7FEFF 		bl	rc66x_set_reg8
+ 480 0040 0346     		mov	r3, r0
+ 481              	.L32:
+ 134:../../lib/bsrfid/drivers/rc66x_transport.c **** }
+ 482              		.loc 1 134 1 discriminator 1
+ 483 0042 1846     		mov	r0, r3
+ 484 0044 1037     		adds	r7, r7, #16
+ 485              		.cfi_def_cfa_offset 8
+ 486 0046 BD46     		mov	sp, r7
+ 487              		.cfi_def_cfa_register 13
+ 488              		@ sp needed
+ 489 0048 80BD     		pop	{r7, pc}
+ 490              		.cfi_endproc
+ 491              	.LFE5:
+ 493              		.text
+ 494              	.Letext0:
+ 495              		.file 2 "/usr/lib/gcc/arm-none-eabi/11.2.0/include/stddef.h"
+ 496              		.file 3 "/usr/arm-none-eabi/include/machine/_default_types.h"
+ 497              		.file 4 "/usr/arm-none-eabi/include/sys/_stdint.h"
+ 498              		.file 5 "../../lib/bsrfid/drivers/pdc.h"
+ 499              		.file 6 "../../lib/bsrfid/drivers/rc52x.h"
+ 500              		.file 7 "../../lib/bsrfid/drivers/rc66x.h"
+ 501              		.file 8 "<built-in>"
+ARM GAS  /tmp/ccv5hTw6.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 rc66x_transport.c
+     /tmp/ccv5hTw6.s:16     .text.rc66x_recv:0000000000000000 $t
+     /tmp/ccv5hTw6.s:24     .text.rc66x_recv:0000000000000000 rc66x_recv
+     /tmp/ccv5hTw6.s:151    .text.rc66x_send:0000000000000000 $t
+     /tmp/ccv5hTw6.s:158    .text.rc66x_send:0000000000000000 rc66x_send
+     /tmp/ccv5hTw6.s:271    .text.rc66x_get_reg8:0000000000000000 $t
+     /tmp/ccv5hTw6.s:278    .text.rc66x_get_reg8:0000000000000000 rc66x_get_reg8
+     /tmp/ccv5hTw6.s:315    .text.rc66x_set_reg8:0000000000000000 $t
+     /tmp/ccv5hTw6.s:322    .text.rc66x_set_reg8:0000000000000000 rc66x_set_reg8
+     /tmp/ccv5hTw6.s:360    .text.rc66x_or_reg8:0000000000000000 $t
+     /tmp/ccv5hTw6.s:367    .text.rc66x_or_reg8:0000000000000000 rc66x_or_reg8
+     /tmp/ccv5hTw6.s:427    .text.rc66x_and_reg8:0000000000000000 $t
+     /tmp/ccv5hTw6.s:434    .text.rc66x_and_reg8:0000000000000000 rc66x_and_reg8
+                           .group:0000000000000000 wm4.0.1098e563ef56396ca346ad6c5e97276e
+                           .group:0000000000000000 wm4.ieeefp.h.77.af21f134a392aadc2c66139cb51ca3a9
+                           .group:0000000000000000 wm4._newlib_version.h.4.bfdf54b0af045d4a71376ae00f63a22c
+                           .group:0000000000000000 wm4.newlib.h.18.1c9fedb6b3cd797cff253cc0fd593ef2
+                           .group:0000000000000000 wm4.features.h.22.fad1cec3bc7ff06488171438dbdcfd02
+                           .group:0000000000000000 wm4.config.h.224.c701144a7b0518c6ee9b9b5465b79f81
+                           .group:0000000000000000 wm4._ansi.h.31.de524f58584151836e90d8620a16f8e8
+                           .group:0000000000000000 wm4.stdlib.h.13.4ed386f5c1a80d71e72172885d946ef2
+                           .group:0000000000000000 wm4.stddef.h.181.13772e73e5434e8cc4fafaaddad2b5da
+                           .group:0000000000000000 wm4.stddef.h.39.cf3ebec0bc8c9e3d2f276a64e0fe5e7a
+                           .group:0000000000000000 wm4._types.h.20.dd0d04dca3800a0d2a6129b87f3adbb2
+                           .group:0000000000000000 wm4.stddef.h.155.3588ebfdd1e8c7ede80509bb9c3b8009
+                           .group:0000000000000000 wm4._default_types.h.6.959254cf5f09734ea7516c89e8bb21bd
+                           .group:0000000000000000 wm4._types.h.127.34941de1b2539d59d5cac00e0dd27a45
+                           .group:0000000000000000 wm4.reent.h.17.e292bf8b0bec6c96e131a54347145a30
+                           .group:0000000000000000 wm4.lock.h.2.1461d1fff82dffe8bfddc23307f6484f
+                           .group:0000000000000000 wm4.reent.h.77.dcd6129ff07fe81bd5636db29abe53b2
+                           .group:0000000000000000 wm4.cdefs.h.49.39045112216f6a021dbdffe3bf5accce
+                           .group:0000000000000000 wm4.alloca.h.8.dfc0c703c47ec3e69746825b17d9e66d
+                           .group:0000000000000000 wm4.stdlib.h.56.f4862cfbf4363a1db01842d5bdf72c18
+                           .group:0000000000000000 wm4._intsup.h.10.48bafbb683905c4daa4565a85aeeb264
+                           .group:0000000000000000 wm4._stdint.h.10.c24fa3af3bc1706662bb5593a907e841
+                           .group:0000000000000000 wm4.stdint.h.23.d53047a68f4a85177f80b422d52785ed
+                           .group:0000000000000000 wm4.stdbool.h.29.4a1c88fe569adb8d03217dd16982ca34
+                           .group:0000000000000000 wm4.rc66x.h.59.14c1290baee281dbf2ec9acb1bfee199
+                           .group:0000000000000000 wm4.rc52x_transport.h.46.e00f748dacb465ef5aee29224882433d
+                           .group:0000000000000000 wm4.rc52x.h.89.3b03ebad2574fe56a04d8e82a6b92f70
+                           .group:0000000000000000 wm4.rc66x.h.72.3bcb513e5b077e6b09d47b57b0ff8e22
+
+UNDEFINED SYMBOLS
+memset
+bshal_spim_transmit
+bshal_spim_transceive

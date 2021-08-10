@@ -1,0 +1,2732 @@
+ARM GAS  /tmp/ccsj0CIu.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 6
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"rc52x.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.rc52x_get_chip_version,"ax",%progbits
+  16              		.align	1
+  17              		.global	rc52x_get_chip_version
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	rc52x_get_chip_version:
+  25              	.LFB0:
+  26              		.file 1 "../../lib/bsrfid/drivers/rc52x.c"
+   1:../../lib/bsrfid/drivers/rc52x.c **** /*****************************************************************************
+   2:../../lib/bsrfid/drivers/rc52x.c ****  * Based upon https://github.com/miguelbalboa/rfid
+   3:../../lib/bsrfid/drivers/rc52x.c ****  *
+   4:../../lib/bsrfid/drivers/rc52x.c ****  * C port by André van Schoubroeck <andre@blaatschaap.be>
+   5:../../lib/bsrfid/drivers/rc52x.c ****  *
+   6:../../lib/bsrfid/drivers/rc52x.c ****  *
+   7:../../lib/bsrfid/drivers/rc52x.c ****  *****************************************************************************/
+   8:../../lib/bsrfid/drivers/rc52x.c **** 
+   9:../../lib/bsrfid/drivers/rc52x.c **** // For testing purposes, thsi will not be the final api
+  10:../../lib/bsrfid/drivers/rc52x.c **** #include <stdlib.h>
+  11:../../lib/bsrfid/drivers/rc52x.c **** #include <stdint.h>
+  12:../../lib/bsrfid/drivers/rc52x.c **** #include <stdbool.h>
+  13:../../lib/bsrfid/drivers/rc52x.c **** 
+  14:../../lib/bsrfid/drivers/rc52x.c **** #include "rc52x_transport.h"
+  15:../../lib/bsrfid/drivers/rc52x.c **** #include "rc52x.h"
+  16:../../lib/bsrfid/drivers/rc52x.c **** 
+  17:../../lib/bsrfid/drivers/rc52x.c **** #include "iso14443a.h"
+  18:../../lib/bsrfid/drivers/rc52x.c **** 
+  19:../../lib/bsrfid/drivers/rc52x.c **** 
+  20:../../lib/bsrfid/drivers/rc52x.c **** 
+  21:../../lib/bsrfid/drivers/rc52x.c **** 
+  22:../../lib/bsrfid/drivers/rc52x.c **** 
+  23:../../lib/bsrfid/drivers/rc52x.c **** #include <stdlib.h>
+  24:../../lib/bsrfid/drivers/rc52x.c **** #include <stdint.h>
+  25:../../lib/bsrfid/drivers/rc52x.c **** #include <stdbool.h>
+  26:../../lib/bsrfid/drivers/rc52x.c **** #include <string.h>
+  27:../../lib/bsrfid/drivers/rc52x.c **** 
+  28:../../lib/bsrfid/drivers/rc52x.c **** //#include "MFRC522.h"
+  29:../../lib/bsrfid/drivers/rc52x.c **** #include "rc52x.h"
+  30:../../lib/bsrfid/drivers/rc52x.c **** 
+  31:../../lib/bsrfid/drivers/rc52x.c **** 
+  32:../../lib/bsrfid/drivers/rc52x.c **** 
+ARM GAS  /tmp/ccsj0CIu.s 			page 2
+
+
+  33:../../lib/bsrfid/drivers/rc52x.c **** int rc52x_get_chip_version(rc52x_t *rc52x, uint8_t *chip_id) {
+  27              		.loc 1 33 62
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 8
+  30              		@ frame_needed = 1, uses_anonymous_args = 0
+  31 0000 80B5     		push	{r7, lr}
+  32              		.cfi_def_cfa_offset 8
+  33              		.cfi_offset 7, -8
+  34              		.cfi_offset 14, -4
+  35 0002 82B0     		sub	sp, sp, #8
+  36              		.cfi_def_cfa_offset 16
+  37 0004 00AF     		add	r7, sp, #0
+  38              		.cfi_def_cfa_register 7
+  39 0006 7860     		str	r0, [r7, #4]
+  40 0008 3960     		str	r1, [r7]
+  34:../../lib/bsrfid/drivers/rc52x.c **** 	return mfrc522_recv(rc52x, RC52X_REG_VersionReg, chip_id, 1);
+  41              		.loc 1 34 9
+  42 000a 0123     		movs	r3, #1
+  43 000c 3A68     		ldr	r2, [r7]
+  44 000e 3721     		movs	r1, #55
+  45 0010 7868     		ldr	r0, [r7, #4]
+  46 0012 FFF7FEFF 		bl	mfrc522_recv
+  47 0016 0346     		mov	r3, r0
+  35:../../lib/bsrfid/drivers/rc52x.c **** }
+  48              		.loc 1 35 1
+  49 0018 1846     		mov	r0, r3
+  50 001a 0837     		adds	r7, r7, #8
+  51              		.cfi_def_cfa_offset 8
+  52 001c BD46     		mov	sp, r7
+  53              		.cfi_def_cfa_register 13
+  54              		@ sp needed
+  55 001e 80BD     		pop	{r7, pc}
+  56              		.cfi_endproc
+  57              	.LFE0:
+  59              		.global	MFRC522_firmware_referenceV0_0
+  60              		.section	.rodata.MFRC522_firmware_referenceV0_0,"a"
+  61              		.align	2
+  64              	MFRC522_firmware_referenceV0_0:
+  65 0000 0087980F 		.ascii	"\000\207\230\017I\377\007\031\277\"0IYc\255\312\177"
+  65      49FF0719 
+  65      BF223049 
+  65      5963ADCA 
+  65      7F
+  66 0011 E34E035C 		.ascii	"\343N\003\\NIPG\2327a\347\342\306.uZ\355\004=\002Kx"
+  66      4E495047 
+  66      9A3761E7 
+  66      E2C62E75 
+  66      5AED043D 
+  67 0028 32FF583B 		.ascii	"2\377X;|\351\000\224\264JY[\375\311)\3375\226\230\236"
+  67      7CE90094 
+  67      B44A595B 
+  67      FDC929DF 
+  67      3596989E 
+  68 003c 4F30328D 		.ascii	"O02\215"
+  69              		.global	MFRC522_firmware_referenceV1_0
+  70              		.section	.rodata.MFRC522_firmware_referenceV1_0,"a"
+  71              		.align	2
+ARM GAS  /tmp/ccsj0CIu.s 			page 3
+
+
+  74              	MFRC522_firmware_referenceV1_0:
+  75 0000 00C637D5 		.ascii	"\000\3067\3252\267W\\\302\330|M\331p\307s\020\346\322"
+  75      32B7575C 
+  75      C2D87C4D 
+  75      D970C773 
+  75      10E6D2
+  76 0013 AA5EA13E 		.ascii	"\252^\241>Z\024\2570a\311p\333.d\"r\265\275e\364\354"
+  76      5A14AF30 
+  76      61C970DB 
+  76      2E642272 
+  76      B5BD65F4 
+  77 0028 22BCD372 		.ascii	"\"\274\323r5\315\252A\037\247\363S\024\336~\002\331"
+  77      35CDAA41 
+  77      1FA7F353 
+  77      14DE7E02 
+  77      D9
+  78 0039 0FB55E25 		.ascii	"\017\265^%\035)y"
+  78      1D2979
+  79              		.global	MFRC522_firmware_referenceV2_0
+  80              		.section	.rodata.MFRC522_firmware_referenceV2_0,"a"
+  81              		.align	2
+  84              	MFRC522_firmware_referenceV2_0:
+  85 0000 00EB66BA 		.ascii	"\000\353f\272W\277#\225\320\343\015='\211\\\336\235"
+  85      57BF2395 
+  85      D0E30D3D 
+  85      27895CDE 
+  85      9D
+  86 0011 3BA70021 		.ascii	";\247\000![\211\202Q:\353\002\014\245\000I|\204M\263"
+  86      5B898251 
+  86      3AEB020C 
+  86      A500497C 
+  86      844DB3
+  87 0024 CCD21B81 		.ascii	"\314\322\033\201]Hv\325qa!\251\206\226\2038\317\235"
+  87      5D4876D5 
+  87      716121A9 
+  87      86968338 
+  87      CF9D
+  88 0036 5B6DDC15 		.ascii	"[m\334\025\272>}\225;/"
+  88      BA3E7D95 
+  88      3B2F
+  89              		.global	FM17522_firmware_reference
+  90              		.section	.rodata.FM17522_firmware_reference,"a"
+  91              		.align	2
+  94              	FM17522_firmware_reference:
+  95 0000 00D6788C 		.ascii	"\000\326x\214\342\252\014\030*\270z\177\323j\317\013"
+  95      E2AA0C18 
+  95      2AB87A7F 
+  95      D36ACF0B 
+  96 0010 B137634B 		.ascii	"\2617cKi\256\221\307\303\227\256w\3647\327\233|\365"
+  96      69AE91C7 
+  96      C397AE77 
+  96      F437D79B 
+  96      7CF5
+  97 0022 3C118F15 		.ascii	"<\021\217\025\303\327\301[\000*\320u\336\236Qd\253>"
+  97      C3D7C15B 
+  97      002AD075 
+  97      DE9E5164 
+ARM GAS  /tmp/ccsj0CIu.s 			page 4
+
+
+  97      AB3E
+  98 0034 E915B5AB 		.ascii	"\351\025\265\253V\232\230\202&\352*b"
+  98      569A9882 
+  98      26EA2A62 
+  99              		.section	.text.RC52X_ReadRegister,"ax",%progbits
+ 100              		.align	1
+ 101              		.global	RC52X_ReadRegister
+ 102              		.syntax unified
+ 103              		.thumb
+ 104              		.thumb_func
+ 105              		.fpu softvfp
+ 107              	RC52X_ReadRegister:
+ 108              	.LFB1:
+  36:../../lib/bsrfid/drivers/rc52x.c **** 
+  37:../../lib/bsrfid/drivers/rc52x.c **** 
+  38:../../lib/bsrfid/drivers/rc52x.c **** //------------
+  39:../../lib/bsrfid/drivers/rc52x.c **** // Firmware data for self-test
+  40:../../lib/bsrfid/drivers/rc52x.c **** // Reference values based on firmware version
+  41:../../lib/bsrfid/drivers/rc52x.c **** // Hint: if needed, you can remove unused self-test data to save flash memory
+  42:../../lib/bsrfid/drivers/rc52x.c **** //
+  43:../../lib/bsrfid/drivers/rc52x.c **** // Version 0.0 (0x90)
+  44:../../lib/bsrfid/drivers/rc52x.c **** // Philips Semiconductors; Preliminary Specification Revision 2.0 - 01 August 2005; 16.1 self-test
+  45:../../lib/bsrfid/drivers/rc52x.c **** const uint8_t MFRC522_firmware_referenceV0_0[] = { 0x00, 0x87, 0x98, 0x0f, 0x49,
+  46:../../lib/bsrfid/drivers/rc52x.c **** 		0xFF, 0x07, 0x19, 0xBF, 0x22, 0x30, 0x49, 0x59, 0x63, 0xAD, 0xCA, 0x7F,
+  47:../../lib/bsrfid/drivers/rc52x.c **** 		0xE3, 0x4E, 0x03, 0x5C, 0x4E, 0x49, 0x50, 0x47, 0x9A, 0x37, 0x61, 0xE7,
+  48:../../lib/bsrfid/drivers/rc52x.c **** 		0xE2, 0xC6, 0x2E, 0x75, 0x5A, 0xED, 0x04, 0x3D, 0x02, 0x4B, 0x78, 0x32,
+  49:../../lib/bsrfid/drivers/rc52x.c **** 		0xFF, 0x58, 0x3B, 0x7C, 0xE9, 0x00, 0x94, 0xB4, 0x4A, 0x59, 0x5B, 0xFD,
+  50:../../lib/bsrfid/drivers/rc52x.c **** 		0xC9, 0x29, 0xDF, 0x35, 0x96, 0x98, 0x9E, 0x4F, 0x30, 0x32, 0x8D };
+  51:../../lib/bsrfid/drivers/rc52x.c **** // Version 1.0 (0x91)
+  52:../../lib/bsrfid/drivers/rc52x.c **** // NXP Semiconductors; Rev. 3.8 - 17 September 2014; 16.1.1 self-test
+  53:../../lib/bsrfid/drivers/rc52x.c **** const uint8_t MFRC522_firmware_referenceV1_0[] = { 0x00, 0xC6, 0x37, 0xD5, 0x32,
+  54:../../lib/bsrfid/drivers/rc52x.c **** 		0xB7, 0x57, 0x5C, 0xC2, 0xD8, 0x7C, 0x4D, 0xD9, 0x70, 0xC7, 0x73, 0x10,
+  55:../../lib/bsrfid/drivers/rc52x.c **** 		0xE6, 0xD2, 0xAA, 0x5E, 0xA1, 0x3E, 0x5A, 0x14, 0xAF, 0x30, 0x61, 0xC9,
+  56:../../lib/bsrfid/drivers/rc52x.c **** 		0x70, 0xDB, 0x2E, 0x64, 0x22, 0x72, 0xB5, 0xBD, 0x65, 0xF4, 0xEC, 0x22,
+  57:../../lib/bsrfid/drivers/rc52x.c **** 		0xBC, 0xD3, 0x72, 0x35, 0xCD, 0xAA, 0x41, 0x1F, 0xA7, 0xF3, 0x53, 0x14,
+  58:../../lib/bsrfid/drivers/rc52x.c **** 		0xDE, 0x7E, 0x02, 0xD9, 0x0F, 0xB5, 0x5E, 0x25, 0x1D, 0x29, 0x79 };
+  59:../../lib/bsrfid/drivers/rc52x.c **** // Version 2.0 (0x92)
+  60:../../lib/bsrfid/drivers/rc52x.c **** // NXP Semiconductors; Rev. 3.8 - 17 September 2014; 16.1.1 self-test
+  61:../../lib/bsrfid/drivers/rc52x.c **** const uint8_t MFRC522_firmware_referenceV2_0[] = { 0x00, 0xEB, 0x66, 0xBA, 0x57,
+  62:../../lib/bsrfid/drivers/rc52x.c **** 		0xBF, 0x23, 0x95, 0xD0, 0xE3, 0x0D, 0x3D, 0x27, 0x89, 0x5C, 0xDE, 0x9D,
+  63:../../lib/bsrfid/drivers/rc52x.c **** 		0x3B, 0xA7, 0x00, 0x21, 0x5B, 0x89, 0x82, 0x51, 0x3A, 0xEB, 0x02, 0x0C,
+  64:../../lib/bsrfid/drivers/rc52x.c **** 		0xA5, 0x00, 0x49, 0x7C, 0x84, 0x4D, 0xB3, 0xCC, 0xD2, 0x1B, 0x81, 0x5D,
+  65:../../lib/bsrfid/drivers/rc52x.c **** 		0x48, 0x76, 0xD5, 0x71, 0x61, 0x21, 0xA9, 0x86, 0x96, 0x83, 0x38, 0xCF,
+  66:../../lib/bsrfid/drivers/rc52x.c **** 		0x9D, 0x5B, 0x6D, 0xDC, 0x15, 0xBA, 0x3E, 0x7D, 0x95, 0x3B, 0x2F };
+  67:../../lib/bsrfid/drivers/rc52x.c **** 
+  68:../../lib/bsrfid/drivers/rc52x.c **** // TODO: Add references for MFRC523, PN512
+  69:../../lib/bsrfid/drivers/rc52x.c **** // TODO: Add define guards for inclusion
+  70:../../lib/bsrfid/drivers/rc52x.c **** 
+  71:../../lib/bsrfid/drivers/rc52x.c **** 
+  72:../../lib/bsrfid/drivers/rc52x.c **** // Clone
+  73:../../lib/bsrfid/drivers/rc52x.c **** // Fudan Semiconductor FM17522 (0x88)
+  74:../../lib/bsrfid/drivers/rc52x.c **** const uint8_t FM17522_firmware_reference[] = { 0x00, 0xD6, 0x78, 0x8C, 0xE2,
+  75:../../lib/bsrfid/drivers/rc52x.c **** 		0xAA, 0x0C, 0x18, 0x2A, 0xB8, 0x7A, 0x7F, 0xD3, 0x6A, 0xCF, 0x0B, 0xB1,
+  76:../../lib/bsrfid/drivers/rc52x.c **** 		0x37, 0x63, 0x4B, 0x69, 0xAE, 0x91, 0xC7, 0xC3, 0x97, 0xAE, 0x77, 0xF4,
+  77:../../lib/bsrfid/drivers/rc52x.c **** 		0x37, 0xD7, 0x9B, 0x7C, 0xF5, 0x3C, 0x11, 0x8F, 0x15, 0xC3, 0xD7, 0xC1,
+  78:../../lib/bsrfid/drivers/rc52x.c **** 		0x5B, 0x00, 0x2A, 0xD0, 0x75, 0xDE, 0x9E, 0x51, 0x64, 0xAB, 0x3E, 0xE9,
+  79:../../lib/bsrfid/drivers/rc52x.c **** 		0x15, 0xB5, 0xAB, 0x56, 0x9A, 0x98, 0x82, 0x26, 0xEA, 0x2A, 0x62 };
+ARM GAS  /tmp/ccsj0CIu.s 			page 5
+
+
+  80:../../lib/bsrfid/drivers/rc52x.c **** 
+  81:../../lib/bsrfid/drivers/rc52x.c **** 
+  82:../../lib/bsrfid/drivers/rc52x.c **** //--------------
+  83:../../lib/bsrfid/drivers/rc52x.c **** 
+  84:../../lib/bsrfid/drivers/rc52x.c **** 
+  85:../../lib/bsrfid/drivers/rc52x.c **** // Temporary helper
+  86:../../lib/bsrfid/drivers/rc52x.c **** // I don't like this style of function as it offers no
+  87:../../lib/bsrfid/drivers/rc52x.c **** // possibility for error handling. Adding it to speed up portong
+  88:../../lib/bsrfid/drivers/rc52x.c **** uint8_t RC52X_ReadRegister(rc52x_t *rc52x, uint8_t reg) {
+ 109              		.loc 1 88 57
+ 110              		.cfi_startproc
+ 111              		@ args = 0, pretend = 0, frame = 16
+ 112              		@ frame_needed = 1, uses_anonymous_args = 0
+ 113 0000 80B5     		push	{r7, lr}
+ 114              		.cfi_def_cfa_offset 8
+ 115              		.cfi_offset 7, -8
+ 116              		.cfi_offset 14, -4
+ 117 0002 84B0     		sub	sp, sp, #16
+ 118              		.cfi_def_cfa_offset 24
+ 119 0004 00AF     		add	r7, sp, #0
+ 120              		.cfi_def_cfa_register 7
+ 121 0006 7860     		str	r0, [r7, #4]
+ 122 0008 0B46     		mov	r3, r1
+ 123 000a FB70     		strb	r3, [r7, #3]
+  89:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t regval;
+  90:../../lib/bsrfid/drivers/rc52x.c **** 	int result = rc52x_get_reg8(rc52x, reg, &regval);
+ 124              		.loc 1 90 15
+ 125 000c 07F10B02 		add	r2, r7, #11
+ 126 0010 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 127 0012 1946     		mov	r1, r3
+ 128 0014 7868     		ldr	r0, [r7, #4]
+ 129 0016 FFF7FEFF 		bl	rc52x_get_reg8
+ 130 001a F860     		str	r0, [r7, #12]
+  91:../../lib/bsrfid/drivers/rc52x.c **** 	(void) result;  // We do not handle the error!
+  92:../../lib/bsrfid/drivers/rc52x.c **** 	return regval;
+ 131              		.loc 1 92 9
+ 132 001c FB7A     		ldrb	r3, [r7, #11]	@ zero_extendqisi2
+  93:../../lib/bsrfid/drivers/rc52x.c **** }
+ 133              		.loc 1 93 1
+ 134 001e 1846     		mov	r0, r3
+ 135 0020 1037     		adds	r7, r7, #16
+ 136              		.cfi_def_cfa_offset 8
+ 137 0022 BD46     		mov	sp, r7
+ 138              		.cfi_def_cfa_register 13
+ 139              		@ sp needed
+ 140 0024 80BD     		pop	{r7, pc}
+ 141              		.cfi_endproc
+ 142              	.LFE1:
+ 144              		.section	.text.RC52X_ClearRegisterBitMask,"ax",%progbits
+ 145              		.align	1
+ 146              		.global	RC52X_ClearRegisterBitMask
+ 147              		.syntax unified
+ 148              		.thumb
+ 149              		.thumb_func
+ 150              		.fpu softvfp
+ 152              	RC52X_ClearRegisterBitMask:
+ 153              	.LFB2:
+ARM GAS  /tmp/ccsj0CIu.s 			page 6
+
+
+  94:../../lib/bsrfid/drivers/rc52x.c **** 
+  95:../../lib/bsrfid/drivers/rc52x.c **** int RC52X_ClearRegisterBitMask(rc52x_t *rc52x, uint8_t reg, uint8_t value) {
+ 154              		.loc 1 95 76
+ 155              		.cfi_startproc
+ 156              		@ args = 0, pretend = 0, frame = 8
+ 157              		@ frame_needed = 1, uses_anonymous_args = 0
+ 158 0000 80B5     		push	{r7, lr}
+ 159              		.cfi_def_cfa_offset 8
+ 160              		.cfi_offset 7, -8
+ 161              		.cfi_offset 14, -4
+ 162 0002 82B0     		sub	sp, sp, #8
+ 163              		.cfi_def_cfa_offset 16
+ 164 0004 00AF     		add	r7, sp, #0
+ 165              		.cfi_def_cfa_register 7
+ 166 0006 7860     		str	r0, [r7, #4]
+ 167 0008 0B46     		mov	r3, r1
+ 168 000a FB70     		strb	r3, [r7, #3]
+ 169 000c 1346     		mov	r3, r2
+ 170 000e BB70     		strb	r3, [r7, #2]
+  96:../../lib/bsrfid/drivers/rc52x.c **** 	return rc52x_and_reg8(rc52x, reg, ~value);
+ 171              		.loc 1 96 9
+ 172 0010 BB78     		ldrb	r3, [r7, #2]
+ 173 0012 DB43     		mvns	r3, r3
+ 174 0014 DAB2     		uxtb	r2, r3
+ 175 0016 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 176 0018 1946     		mov	r1, r3
+ 177 001a 7868     		ldr	r0, [r7, #4]
+ 178 001c FFF7FEFF 		bl	rc52x_and_reg8
+ 179 0020 0346     		mov	r3, r0
+  97:../../lib/bsrfid/drivers/rc52x.c **** }
+ 180              		.loc 1 97 1
+ 181 0022 1846     		mov	r0, r3
+ 182 0024 0837     		adds	r7, r7, #8
+ 183              		.cfi_def_cfa_offset 8
+ 184 0026 BD46     		mov	sp, r7
+ 185              		.cfi_def_cfa_register 13
+ 186              		@ sp needed
+ 187 0028 80BD     		pop	{r7, pc}
+ 188              		.cfi_endproc
+ 189              	.LFE2:
+ 191              		.section	.text.RC52X_CalculateCRC,"ax",%progbits
+ 192              		.align	1
+ 193              		.global	RC52X_CalculateCRC
+ 194              		.syntax unified
+ 195              		.thumb
+ 196              		.thumb_func
+ 197              		.fpu softvfp
+ 199              	RC52X_CalculateCRC:
+ 200              	.LFB3:
+  98:../../lib/bsrfid/drivers/rc52x.c **** 
+  99:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 100:../../lib/bsrfid/drivers/rc52x.c ****  * Use the CRC coprocessor in the MFRC522 to calculate a CRC_A.
+ 101:../../lib/bsrfid/drivers/rc52x.c ****  *
+ 102:../../lib/bsrfid/drivers/rc52x.c ****  * @return STATUS_OK on success, STATUS_??? otherwise.
+ 103:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 104:../../lib/bsrfid/drivers/rc52x.c **** rc52x_result_t RC52X_CalculateCRC(rc52x_t *rc52x, uint8_t *data, ///< In: Pointer to the data to tr
+ 105:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t length,	///< In: The number of uint8_ts to transfer.
+ARM GAS  /tmp/ccsj0CIu.s 			page 7
+
+
+ 106:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t *result	///< Out: Pointer to result buffer. Result is written to result[0..1], low uint8_
+ 107:../../lib/bsrfid/drivers/rc52x.c **** 		) {
+ 201              		.loc 1 107 5
+ 202              		.cfi_startproc
+ 203              		@ args = 0, pretend = 0, frame = 24
+ 204              		@ frame_needed = 1, uses_anonymous_args = 0
+ 205 0000 90B5     		push	{r4, r7, lr}
+ 206              		.cfi_def_cfa_offset 12
+ 207              		.cfi_offset 4, -12
+ 208              		.cfi_offset 7, -8
+ 209              		.cfi_offset 14, -4
+ 210 0002 87B0     		sub	sp, sp, #28
+ 211              		.cfi_def_cfa_offset 40
+ 212 0004 00AF     		add	r7, sp, #0
+ 213              		.cfi_def_cfa_register 7
+ 214 0006 F860     		str	r0, [r7, #12]
+ 215 0008 B960     		str	r1, [r7, #8]
+ 216 000a 3B60     		str	r3, [r7]
+ 217 000c 1346     		mov	r3, r2
+ 218 000e FB71     		strb	r3, [r7, #7]
+ 108:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, RC52X_CMD_Idle);// Stop any active command.
+ 219              		.loc 1 108 2
+ 220 0010 0022     		movs	r2, #0
+ 221 0012 0121     		movs	r1, #1
+ 222 0014 F868     		ldr	r0, [r7, #12]
+ 223 0016 FFF7FEFF 		bl	rc52x_set_reg8
+ 109:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_DivIrqReg, 0x04);// Clear the CRCIRq interrupt request bit
+ 224              		.loc 1 109 2
+ 225 001a 0422     		movs	r2, #4
+ 226 001c 0521     		movs	r1, #5
+ 227 001e F868     		ldr	r0, [r7, #12]
+ 228 0020 FFF7FEFF 		bl	rc52x_set_reg8
+ 110:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_FIFOLevelReg, 0x80);	// FlushBuffer = 1, FIFO initialization
+ 229              		.loc 1 110 2
+ 230 0024 8022     		movs	r2, #128
+ 231 0026 0A21     		movs	r1, #10
+ 232 0028 F868     		ldr	r0, [r7, #12]
+ 233 002a FFF7FEFF 		bl	rc52x_set_reg8
+ 111:../../lib/bsrfid/drivers/rc52x.c **** 	mfrc522_send(rc52x, RC52X_REG_FIFODataReg, data, length);// Write data to the FIFO
+ 234              		.loc 1 111 2
+ 235 002e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 236 0030 BA68     		ldr	r2, [r7, #8]
+ 237 0032 0921     		movs	r1, #9
+ 238 0034 F868     		ldr	r0, [r7, #12]
+ 239 0036 FFF7FEFF 		bl	mfrc522_send
+ 112:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, RC52X_CMD_CalcCRC);// Start the calculation
+ 240              		.loc 1 112 2
+ 241 003a 0322     		movs	r2, #3
+ 242 003c 0121     		movs	r1, #1
+ 243 003e F868     		ldr	r0, [r7, #12]
+ 244 0040 FFF7FEFF 		bl	rc52x_set_reg8
+ 245              	.LBB2:
+ 113:../../lib/bsrfid/drivers/rc52x.c **** 
+ 114:../../lib/bsrfid/drivers/rc52x.c **** 	// Wait for the CRC calculation to complete. Each iteration of the while-loop takes 17.73μs.
+ 115:../../lib/bsrfid/drivers/rc52x.c **** 	// TODO check/modify for other architectures than Arduino Uno 16bit
+ 116:../../lib/bsrfid/drivers/rc52x.c **** 
+ 117:../../lib/bsrfid/drivers/rc52x.c **** 	// Wait for the CRC calculation to complete. Each iteration of the while-loop takes 17.73us.
+ARM GAS  /tmp/ccsj0CIu.s 			page 8
+
+
+ 118:../../lib/bsrfid/drivers/rc52x.c **** 	for (uint16_t i = 5000; i > 0; i--) {
+ 246              		.loc 1 118 16
+ 247 0044 41F28833 		movw	r3, #5000
+ 248 0048 FB82     		strh	r3, [r7, #22]	@ movhi
+ 249              		.loc 1 118 2
+ 250 004a 24E0     		b	.L8
+ 251              	.L11:
+ 252              	.LBB3:
+ 119:../../lib/bsrfid/drivers/rc52x.c **** 		// DivIrqReg[7..0] bits are: Set2 reserved reserved MfinActIRq reserved CRCIRq reserved reserved
+ 120:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t n = RC52X_ReadRegister(rc52x, RC52X_REG_DivIrqReg);
+ 253              		.loc 1 120 15
+ 254 004c 0521     		movs	r1, #5
+ 255 004e F868     		ldr	r0, [r7, #12]
+ 256 0050 FFF7FEFF 		bl	RC52X_ReadRegister
+ 257 0054 0346     		mov	r3, r0
+ 258 0056 7B75     		strb	r3, [r7, #21]
+ 121:../../lib/bsrfid/drivers/rc52x.c **** 		if (n & 0x04) {						// CRCIRq bit set - calculation done
+ 259              		.loc 1 121 9
+ 260 0058 7B7D     		ldrb	r3, [r7, #21]	@ zero_extendqisi2
+ 261 005a 03F00403 		and	r3, r3, #4
+ 262              		.loc 1 121 6
+ 263 005e 002B     		cmp	r3, #0
+ 264 0060 16D0     		beq	.L9
+ 122:../../lib/bsrfid/drivers/rc52x.c **** 			rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, RC52X_CMD_Idle);// Stop calculating CRC for new cont
+ 265              		.loc 1 122 4
+ 266 0062 0022     		movs	r2, #0
+ 267 0064 0121     		movs	r1, #1
+ 268 0066 F868     		ldr	r0, [r7, #12]
+ 269 0068 FFF7FEFF 		bl	rc52x_set_reg8
+ 123:../../lib/bsrfid/drivers/rc52x.c **** 			// Transfer the result from the registers to the result buffer
+ 124:../../lib/bsrfid/drivers/rc52x.c **** 			result[0] = RC52X_ReadRegister(rc52x, RC52X_REG_CRCResultReg_Lo);
+ 270              		.loc 1 124 16
+ 271 006c 2221     		movs	r1, #34
+ 272 006e F868     		ldr	r0, [r7, #12]
+ 273 0070 FFF7FEFF 		bl	RC52X_ReadRegister
+ 274 0074 0346     		mov	r3, r0
+ 275 0076 1A46     		mov	r2, r3
+ 276              		.loc 1 124 14
+ 277 0078 3B68     		ldr	r3, [r7]
+ 278 007a 1A70     		strb	r2, [r3]
+ 125:../../lib/bsrfid/drivers/rc52x.c **** 			result[1] = RC52X_ReadRegister(rc52x, RC52X_REG_CRCResultReg_Hi);
+ 279              		.loc 1 125 10
+ 280 007c 3B68     		ldr	r3, [r7]
+ 281 007e 5C1C     		adds	r4, r3, #1
+ 282              		.loc 1 125 16
+ 283 0080 2121     		movs	r1, #33
+ 284 0082 F868     		ldr	r0, [r7, #12]
+ 285 0084 FFF7FEFF 		bl	RC52X_ReadRegister
+ 286 0088 0346     		mov	r3, r0
+ 287              		.loc 1 125 14
+ 288 008a 2370     		strb	r3, [r4]
+ 126:../../lib/bsrfid/drivers/rc52x.c **** 			return STATUS_OK;
+ 289              		.loc 1 126 11
+ 290 008c 0023     		movs	r3, #0
+ 291 008e 07E0     		b	.L10
+ 292              	.L9:
+ 293              	.LBE3:
+ARM GAS  /tmp/ccsj0CIu.s 			page 9
+
+
+ 118:../../lib/bsrfid/drivers/rc52x.c **** 		// DivIrqReg[7..0] bits are: Set2 reserved reserved MfinActIRq reserved CRCIRq reserved reserved
+ 294              		.loc 1 118 34 discriminator 2
+ 295 0090 FB8A     		ldrh	r3, [r7, #22]
+ 296 0092 013B     		subs	r3, r3, #1
+ 297 0094 FB82     		strh	r3, [r7, #22]	@ movhi
+ 298              	.L8:
+ 118:../../lib/bsrfid/drivers/rc52x.c **** 		// DivIrqReg[7..0] bits are: Set2 reserved reserved MfinActIRq reserved CRCIRq reserved reserved
+ 299              		.loc 1 118 28 discriminator 1
+ 300 0096 FB8A     		ldrh	r3, [r7, #22]
+ 301 0098 002B     		cmp	r3, #0
+ 302 009a D7D1     		bne	.L11
+ 303              	.LBE2:
+ 127:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 128:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 129:../../lib/bsrfid/drivers/rc52x.c **** 	// 89ms passed and nothing happend. Communication with the MFRC522 might be down.
+ 130:../../lib/bsrfid/drivers/rc52x.c **** 	return STATUS_TIMEOUT;
+ 304              		.loc 1 130 9
+ 305 009c 6FF00303 		mvn	r3, #3
+ 306              	.L10:
+ 131:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_CalculateCRC()
+ 307              		.loc 1 131 1
+ 308 00a0 1846     		mov	r0, r3
+ 309 00a2 1C37     		adds	r7, r7, #28
+ 310              		.cfi_def_cfa_offset 12
+ 311 00a4 BD46     		mov	sp, r7
+ 312              		.cfi_def_cfa_register 13
+ 313              		@ sp needed
+ 314 00a6 90BD     		pop	{r4, r7, pc}
+ 315              		.cfi_endproc
+ 316              	.LFE3:
+ 318              		.section	.text.RC52X_Init,"ax",%progbits
+ 319              		.align	1
+ 320              		.global	RC52X_Init
+ 321              		.syntax unified
+ 322              		.thumb
+ 323              		.thumb_func
+ 324              		.fpu softvfp
+ 326              	RC52X_Init:
+ 327              	.LFB4:
+ 132:../../lib/bsrfid/drivers/rc52x.c **** 
+ 133:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 134:../../lib/bsrfid/drivers/rc52x.c **** // Functions for manipulating the MFRC522
+ 135:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 136:../../lib/bsrfid/drivers/rc52x.c **** 
+ 137:../../lib/bsrfid/drivers/rc52x.c **** 
+ 138:../../lib/bsrfid/drivers/rc52x.c **** 
+ 139:../../lib/bsrfid/drivers/rc52x.c **** 
+ 140:../../lib/bsrfid/drivers/rc52x.c **** 
+ 141:../../lib/bsrfid/drivers/rc52x.c **** 
+ 142:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 143:../../lib/bsrfid/drivers/rc52x.c ****  * Initializes the MFRC522 chip.
+ 144:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 145:../../lib/bsrfid/drivers/rc52x.c **** void RC52X_Init(rc52x_t *rc52x) {
+ 328              		.loc 1 145 33
+ 329              		.cfi_startproc
+ 330              		@ args = 0, pretend = 0, frame = 8
+ 331              		@ frame_needed = 1, uses_anonymous_args = 0
+ARM GAS  /tmp/ccsj0CIu.s 			page 10
+
+
+ 332 0000 80B5     		push	{r7, lr}
+ 333              		.cfi_def_cfa_offset 8
+ 334              		.cfi_offset 7, -8
+ 335              		.cfi_offset 14, -4
+ 336 0002 82B0     		sub	sp, sp, #8
+ 337              		.cfi_def_cfa_offset 16
+ 338 0004 00AF     		add	r7, sp, #0
+ 339              		.cfi_def_cfa_register 7
+ 340 0006 7860     		str	r0, [r7, #4]
+ 146:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x->TransceiveData = RC52X_TransceiveData;
+ 341              		.loc 1 146 24
+ 342 0008 7B68     		ldr	r3, [r7, #4]
+ 343 000a 1C4A     		ldr	r2, .L13
+ 344 000c DA60     		str	r2, [r3, #12]
+ 147:../../lib/bsrfid/drivers/rc52x.c **** 	//rc52x->SetBitFraming = rc52x_set_bit_framing;
+ 148:../../lib/bsrfid/drivers/rc52x.c **** 	RC52X_Reset(rc52x);
+ 345              		.loc 1 148 2
+ 346 000e 7868     		ldr	r0, [r7, #4]
+ 347 0010 FFF7FEFF 		bl	RC52X_Reset
+ 149:../../lib/bsrfid/drivers/rc52x.c **** 
+ 150:../../lib/bsrfid/drivers/rc52x.c **** 	// Reset baud rates
+ 151:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_TxModeReg, 0x00);
+ 348              		.loc 1 151 2
+ 349 0014 0022     		movs	r2, #0
+ 350 0016 1221     		movs	r1, #18
+ 351 0018 7868     		ldr	r0, [r7, #4]
+ 352 001a FFF7FEFF 		bl	rc52x_set_reg8
+ 152:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_RxModeReg, 0x00);
+ 353              		.loc 1 152 2
+ 354 001e 0022     		movs	r2, #0
+ 355 0020 1321     		movs	r1, #19
+ 356 0022 7868     		ldr	r0, [r7, #4]
+ 357 0024 FFF7FEFF 		bl	rc52x_set_reg8
+ 153:../../lib/bsrfid/drivers/rc52x.c **** 	// Reset ModWidthReg
+ 154:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_ModWidthReg, 0x26);
+ 358              		.loc 1 154 2
+ 359 0028 2622     		movs	r2, #38
+ 360 002a 2421     		movs	r1, #36
+ 361 002c 7868     		ldr	r0, [r7, #4]
+ 362 002e FFF7FEFF 		bl	rc52x_set_reg8
+ 155:../../lib/bsrfid/drivers/rc52x.c **** 
+ 156:../../lib/bsrfid/drivers/rc52x.c **** 	// When communicating with a PICC we need a timeout if something goes wrong.
+ 157:../../lib/bsrfid/drivers/rc52x.c **** 	// f_timer = 13.56 MHz / (2*TPreScaler+1) where TPreScaler = [TPrescaler_Hi:TPrescaler_Lo].
+ 158:../../lib/bsrfid/drivers/rc52x.c **** 	// TPrescaler_Hi are the four low bits in TModeReg. TPrescaler_Lo is TPrescalerReg.
+ 159:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_TModeReg, 0x80);	// TAuto=1; timer starts automatically at the end
+ 363              		.loc 1 159 2
+ 364 0032 8022     		movs	r2, #128
+ 365 0034 2A21     		movs	r1, #42
+ 366 0036 7868     		ldr	r0, [r7, #4]
+ 367 0038 FFF7FEFF 		bl	rc52x_set_reg8
+ 160:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_TPrescalerReg, 0xA9);// TPreScaler = TModeReg[3..0]:TPrescalerReg,
+ 368              		.loc 1 160 2
+ 369 003c A922     		movs	r2, #169
+ 370 003e 2B21     		movs	r1, #43
+ 371 0040 7868     		ldr	r0, [r7, #4]
+ 372 0042 FFF7FEFF 		bl	rc52x_set_reg8
+ 161:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_TReloadReg_Hi, 0x03);// Reload timer with 0x3E8 = 1000, ie 25ms be
+ARM GAS  /tmp/ccsj0CIu.s 			page 11
+
+
+ 373              		.loc 1 161 2
+ 374 0046 0322     		movs	r2, #3
+ 375 0048 2C21     		movs	r1, #44
+ 376 004a 7868     		ldr	r0, [r7, #4]
+ 377 004c FFF7FEFF 		bl	rc52x_set_reg8
+ 162:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_TReloadReg_Lo, 0xE8);
+ 378              		.loc 1 162 2
+ 379 0050 E822     		movs	r2, #232
+ 380 0052 2D21     		movs	r1, #45
+ 381 0054 7868     		ldr	r0, [r7, #4]
+ 382 0056 FFF7FEFF 		bl	rc52x_set_reg8
+ 163:../../lib/bsrfid/drivers/rc52x.c **** 
+ 164:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_TxASKReg, 0x40);	// Default 0x00. Force a 100 % ASK modulation ind
+ 383              		.loc 1 164 2
+ 384 005a 4022     		movs	r2, #64
+ 385 005c 1521     		movs	r1, #21
+ 386 005e 7868     		ldr	r0, [r7, #4]
+ 387 0060 FFF7FEFF 		bl	rc52x_set_reg8
+ 165:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_ModeReg, 0x3D);// Default 0x3F. Set the preset value for the CRC c
+ 388              		.loc 1 165 2
+ 389 0064 3D22     		movs	r2, #61
+ 390 0066 1121     		movs	r1, #17
+ 391 0068 7868     		ldr	r0, [r7, #4]
+ 392 006a FFF7FEFF 		bl	rc52x_set_reg8
+ 166:../../lib/bsrfid/drivers/rc52x.c **** 	RC52X_AntennaOn(rc52x);// Enable the antenna driver pins TX1 and TX2 (they were disabled by the re
+ 393              		.loc 1 166 2
+ 394 006e 7868     		ldr	r0, [r7, #4]
+ 395 0070 FFF7FEFF 		bl	RC52X_AntennaOn
+ 167:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_Init()
+ 396              		.loc 1 167 1
+ 397 0074 00BF     		nop
+ 398 0076 0837     		adds	r7, r7, #8
+ 399              		.cfi_def_cfa_offset 8
+ 400 0078 BD46     		mov	sp, r7
+ 401              		.cfi_def_cfa_register 13
+ 402              		@ sp needed
+ 403 007a 80BD     		pop	{r7, pc}
+ 404              	.L14:
+ 405              		.align	2
+ 406              	.L13:
+ 407 007c 00000000 		.word	RC52X_TransceiveData
+ 408              		.cfi_endproc
+ 409              	.LFE4:
+ 411              		.section	.text.RC52X_Reset,"ax",%progbits
+ 412              		.align	1
+ 413              		.global	RC52X_Reset
+ 414              		.syntax unified
+ 415              		.thumb
+ 416              		.thumb_func
+ 417              		.fpu softvfp
+ 419              	RC52X_Reset:
+ 420              	.LFB5:
+ 168:../../lib/bsrfid/drivers/rc52x.c **** 
+ 169:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 170:../../lib/bsrfid/drivers/rc52x.c ****  * Performs a soft reset on the MFRC522 chip and waits for it to be ready again.
+ 171:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 172:../../lib/bsrfid/drivers/rc52x.c **** void RC52X_Reset(rc52x_t *rc52x) {
+ARM GAS  /tmp/ccsj0CIu.s 			page 12
+
+
+ 421              		.loc 1 172 34
+ 422              		.cfi_startproc
+ 423              		@ args = 0, pretend = 0, frame = 16
+ 424              		@ frame_needed = 1, uses_anonymous_args = 0
+ 425 0000 80B5     		push	{r7, lr}
+ 426              		.cfi_def_cfa_offset 8
+ 427              		.cfi_offset 7, -8
+ 428              		.cfi_offset 14, -4
+ 429 0002 84B0     		sub	sp, sp, #16
+ 430              		.cfi_def_cfa_offset 24
+ 431 0004 00AF     		add	r7, sp, #0
+ 432              		.cfi_def_cfa_register 7
+ 433 0006 7860     		str	r0, [r7, #4]
+ 173:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, RC52X_CMD_SoftReset); // Issue the SoftReset command.
+ 434              		.loc 1 173 2
+ 435 0008 0F22     		movs	r2, #15
+ 436 000a 0121     		movs	r1, #1
+ 437 000c 7868     		ldr	r0, [r7, #4]
+ 438 000e FFF7FEFF 		bl	rc52x_set_reg8
+ 174:../../lib/bsrfid/drivers/rc52x.c **** 	// The datasheet does not mention how long the SoftRest command takes to complete.
+ 175:../../lib/bsrfid/drivers/rc52x.c **** 	// But the MFRC522 might have been in soft power-down mode (triggered by bit 4 of CommandReg)
+ 176:../../lib/bsrfid/drivers/rc52x.c **** 	// Section 8.8.2 in the datasheet says the oscillator start-up time is the start up time of the cr
+ 177:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t count = 0;
+ 439              		.loc 1 177 10
+ 440 0012 0023     		movs	r3, #0
+ 441 0014 FB73     		strb	r3, [r7, #15]
+ 442              	.L17:
+ 178:../../lib/bsrfid/drivers/rc52x.c **** 	do {
+ 179:../../lib/bsrfid/drivers/rc52x.c **** 		// Wait for the PowerDown bit in CommandReg to be cleared (max 3x50ms)
+ 180:../../lib/bsrfid/drivers/rc52x.c **** 		rc52x->delay_ms(50);
+ 443              		.loc 1 180 8 discriminator 2
+ 444 0016 7B68     		ldr	r3, [r7, #4]
+ 445 0018 9B68     		ldr	r3, [r3, #8]
+ 446              		.loc 1 180 3 discriminator 2
+ 447 001a 3220     		movs	r0, #50
+ 448 001c 9847     		blx	r3
+ 449              	.LVL0:
+ 181:../../lib/bsrfid/drivers/rc52x.c **** 
+ 182:../../lib/bsrfid/drivers/rc52x.c **** 	} while ((RC52X_ReadRegister(rc52x, RC52X_REG_CommandReg) & (1 << 4))
+ 450              		.loc 1 182 12 discriminator 2
+ 451 001e 0121     		movs	r1, #1
+ 452 0020 7868     		ldr	r0, [r7, #4]
+ 453 0022 FFF7FEFF 		bl	RC52X_ReadRegister
+ 454 0026 0346     		mov	r3, r0
+ 455              		.loc 1 182 60 discriminator 2
+ 456 0028 03F01003 		and	r3, r3, #16
+ 183:../../lib/bsrfid/drivers/rc52x.c **** 			&& (++count) < 3);
+ 457              		.loc 1 183 4 discriminator 2
+ 458 002c 002B     		cmp	r3, #0
+ 459 002e 05D0     		beq	.L18
+ 460              		.loc 1 183 4 is_stmt 0 discriminator 1
+ 461 0030 FB7B     		ldrb	r3, [r7, #15]
+ 462 0032 0133     		adds	r3, r3, #1
+ 463 0034 FB73     		strb	r3, [r7, #15]
+ 464 0036 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 465 0038 022B     		cmp	r3, #2
+ 466 003a ECD9     		bls	.L17
+ARM GAS  /tmp/ccsj0CIu.s 			page 13
+
+
+ 467              	.L18:
+ 184:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_Reset()
+ 468              		.loc 1 184 1 is_stmt 1
+ 469 003c 00BF     		nop
+ 470 003e 1037     		adds	r7, r7, #16
+ 471              		.cfi_def_cfa_offset 8
+ 472 0040 BD46     		mov	sp, r7
+ 473              		.cfi_def_cfa_register 13
+ 474              		@ sp needed
+ 475 0042 80BD     		pop	{r7, pc}
+ 476              		.cfi_endproc
+ 477              	.LFE5:
+ 479              		.section	.text.RC52X_AntennaOn,"ax",%progbits
+ 480              		.align	1
+ 481              		.global	RC52X_AntennaOn
+ 482              		.syntax unified
+ 483              		.thumb
+ 484              		.thumb_func
+ 485              		.fpu softvfp
+ 487              	RC52X_AntennaOn:
+ 488              	.LFB6:
+ 185:../../lib/bsrfid/drivers/rc52x.c **** 
+ 186:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 187:../../lib/bsrfid/drivers/rc52x.c ****  * Turns the antenna on by enabling pins TX1 and TX2.
+ 188:../../lib/bsrfid/drivers/rc52x.c ****  * After a reset these pins are disabled.
+ 189:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 190:../../lib/bsrfid/drivers/rc52x.c **** void RC52X_AntennaOn(rc52x_t *rc52x) {
+ 489              		.loc 1 190 38
+ 490              		.cfi_startproc
+ 491              		@ args = 0, pretend = 0, frame = 16
+ 492              		@ frame_needed = 1, uses_anonymous_args = 0
+ 493 0000 80B5     		push	{r7, lr}
+ 494              		.cfi_def_cfa_offset 8
+ 495              		.cfi_offset 7, -8
+ 496              		.cfi_offset 14, -4
+ 497 0002 84B0     		sub	sp, sp, #16
+ 498              		.cfi_def_cfa_offset 24
+ 499 0004 00AF     		add	r7, sp, #0
+ 500              		.cfi_def_cfa_register 7
+ 501 0006 7860     		str	r0, [r7, #4]
+ 191:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t value = RC52X_ReadRegister(rc52x, RC52X_REG_TxControlReg);
+ 502              		.loc 1 191 18
+ 503 0008 1421     		movs	r1, #20
+ 504 000a 7868     		ldr	r0, [r7, #4]
+ 505 000c FFF7FEFF 		bl	RC52X_ReadRegister
+ 506 0010 0346     		mov	r3, r0
+ 507 0012 FB73     		strb	r3, [r7, #15]
+ 192:../../lib/bsrfid/drivers/rc52x.c **** 	if ((value & 0x03) != 0x03) {
+ 508              		.loc 1 192 13
+ 509 0014 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 510 0016 03F00303 		and	r3, r3, #3
+ 511              		.loc 1 192 5
+ 512 001a 032B     		cmp	r3, #3
+ 513 001c 08D0     		beq	.L21
+ 193:../../lib/bsrfid/drivers/rc52x.c **** 		rc52x_set_reg8(rc52x, RC52X_REG_TxControlReg, value | 0x03);
+ 514              		.loc 1 193 3
+ 515 001e FB7B     		ldrb	r3, [r7, #15]
+ARM GAS  /tmp/ccsj0CIu.s 			page 14
+
+
+ 516 0020 43F00303 		orr	r3, r3, #3
+ 517 0024 DBB2     		uxtb	r3, r3
+ 518 0026 1A46     		mov	r2, r3
+ 519 0028 1421     		movs	r1, #20
+ 520 002a 7868     		ldr	r0, [r7, #4]
+ 521 002c FFF7FEFF 		bl	rc52x_set_reg8
+ 522              	.L21:
+ 194:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 195:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_AntennaOn()
+ 523              		.loc 1 195 1
+ 524 0030 00BF     		nop
+ 525 0032 1037     		adds	r7, r7, #16
+ 526              		.cfi_def_cfa_offset 8
+ 527 0034 BD46     		mov	sp, r7
+ 528              		.cfi_def_cfa_register 13
+ 529              		@ sp needed
+ 530 0036 80BD     		pop	{r7, pc}
+ 531              		.cfi_endproc
+ 532              	.LFE6:
+ 534              		.section	.text.RC52X_AntennaOff,"ax",%progbits
+ 535              		.align	1
+ 536              		.global	RC52X_AntennaOff
+ 537              		.syntax unified
+ 538              		.thumb
+ 539              		.thumb_func
+ 540              		.fpu softvfp
+ 542              	RC52X_AntennaOff:
+ 543              	.LFB7:
+ 196:../../lib/bsrfid/drivers/rc52x.c **** 
+ 197:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 198:../../lib/bsrfid/drivers/rc52x.c ****  * Turns the antenna off by disabling pins TX1 and TX2.
+ 199:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 200:../../lib/bsrfid/drivers/rc52x.c **** void RC52X_AntennaOff(rc52x_t *rc52x) {
+ 544              		.loc 1 200 39
+ 545              		.cfi_startproc
+ 546              		@ args = 0, pretend = 0, frame = 8
+ 547              		@ frame_needed = 1, uses_anonymous_args = 0
+ 548 0000 80B5     		push	{r7, lr}
+ 549              		.cfi_def_cfa_offset 8
+ 550              		.cfi_offset 7, -8
+ 551              		.cfi_offset 14, -4
+ 552 0002 82B0     		sub	sp, sp, #8
+ 553              		.cfi_def_cfa_offset 16
+ 554 0004 00AF     		add	r7, sp, #0
+ 555              		.cfi_def_cfa_register 7
+ 556 0006 7860     		str	r0, [r7, #4]
+ 201:../../lib/bsrfid/drivers/rc52x.c **** 	RC52X_ClearRegisterBitMask(rc52x, RC52X_REG_TxControlReg, 0x03);
+ 557              		.loc 1 201 2
+ 558 0008 0322     		movs	r2, #3
+ 559 000a 1421     		movs	r1, #20
+ 560 000c 7868     		ldr	r0, [r7, #4]
+ 561 000e FFF7FEFF 		bl	RC52X_ClearRegisterBitMask
+ 202:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_AntennaOff()
+ 562              		.loc 1 202 1
+ 563 0012 00BF     		nop
+ 564 0014 0837     		adds	r7, r7, #8
+ 565              		.cfi_def_cfa_offset 8
+ARM GAS  /tmp/ccsj0CIu.s 			page 15
+
+
+ 566 0016 BD46     		mov	sp, r7
+ 567              		.cfi_def_cfa_register 13
+ 568              		@ sp needed
+ 569 0018 80BD     		pop	{r7, pc}
+ 570              		.cfi_endproc
+ 571              	.LFE7:
+ 573              		.section	.text.RC52X_GetAntennaGain,"ax",%progbits
+ 574              		.align	1
+ 575              		.global	RC52X_GetAntennaGain
+ 576              		.syntax unified
+ 577              		.thumb
+ 578              		.thumb_func
+ 579              		.fpu softvfp
+ 581              	RC52X_GetAntennaGain:
+ 582              	.LFB8:
+ 203:../../lib/bsrfid/drivers/rc52x.c **** 
+ 204:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 205:../../lib/bsrfid/drivers/rc52x.c ****  * Get the current MFRC522 Receiver Gain (RxGain[2:0]) value.
+ 206:../../lib/bsrfid/drivers/rc52x.c ****  * See 9.3.3.6 / table 98 in http://www.nxp.com/documents/data_sheet/MFRC522.pdf
+ 207:../../lib/bsrfid/drivers/rc52x.c ****  * NOTE: Return value scrubbed with (0x07<<4)=01110000b as RCFfgReg may use reserved bits.
+ 208:../../lib/bsrfid/drivers/rc52x.c ****  *
+ 209:../../lib/bsrfid/drivers/rc52x.c ****  * @return Value of the RxGain, scrubbed to the 3 bits used.
+ 210:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 211:../../lib/bsrfid/drivers/rc52x.c **** uint8_t RC52X_GetAntennaGain(rc52x_t *rc52x) {
+ 583              		.loc 1 211 46
+ 584              		.cfi_startproc
+ 585              		@ args = 0, pretend = 0, frame = 8
+ 586              		@ frame_needed = 1, uses_anonymous_args = 0
+ 587 0000 80B5     		push	{r7, lr}
+ 588              		.cfi_def_cfa_offset 8
+ 589              		.cfi_offset 7, -8
+ 590              		.cfi_offset 14, -4
+ 591 0002 82B0     		sub	sp, sp, #8
+ 592              		.cfi_def_cfa_offset 16
+ 593 0004 00AF     		add	r7, sp, #0
+ 594              		.cfi_def_cfa_register 7
+ 595 0006 7860     		str	r0, [r7, #4]
+ 212:../../lib/bsrfid/drivers/rc52x.c **** 	return RC52X_ReadRegister(rc52x, RC52X_REG_RFCfgReg) & (0x07 << 4);
+ 596              		.loc 1 212 9
+ 597 0008 2621     		movs	r1, #38
+ 598 000a 7868     		ldr	r0, [r7, #4]
+ 599 000c FFF7FEFF 		bl	RC52X_ReadRegister
+ 600 0010 0346     		mov	r3, r0
+ 601              		.loc 1 212 55
+ 602 0012 03F07003 		and	r3, r3, #112
+ 603 0016 DBB2     		uxtb	r3, r3
+ 213:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_GetAntennaGain()
+ 604              		.loc 1 213 1
+ 605 0018 1846     		mov	r0, r3
+ 606 001a 0837     		adds	r7, r7, #8
+ 607              		.cfi_def_cfa_offset 8
+ 608 001c BD46     		mov	sp, r7
+ 609              		.cfi_def_cfa_register 13
+ 610              		@ sp needed
+ 611 001e 80BD     		pop	{r7, pc}
+ 612              		.cfi_endproc
+ 613              	.LFE8:
+ARM GAS  /tmp/ccsj0CIu.s 			page 16
+
+
+ 615              		.section	.text.RC52X_SetAntennaGain,"ax",%progbits
+ 616              		.align	1
+ 617              		.global	RC52X_SetAntennaGain
+ 618              		.syntax unified
+ 619              		.thumb
+ 620              		.thumb_func
+ 621              		.fpu softvfp
+ 623              	RC52X_SetAntennaGain:
+ 624              	.LFB9:
+ 214:../../lib/bsrfid/drivers/rc52x.c **** 
+ 215:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 216:../../lib/bsrfid/drivers/rc52x.c ****  * Set the MFRC522 Receiver Gain (RxGain) to value specified by given mask.
+ 217:../../lib/bsrfid/drivers/rc52x.c ****  * See 9.3.3.6 / table 98 in http://www.nxp.com/documents/data_sheet/MFRC522.pdf
+ 218:../../lib/bsrfid/drivers/rc52x.c ****  * NOTE: Given mask is scrubbed with (0x07<<4)=01110000b as RCFfgReg may use reserved bits.
+ 219:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 220:../../lib/bsrfid/drivers/rc52x.c **** void RC52X_SetAntennaGain(rc52x_t *rc52x, uint8_t mask) {
+ 625              		.loc 1 220 57
+ 626              		.cfi_startproc
+ 627              		@ args = 0, pretend = 0, frame = 8
+ 628              		@ frame_needed = 1, uses_anonymous_args = 0
+ 629 0000 80B5     		push	{r7, lr}
+ 630              		.cfi_def_cfa_offset 8
+ 631              		.cfi_offset 7, -8
+ 632              		.cfi_offset 14, -4
+ 633 0002 82B0     		sub	sp, sp, #8
+ 634              		.cfi_def_cfa_offset 16
+ 635 0004 00AF     		add	r7, sp, #0
+ 636              		.cfi_def_cfa_register 7
+ 637 0006 7860     		str	r0, [r7, #4]
+ 638 0008 0B46     		mov	r3, r1
+ 639 000a FB70     		strb	r3, [r7, #3]
+ 221:../../lib/bsrfid/drivers/rc52x.c **** 	if (RC52X_GetAntennaGain(rc52x) != mask) { // only bother if there is a change
+ 640              		.loc 1 221 6
+ 641 000c 7868     		ldr	r0, [r7, #4]
+ 642 000e FFF7FEFF 		bl	RC52X_GetAntennaGain
+ 643 0012 0346     		mov	r3, r0
+ 644 0014 1A46     		mov	r2, r3
+ 645              		.loc 1 221 5
+ 646 0016 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 647 0018 9342     		cmp	r3, r2
+ 648 001a 0CD0     		beq	.L27
+ 649              	.LBB4:
+ 222:../../lib/bsrfid/drivers/rc52x.c **** 		RC52X_ClearRegisterBitMask(rc52x, RC52X_REG_RFCfgReg, (0x07 << 4)); // clear needed to allow 000 
+ 650              		.loc 1 222 3
+ 651 001c 7022     		movs	r2, #112
+ 652 001e 2621     		movs	r1, #38
+ 653 0020 7868     		ldr	r0, [r7, #4]
+ 654 0022 FFF7FEFF 		bl	RC52X_ClearRegisterBitMask
+ 223:../../lib/bsrfid/drivers/rc52x.c **** 		RC52X_SetRegisterBitMask(rc52x, RC52X_REG_RFCfgReg, mask & (0x07 << 4)); // only set RxGain[2:0] 
+ 655              		.loc 1 223 3
+ 656 0026 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 657 0028 03F07003 		and	r3, r3, #112
+ 658 002c 1A46     		mov	r2, r3
+ 659 002e 2621     		movs	r1, #38
+ 660 0030 7868     		ldr	r0, [r7, #4]
+ 661 0032 FFF7FEFF 		bl	RC52X_SetRegisterBitMask
+ 662              	.L27:
+ARM GAS  /tmp/ccsj0CIu.s 			page 17
+
+
+ 663              	.LBE4:
+ 224:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 225:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_SetAntennaGain()
+ 664              		.loc 1 225 1
+ 665 0036 00BF     		nop
+ 666 0038 0837     		adds	r7, r7, #8
+ 667              		.cfi_def_cfa_offset 8
+ 668 003a BD46     		mov	sp, r7
+ 669              		.cfi_def_cfa_register 13
+ 670              		@ sp needed
+ 671 003c 80BD     		pop	{r7, pc}
+ 672              		.cfi_endproc
+ 673              	.LFE9:
+ 675              		.section	.text.RC52X_PerformSelfTest,"ax",%progbits
+ 676              		.align	1
+ 677              		.global	RC52X_PerformSelfTest
+ 678              		.syntax unified
+ 679              		.thumb
+ 680              		.thumb_func
+ 681              		.fpu softvfp
+ 683              	RC52X_PerformSelfTest:
+ 684              	.LFB10:
+ 226:../../lib/bsrfid/drivers/rc52x.c **** 
+ 227:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 228:../../lib/bsrfid/drivers/rc52x.c ****  * Performs a self-test of the MFRC522
+ 229:../../lib/bsrfid/drivers/rc52x.c ****  * See 16.1.1 in http://www.nxp.com/documents/data_sheet/MFRC522.pdf
+ 230:../../lib/bsrfid/drivers/rc52x.c ****  *
+ 231:../../lib/bsrfid/drivers/rc52x.c ****  * @return Whether or not the test passed. Or false if no firmware reference is available.
+ 232:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 233:../../lib/bsrfid/drivers/rc52x.c **** bool RC52X_PerformSelfTest(rc52x_t *rc52x) {
+ 685              		.loc 1 233 44
+ 686              		.cfi_startproc
+ 687              		@ args = 0, pretend = 0, frame = 112
+ 688              		@ frame_needed = 1, uses_anonymous_args = 0
+ 689 0000 80B5     		push	{r7, lr}
+ 690              		.cfi_def_cfa_offset 8
+ 691              		.cfi_offset 7, -8
+ 692              		.cfi_offset 14, -4
+ 693 0002 9CB0     		sub	sp, sp, #112
+ 694              		.cfi_def_cfa_offset 120
+ 695 0004 00AF     		add	r7, sp, #0
+ 696              		.cfi_def_cfa_register 7
+ 697 0006 7860     		str	r0, [r7, #4]
+ 234:../../lib/bsrfid/drivers/rc52x.c **** 	// This follows directly the steps outlined in 16.1.1
+ 235:../../lib/bsrfid/drivers/rc52x.c **** 	// 1. Perform a soft reset.
+ 236:../../lib/bsrfid/drivers/rc52x.c **** 	RC52X_Reset(rc52x);
+ 698              		.loc 1 236 2
+ 699 0008 7868     		ldr	r0, [r7, #4]
+ 700 000a FFF7FEFF 		bl	RC52X_Reset
+ 237:../../lib/bsrfid/drivers/rc52x.c **** 
+ 238:../../lib/bsrfid/drivers/rc52x.c **** 	// 2. Clear the internal buffer by writing 25 uint8_ts of 00h
+ 239:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t ZEROES[25] = { 0x00 };
+ 701              		.loc 1 239 10
+ 702 000e 0023     		movs	r3, #0
+ 703 0010 FB64     		str	r3, [r7, #76]
+ 704 0012 07F15003 		add	r3, r7, #80
+ 705 0016 0022     		movs	r2, #0
+ARM GAS  /tmp/ccsj0CIu.s 			page 18
+
+
+ 706 0018 1A60     		str	r2, [r3]
+ 707 001a 5A60     		str	r2, [r3, #4]
+ 708 001c 9A60     		str	r2, [r3, #8]
+ 709 001e DA60     		str	r2, [r3, #12]
+ 710 0020 1A61     		str	r2, [r3, #16]
+ 711 0022 1A75     		strb	r2, [r3, #20]
+ 240:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_FIFOLevelReg, 0x80);	// flush the FIFO buffer
+ 712              		.loc 1 240 2
+ 713 0024 8022     		movs	r2, #128
+ 714 0026 0A21     		movs	r1, #10
+ 715 0028 7868     		ldr	r0, [r7, #4]
+ 716 002a FFF7FEFF 		bl	rc52x_set_reg8
+ 241:../../lib/bsrfid/drivers/rc52x.c **** 	mfrc522_send(rc52x, RC52X_REG_FIFODataReg, ZEROES, 25);// write 25 uint8_ts of 00h to FIFO
+ 717              		.loc 1 241 2
+ 718 002e 07F14C02 		add	r2, r7, #76
+ 719 0032 1923     		movs	r3, #25
+ 720 0034 0921     		movs	r1, #9
+ 721 0036 7868     		ldr	r0, [r7, #4]
+ 722 0038 FFF7FEFF 		bl	mfrc522_send
+ 242:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, RC52X_CMD_Configure);	// transfer to internal buffer
+ 723              		.loc 1 242 2
+ 724 003c 0122     		movs	r2, #1
+ 725 003e 0121     		movs	r1, #1
+ 726 0040 7868     		ldr	r0, [r7, #4]
+ 727 0042 FFF7FEFF 		bl	rc52x_set_reg8
+ 243:../../lib/bsrfid/drivers/rc52x.c **** 
+ 244:../../lib/bsrfid/drivers/rc52x.c **** 	// 3. Enable self-test
+ 245:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_AutoTestReg, 0x09);
+ 728              		.loc 1 245 2
+ 729 0046 0922     		movs	r2, #9
+ 730 0048 3621     		movs	r1, #54
+ 731 004a 7868     		ldr	r0, [r7, #4]
+ 732 004c FFF7FEFF 		bl	rc52x_set_reg8
+ 246:../../lib/bsrfid/drivers/rc52x.c **** 
+ 247:../../lib/bsrfid/drivers/rc52x.c **** 	// 4. Write 00h to FIFO buffer
+ 248:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_FIFODataReg, 0x00);
+ 733              		.loc 1 248 2
+ 734 0050 0022     		movs	r2, #0
+ 735 0052 0921     		movs	r1, #9
+ 736 0054 7868     		ldr	r0, [r7, #4]
+ 737 0056 FFF7FEFF 		bl	rc52x_set_reg8
+ 249:../../lib/bsrfid/drivers/rc52x.c **** 
+ 250:../../lib/bsrfid/drivers/rc52x.c **** 	// 5. Start self-test by issuing the CalcCRC command
+ 251:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, RC52X_CMD_CalcCRC);
+ 738              		.loc 1 251 2
+ 739 005a 0322     		movs	r2, #3
+ 740 005c 0121     		movs	r1, #1
+ 741 005e 7868     		ldr	r0, [r7, #4]
+ 742 0060 FFF7FEFF 		bl	rc52x_set_reg8
+ 743              	.LBB5:
+ 252:../../lib/bsrfid/drivers/rc52x.c **** 
+ 253:../../lib/bsrfid/drivers/rc52x.c **** 	// 6. Wait for self-test to complete
+ 254:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t n;
+ 255:../../lib/bsrfid/drivers/rc52x.c **** 	for (uint8_t i = 0; i < 0xFF; i++) {
+ 744              		.loc 1 255 15
+ 745 0064 0023     		movs	r3, #0
+ 746 0066 87F86F30 		strb	r3, [r7, #111]
+ARM GAS  /tmp/ccsj0CIu.s 			page 19
+
+
+ 747              		.loc 1 255 2
+ 748 006a 0FE0     		b	.L29
+ 749              	.L32:
+ 256:../../lib/bsrfid/drivers/rc52x.c **** 		// The datasheet does not specify exact completion condition except
+ 257:../../lib/bsrfid/drivers/rc52x.c **** 		// that FIFO buffer should contain 64 uint8_ts.
+ 258:../../lib/bsrfid/drivers/rc52x.c **** 		// While selftest is initiated by CalcCRC command
+ 259:../../lib/bsrfid/drivers/rc52x.c **** 		// it behaves differently from normal CRC computation,
+ 260:../../lib/bsrfid/drivers/rc52x.c **** 		// so one can't reliably use DivIrqReg to check for completion.
+ 261:../../lib/bsrfid/drivers/rc52x.c **** 		// It is reported that some devices does not trigger CRCIRq flag
+ 262:../../lib/bsrfid/drivers/rc52x.c **** 		// during selftest.
+ 263:../../lib/bsrfid/drivers/rc52x.c **** 		n = RC52X_ReadRegister(rc52x, RC52X_REG_FIFOLevelReg);
+ 750              		.loc 1 263 7
+ 751 006c 0A21     		movs	r1, #10
+ 752 006e 7868     		ldr	r0, [r7, #4]
+ 753 0070 FFF7FEFF 		bl	RC52X_ReadRegister
+ 754 0074 0346     		mov	r3, r0
+ 755 0076 87F86E30 		strb	r3, [r7, #110]
+ 264:../../lib/bsrfid/drivers/rc52x.c **** 		if (n >= 64) {
+ 756              		.loc 1 264 6
+ 757 007a 97F86E30 		ldrb	r3, [r7, #110]	@ zero_extendqisi2
+ 758 007e 3F2B     		cmp	r3, #63
+ 759 0080 09D8     		bhi	.L42
+ 255:../../lib/bsrfid/drivers/rc52x.c **** 		// The datasheet does not specify exact completion condition except
+ 760              		.loc 1 255 33 discriminator 2
+ 761 0082 97F86F30 		ldrb	r3, [r7, #111]	@ zero_extendqisi2
+ 762 0086 0133     		adds	r3, r3, #1
+ 763 0088 87F86F30 		strb	r3, [r7, #111]
+ 764              	.L29:
+ 255:../../lib/bsrfid/drivers/rc52x.c **** 		// The datasheet does not specify exact completion condition except
+ 765              		.loc 1 255 24 discriminator 1
+ 766 008c 97F86F30 		ldrb	r3, [r7, #111]	@ zero_extendqisi2
+ 767 0090 FF2B     		cmp	r3, #255
+ 768 0092 EBD1     		bne	.L32
+ 769 0094 00E0     		b	.L31
+ 770              	.L42:
+ 265:../../lib/bsrfid/drivers/rc52x.c **** 			break;
+ 771              		.loc 1 265 4
+ 772 0096 00BF     		nop
+ 773              	.L31:
+ 774              	.LBE5:
+ 266:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 267:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 268:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, RC52X_CMD_Idle);// Stop calculating CRC for new conten
+ 775              		.loc 1 268 2
+ 776 0098 0022     		movs	r2, #0
+ 777 009a 0121     		movs	r1, #1
+ 778 009c 7868     		ldr	r0, [r7, #4]
+ 779 009e FFF7FEFF 		bl	rc52x_set_reg8
+ 269:../../lib/bsrfid/drivers/rc52x.c **** 
+ 270:../../lib/bsrfid/drivers/rc52x.c **** 	// 7. Read out resulting 64 uint8_ts from the FIFO buffer.
+ 271:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t result[64];
+ 272:../../lib/bsrfid/drivers/rc52x.c **** 	mfrc522_recv(rc52x, RC52X_REG_FIFODataReg, result, 64);
+ 780              		.loc 1 272 2
+ 781 00a2 07F10C02 		add	r2, r7, #12
+ 782 00a6 4023     		movs	r3, #64
+ 783 00a8 0921     		movs	r1, #9
+ 784 00aa 7868     		ldr	r0, [r7, #4]
+ARM GAS  /tmp/ccsj0CIu.s 			page 20
+
+
+ 785 00ac FFF7FEFF 		bl	mfrc522_recv
+ 273:../../lib/bsrfid/drivers/rc52x.c **** 
+ 274:../../lib/bsrfid/drivers/rc52x.c **** 	// Auto self-test done
+ 275:../../lib/bsrfid/drivers/rc52x.c **** 	// Reset AutoTestReg register to be 0 again. Required for normal operation.
+ 276:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_AutoTestReg, 0x00);
+ 786              		.loc 1 276 2
+ 787 00b0 0022     		movs	r2, #0
+ 788 00b2 3621     		movs	r1, #54
+ 789 00b4 7868     		ldr	r0, [r7, #4]
+ 790 00b6 FFF7FEFF 		bl	rc52x_set_reg8
+ 277:../../lib/bsrfid/drivers/rc52x.c **** 
+ 278:../../lib/bsrfid/drivers/rc52x.c **** 	// Determine firmware version (see section 9.3.4.8 in spec)
+ 279:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t version = RC52X_ReadRegister(rc52x, RC52X_REG_VersionReg);
+ 791              		.loc 1 279 20
+ 792 00ba 3721     		movs	r1, #55
+ 793 00bc 7868     		ldr	r0, [r7, #4]
+ 794 00be FFF7FEFF 		bl	RC52X_ReadRegister
+ 795 00c2 0346     		mov	r3, r0
+ 796 00c4 87F86D30 		strb	r3, [r7, #109]
+ 280:../../lib/bsrfid/drivers/rc52x.c **** 
+ 281:../../lib/bsrfid/drivers/rc52x.c **** 	// Pick the appropriate reference values
+ 282:../../lib/bsrfid/drivers/rc52x.c **** 	const uint8_t *reference;
+ 283:../../lib/bsrfid/drivers/rc52x.c **** 	switch (version) {
+ 797              		.loc 1 283 2
+ 798 00c8 97F86D30 		ldrb	r3, [r7, #109]	@ zero_extendqisi2
+ 799 00cc 883B     		subs	r3, r3, #136
+ 800 00ce 0A2B     		cmp	r3, #10
+ 801 00d0 24D8     		bhi	.L33
+ 802 00d2 01A2     		adr	r2, .L35
+ 803 00d4 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 804              		.p2align 2
+ 805              	.L35:
+ 806 00d8 05010000 		.word	.L38+1
+ 807 00dc 1D010000 		.word	.L33+1
+ 808 00e0 1D010000 		.word	.L33+1
+ 809 00e4 1D010000 		.word	.L33+1
+ 810 00e8 1D010000 		.word	.L33+1
+ 811 00ec 1D010000 		.word	.L33+1
+ 812 00f0 1D010000 		.word	.L33+1
+ 813 00f4 1D010000 		.word	.L33+1
+ 814 00f8 0B010000 		.word	.L37+1
+ 815 00fc 11010000 		.word	.L36+1
+ 816 0100 17010000 		.word	.L34+1
+ 817              		.p2align 1
+ 818              	.L38:
+ 284:../../lib/bsrfid/drivers/rc52x.c **** 	case 0x88:	// Fudan Semiconductor FM17522 clone
+ 285:../../lib/bsrfid/drivers/rc52x.c **** 		reference = FM17522_firmware_reference;
+ 819              		.loc 1 285 13
+ 820 0104 094B     		ldr	r3, .L43
+ 821 0106 BB66     		str	r3, [r7, #104]
+ 286:../../lib/bsrfid/drivers/rc52x.c **** 		break;
+ 822              		.loc 1 286 3
+ 823 0108 0AE0     		b	.L39
+ 824              	.L37:
+ 287:../../lib/bsrfid/drivers/rc52x.c **** 	case 0x90:	// Version 0.0
+ 288:../../lib/bsrfid/drivers/rc52x.c **** 		reference = MFRC522_firmware_referenceV0_0;
+ 825              		.loc 1 288 13
+ARM GAS  /tmp/ccsj0CIu.s 			page 21
+
+
+ 826 010a 094B     		ldr	r3, .L43+4
+ 827 010c BB66     		str	r3, [r7, #104]
+ 289:../../lib/bsrfid/drivers/rc52x.c **** 		break;
+ 828              		.loc 1 289 3
+ 829 010e 07E0     		b	.L39
+ 830              	.L36:
+ 290:../../lib/bsrfid/drivers/rc52x.c **** 	case 0x91:	// Version 1.0
+ 291:../../lib/bsrfid/drivers/rc52x.c **** 		reference = MFRC522_firmware_referenceV1_0;
+ 831              		.loc 1 291 13
+ 832 0110 084B     		ldr	r3, .L43+8
+ 833 0112 BB66     		str	r3, [r7, #104]
+ 292:../../lib/bsrfid/drivers/rc52x.c **** 		break;
+ 834              		.loc 1 292 3
+ 835 0114 04E0     		b	.L39
+ 836              	.L34:
+ 293:../../lib/bsrfid/drivers/rc52x.c **** 	case 0x92:	// Version 2.0
+ 294:../../lib/bsrfid/drivers/rc52x.c **** 		reference = MFRC522_firmware_referenceV2_0;
+ 837              		.loc 1 294 13
+ 838 0116 084B     		ldr	r3, .L43+12
+ 839 0118 BB66     		str	r3, [r7, #104]
+ 295:../../lib/bsrfid/drivers/rc52x.c **** 		break;
+ 840              		.loc 1 295 3
+ 841 011a 01E0     		b	.L39
+ 842              	.L33:
+ 296:../../lib/bsrfid/drivers/rc52x.c **** 	default:	// Unknown version
+ 297:../../lib/bsrfid/drivers/rc52x.c **** 		return false; // abort test
+ 843              		.loc 1 297 10
+ 844 011c 0023     		movs	r3, #0
+ 845 011e 00E0     		b	.L41
+ 846              	.L39:
+ 298:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 299:../../lib/bsrfid/drivers/rc52x.c **** 
+ 300:../../lib/bsrfid/drivers/rc52x.c **** 	/*
+ 301:../../lib/bsrfid/drivers/rc52x.c **** 	 *
+ 302:../../lib/bsrfid/drivers/rc52x.c **** 	 *  Some Atmel specific stuff
+ 303:../../lib/bsrfid/drivers/rc52x.c **** 	 // Verify that the results match up to our expectations
+ 304:../../lib/bsrfid/drivers/rc52x.c **** 	 for (uint8_t i = 0; i < 64; i++) {
+ 305:../../lib/bsrfid/drivers/rc52x.c **** 	 if (result[i] != pgm_read_uint8_t(&(reference[i]))) {
+ 306:../../lib/bsrfid/drivers/rc52x.c **** 	 return false;
+ 307:../../lib/bsrfid/drivers/rc52x.c **** 	 }
+ 308:../../lib/bsrfid/drivers/rc52x.c **** 	 }
+ 309:../../lib/bsrfid/drivers/rc52x.c **** 	 */
+ 310:../../lib/bsrfid/drivers/rc52x.c **** 
+ 311:../../lib/bsrfid/drivers/rc52x.c **** 	// Test passed; all is good.
+ 312:../../lib/bsrfid/drivers/rc52x.c **** 	return true;
+ 847              		.loc 1 312 9
+ 848 0120 0123     		movs	r3, #1
+ 849              	.L41:
+ 313:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_PerformSelfTest()
+ 850              		.loc 1 313 1 discriminator 1
+ 851 0122 1846     		mov	r0, r3
+ 852 0124 7037     		adds	r7, r7, #112
+ 853              		.cfi_def_cfa_offset 8
+ 854 0126 BD46     		mov	sp, r7
+ 855              		.cfi_def_cfa_register 13
+ 856              		@ sp needed
+ 857 0128 80BD     		pop	{r7, pc}
+ARM GAS  /tmp/ccsj0CIu.s 			page 22
+
+
+ 858              	.L44:
+ 859 012a 00BF     		.align	2
+ 860              	.L43:
+ 861 012c 00000000 		.word	FM17522_firmware_reference
+ 862 0130 00000000 		.word	MFRC522_firmware_referenceV0_0
+ 863 0134 00000000 		.word	MFRC522_firmware_referenceV1_0
+ 864 0138 00000000 		.word	MFRC522_firmware_referenceV2_0
+ 865              		.cfi_endproc
+ 866              	.LFE10:
+ 868              		.section	.text.RC52X_SoftPowerDown,"ax",%progbits
+ 869              		.align	1
+ 870              		.global	RC52X_SoftPowerDown
+ 871              		.syntax unified
+ 872              		.thumb
+ 873              		.thumb_func
+ 874              		.fpu softvfp
+ 876              	RC52X_SoftPowerDown:
+ 877              	.LFB11:
+ 314:../../lib/bsrfid/drivers/rc52x.c **** 
+ 315:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 316:../../lib/bsrfid/drivers/rc52x.c **** // Power control
+ 317:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 318:../../lib/bsrfid/drivers/rc52x.c **** 
+ 319:../../lib/bsrfid/drivers/rc52x.c **** //IMPORTANT NOTE!!!!
+ 320:../../lib/bsrfid/drivers/rc52x.c **** //Calling any other function that uses CommandReg will disable soft power down mode !!!
+ 321:../../lib/bsrfid/drivers/rc52x.c **** //For more details about power control, refer to the datasheet - page 33 (8.6)
+ 322:../../lib/bsrfid/drivers/rc52x.c **** 
+ 323:../../lib/bsrfid/drivers/rc52x.c **** void RC52X_SoftPowerDown(rc52x_t *rc52x) { //Note : Only soft power down mode is available throught
+ 878              		.loc 1 323 42
+ 879              		.cfi_startproc
+ 880              		@ args = 0, pretend = 0, frame = 16
+ 881              		@ frame_needed = 1, uses_anonymous_args = 0
+ 882 0000 80B5     		push	{r7, lr}
+ 883              		.cfi_def_cfa_offset 8
+ 884              		.cfi_offset 7, -8
+ 885              		.cfi_offset 14, -4
+ 886 0002 84B0     		sub	sp, sp, #16
+ 887              		.cfi_def_cfa_offset 24
+ 888 0004 00AF     		add	r7, sp, #0
+ 889              		.cfi_def_cfa_register 7
+ 890 0006 7860     		str	r0, [r7, #4]
+ 324:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t val = RC52X_ReadRegister(rc52x, RC52X_REG_CommandReg); // Read state of the command regist
+ 891              		.loc 1 324 16
+ 892 0008 0121     		movs	r1, #1
+ 893 000a 7868     		ldr	r0, [r7, #4]
+ 894 000c FFF7FEFF 		bl	RC52X_ReadRegister
+ 895 0010 0346     		mov	r3, r0
+ 896 0012 FB73     		strb	r3, [r7, #15]
+ 325:../../lib/bsrfid/drivers/rc52x.c **** 	val |= (1 << 4); // set PowerDown bit ( bit 4 ) to 1
+ 897              		.loc 1 325 6
+ 898 0014 FB7B     		ldrb	r3, [r7, #15]
+ 899 0016 43F01003 		orr	r3, r3, #16
+ 900 001a FB73     		strb	r3, [r7, #15]
+ 326:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, val); //write new value to the command register
+ 901              		.loc 1 326 2
+ 902 001c FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 903 001e 1A46     		mov	r2, r3
+ARM GAS  /tmp/ccsj0CIu.s 			page 23
+
+
+ 904 0020 0121     		movs	r1, #1
+ 905 0022 7868     		ldr	r0, [r7, #4]
+ 906 0024 FFF7FEFF 		bl	rc52x_set_reg8
+ 327:../../lib/bsrfid/drivers/rc52x.c **** }
+ 907              		.loc 1 327 1
+ 908 0028 00BF     		nop
+ 909 002a 1037     		adds	r7, r7, #16
+ 910              		.cfi_def_cfa_offset 8
+ 911 002c BD46     		mov	sp, r7
+ 912              		.cfi_def_cfa_register 13
+ 913              		@ sp needed
+ 914 002e 80BD     		pop	{r7, pc}
+ 915              		.cfi_endproc
+ 916              	.LFE11:
+ 918              		.section	.text.RC52X_SoftPowerUp,"ax",%progbits
+ 919              		.align	1
+ 920              		.global	RC52X_SoftPowerUp
+ 921              		.syntax unified
+ 922              		.thumb
+ 923              		.thumb_func
+ 924              		.fpu softvfp
+ 926              	RC52X_SoftPowerUp:
+ 927              	.LFB12:
+ 328:../../lib/bsrfid/drivers/rc52x.c **** 
+ 329:../../lib/bsrfid/drivers/rc52x.c **** void RC52X_SoftPowerUp(rc52x_t *rc52x) {
+ 928              		.loc 1 329 40
+ 929              		.cfi_startproc
+ 930              		@ args = 0, pretend = 0, frame = 16
+ 931              		@ frame_needed = 1, uses_anonymous_args = 0
+ 932 0000 80B5     		push	{r7, lr}
+ 933              		.cfi_def_cfa_offset 8
+ 934              		.cfi_offset 7, -8
+ 935              		.cfi_offset 14, -4
+ 936 0002 84B0     		sub	sp, sp, #16
+ 937              		.cfi_def_cfa_offset 24
+ 938 0004 00AF     		add	r7, sp, #0
+ 939              		.cfi_def_cfa_register 7
+ 940 0006 7860     		str	r0, [r7, #4]
+ 330:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t val = RC52X_ReadRegister(rc52x, RC52X_REG_CommandReg); // Read state of the command regist
+ 941              		.loc 1 330 16
+ 942 0008 0121     		movs	r1, #1
+ 943 000a 7868     		ldr	r0, [r7, #4]
+ 944 000c FFF7FEFF 		bl	RC52X_ReadRegister
+ 945 0010 0346     		mov	r3, r0
+ 946 0012 FB73     		strb	r3, [r7, #15]
+ 331:../../lib/bsrfid/drivers/rc52x.c **** 	val &= ~(1 << 4); // set PowerDown bit ( bit 4 ) to 0
+ 947              		.loc 1 331 6
+ 948 0014 FB7B     		ldrb	r3, [r7, #15]
+ 949 0016 23F01003 		bic	r3, r3, #16
+ 950 001a FB73     		strb	r3, [r7, #15]
+ 332:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, val); //write new value to the command register
+ 951              		.loc 1 332 2
+ 952 001c FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 953 001e 1A46     		mov	r2, r3
+ 954 0020 0121     		movs	r1, #1
+ 955 0022 7868     		ldr	r0, [r7, #4]
+ 956 0024 FFF7FEFF 		bl	rc52x_set_reg8
+ARM GAS  /tmp/ccsj0CIu.s 			page 24
+
+
+ 333:../../lib/bsrfid/drivers/rc52x.c **** 	// wait until PowerDown bit is cleared (this indicates end of wake up procedure)
+ 334:../../lib/bsrfid/drivers/rc52x.c **** 	const uint32_t timeout = (uint32_t) millis() + 500;	// create timer for timeout (just in case)
+ 957              		.loc 1 334 38
+ 958 0028 FFF7FEFF 		bl	millis
+ 959 002c 0346     		mov	r3, r0
+ 960              		.loc 1 334 17
+ 961 002e 03F5FA73 		add	r3, r3, #500
+ 962 0032 BB60     		str	r3, [r7, #8]
+ 335:../../lib/bsrfid/drivers/rc52x.c **** 
+ 336:../../lib/bsrfid/drivers/rc52x.c **** 	while (millis() <= timeout) { // set timeout to 500 ms
+ 963              		.loc 1 336 8
+ 964 0034 0AE0     		b	.L47
+ 965              	.L49:
+ 337:../../lib/bsrfid/drivers/rc52x.c **** 		val = RC52X_ReadRegister(rc52x, RC52X_REG_CommandReg); // Read state of the command register
+ 966              		.loc 1 337 9
+ 967 0036 0121     		movs	r1, #1
+ 968 0038 7868     		ldr	r0, [r7, #4]
+ 969 003a FFF7FEFF 		bl	RC52X_ReadRegister
+ 970 003e 0346     		mov	r3, r0
+ 971 0040 FB73     		strb	r3, [r7, #15]
+ 338:../../lib/bsrfid/drivers/rc52x.c **** 		if (!(val & (1 << 4))) { // if powerdown bit is 0
+ 972              		.loc 1 338 13
+ 973 0042 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 974 0044 03F01003 		and	r3, r3, #16
+ 975              		.loc 1 338 6
+ 976 0048 002B     		cmp	r3, #0
+ 977 004a 07D0     		beq	.L50
+ 978              	.L47:
+ 336:../../lib/bsrfid/drivers/rc52x.c **** 		val = RC52X_ReadRegister(rc52x, RC52X_REG_CommandReg); // Read state of the command register
+ 979              		.loc 1 336 9
+ 980 004c FFF7FEFF 		bl	millis
+ 981 0050 0346     		mov	r3, r0
+ 982 0052 1A46     		mov	r2, r3
+ 336:../../lib/bsrfid/drivers/rc52x.c **** 		val = RC52X_ReadRegister(rc52x, RC52X_REG_CommandReg); // Read state of the command register
+ 983              		.loc 1 336 18
+ 984 0054 BB68     		ldr	r3, [r7, #8]
+ 985 0056 9342     		cmp	r3, r2
+ 986 0058 EDD2     		bcs	.L49
+ 339:../../lib/bsrfid/drivers/rc52x.c **** 			break; // wake up procedure is finished
+ 340:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 341:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 342:../../lib/bsrfid/drivers/rc52x.c **** }
+ 987              		.loc 1 342 1
+ 988 005a 00E0     		b	.L51
+ 989              	.L50:
+ 339:../../lib/bsrfid/drivers/rc52x.c **** 			break; // wake up procedure is finished
+ 990              		.loc 1 339 4
+ 991 005c 00BF     		nop
+ 992              	.L51:
+ 993              		.loc 1 342 1
+ 994 005e 00BF     		nop
+ 995 0060 1037     		adds	r7, r7, #16
+ 996              		.cfi_def_cfa_offset 8
+ 997 0062 BD46     		mov	sp, r7
+ 998              		.cfi_def_cfa_register 13
+ 999              		@ sp needed
+ 1000 0064 80BD     		pop	{r7, pc}
+ARM GAS  /tmp/ccsj0CIu.s 			page 25
+
+
+ 1001              		.cfi_endproc
+ 1002              	.LFE12:
+ 1004              		.section	.text.RC52X_TransceiveData,"ax",%progbits
+ 1005              		.align	1
+ 1006              		.global	RC52X_TransceiveData
+ 1007              		.syntax unified
+ 1008              		.thumb
+ 1009              		.thumb_func
+ 1010              		.fpu softvfp
+ 1012              	RC52X_TransceiveData:
+ 1013              	.LFB13:
+ 343:../../lib/bsrfid/drivers/rc52x.c **** 
+ 344:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 345:../../lib/bsrfid/drivers/rc52x.c **** // Functions for communicating with PICCs
+ 346:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 347:../../lib/bsrfid/drivers/rc52x.c **** 
+ 348:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 349:../../lib/bsrfid/drivers/rc52x.c ****  * Executes the Transceive command.
+ 350:../../lib/bsrfid/drivers/rc52x.c ****  * CRC validation can only be done if backData and backLen are specified.
+ 351:../../lib/bsrfid/drivers/rc52x.c ****  *
+ 352:../../lib/bsrfid/drivers/rc52x.c ****  * @return STATUS_OK on success, STATUS_??? otherwise.
+ 353:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 354:../../lib/bsrfid/drivers/rc52x.c **** rc52x_result_t RC52X_TransceiveData(rc52x_t *rc52x, uint8_t *sendData, ///< Pointer to the data to 
+ 355:../../lib/bsrfid/drivers/rc52x.c **** 		size_t sendLen,		///< Number of uint8_ts to transfer to the FIFO.
+ 356:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t *backData,///< nullptr or pointer to buffer if data should be read back after executing t
+ 357:../../lib/bsrfid/drivers/rc52x.c **** 		size_t *backLen,///< In: Max number of uint8_ts to write to *backData. Out: The number of uint8_t
+ 358:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t *validBits,	///< In/Out: The number of valid bits in the last uint8_t. 0 for 8 valid bits
+ 359:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t rxAlign,///< In: Defines the bit position in backData[0] for the first bit received. Defa
+ 360:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t *collisionPos,
+ 361:../../lib/bsrfid/drivers/rc52x.c **** 		bool sendCRC ,
+ 362:../../lib/bsrfid/drivers/rc52x.c **** 		bool recvCRC
+ 363:../../lib/bsrfid/drivers/rc52x.c **** 		) {
+ 1014              		.loc 1 363 5
+ 1015              		.cfi_startproc
+ 1016              		@ args = 24, pretend = 0, frame = 24
+ 1017              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1018 0000 80B5     		push	{r7, lr}
+ 1019              		.cfi_def_cfa_offset 8
+ 1020              		.cfi_offset 7, -8
+ 1021              		.cfi_offset 14, -4
+ 1022 0002 8EB0     		sub	sp, sp, #56
+ 1023              		.cfi_def_cfa_offset 64
+ 1024 0004 08AF     		add	r7, sp, #32
+ 1025              		.cfi_def_cfa 7, 32
+ 1026 0006 F860     		str	r0, [r7, #12]
+ 1027 0008 B960     		str	r1, [r7, #8]
+ 1028 000a 7A60     		str	r2, [r7, #4]
+ 1029 000c 3B60     		str	r3, [r7]
+ 364:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t waitIRq = 0x30;		// RxIRq and IdleIRq
+ 1030              		.loc 1 364 10
+ 1031 000e 3023     		movs	r3, #48
+ 1032 0010 FB75     		strb	r3, [r7, #23]
+ 365:../../lib/bsrfid/drivers/rc52x.c **** 	return RC52X_CommunicateWithPICC(rc52x, RC52X_CMD_Transceive, waitIRq,
+ 1033              		.loc 1 365 9
+ 1034 0012 FA7D     		ldrb	r2, [r7, #23]	@ zero_extendqisi2
+ 1035 0014 97F83430 		ldrb	r3, [r7, #52]	@ zero_extendqisi2
+ 1036 0018 0793     		str	r3, [sp, #28]
+ARM GAS  /tmp/ccsj0CIu.s 			page 26
+
+
+ 1037 001a 97F83030 		ldrb	r3, [r7, #48]	@ zero_extendqisi2
+ 1038 001e 0693     		str	r3, [sp, #24]
+ 1039 0020 FB6A     		ldr	r3, [r7, #44]
+ 1040 0022 0593     		str	r3, [sp, #20]
+ 1041 0024 97F82830 		ldrb	r3, [r7, #40]	@ zero_extendqisi2
+ 1042 0028 0493     		str	r3, [sp, #16]
+ 1043 002a 7B6A     		ldr	r3, [r7, #36]
+ 1044 002c 0393     		str	r3, [sp, #12]
+ 1045 002e 3B6A     		ldr	r3, [r7, #32]
+ 1046 0030 0293     		str	r3, [sp, #8]
+ 1047 0032 3B68     		ldr	r3, [r7]
+ 1048 0034 0193     		str	r3, [sp, #4]
+ 1049 0036 7B68     		ldr	r3, [r7, #4]
+ 1050 0038 0093     		str	r3, [sp]
+ 1051 003a BB68     		ldr	r3, [r7, #8]
+ 1052 003c 0C21     		movs	r1, #12
+ 1053 003e F868     		ldr	r0, [r7, #12]
+ 1054 0040 FFF7FEFF 		bl	RC52X_CommunicateWithPICC
+ 1055 0044 0346     		mov	r3, r0
+ 366:../../lib/bsrfid/drivers/rc52x.c **** 			sendData, sendLen, backData, backLen, validBits, rxAlign, collisionPos, sendCRC, recvCRC);
+ 367:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_TransceiveData()
+ 1056              		.loc 1 367 1
+ 1057 0046 1846     		mov	r0, r3
+ 1058 0048 1837     		adds	r7, r7, #24
+ 1059              		.cfi_def_cfa_offset 8
+ 1060 004a BD46     		mov	sp, r7
+ 1061              		.cfi_def_cfa_register 13
+ 1062              		@ sp needed
+ 1063 004c 80BD     		pop	{r7, pc}
+ 1064              		.cfi_endproc
+ 1065              	.LFE13:
+ 1067              		.section	.text.RC52X_CommunicateWithPICC,"ax",%progbits
+ 1068              		.align	1
+ 1069              		.global	RC52X_CommunicateWithPICC
+ 1070              		.syntax unified
+ 1071              		.thumb
+ 1072              		.thumb_func
+ 1073              		.fpu softvfp
+ 1075              	RC52X_CommunicateWithPICC:
+ 1076              	.LFB14:
+ 368:../../lib/bsrfid/drivers/rc52x.c **** 
+ 369:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 370:../../lib/bsrfid/drivers/rc52x.c ****  * Transfers data to the MFRC522 FIFO, executes a command, waits for completion and transfers data 
+ 371:../../lib/bsrfid/drivers/rc52x.c ****  * CRC validation can only be done if backData and backLen are specified.
+ 372:../../lib/bsrfid/drivers/rc52x.c ****  *
+ 373:../../lib/bsrfid/drivers/rc52x.c ****  * @return STATUS_OK on success, STATUS_??? otherwise.
+ 374:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 375:../../lib/bsrfid/drivers/rc52x.c **** rc52x_result_t RC52X_CommunicateWithPICC(rc52x_t *rc52x, uint8_t command,	///< The command to execu
+ 376:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t waitIRq,///< The bits in the ComIrqReg register that signals successful completion of the
+ 377:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t *sendData,	///< Pointer to the data to transfer to the FIFO.
+ 378:../../lib/bsrfid/drivers/rc52x.c **** 		size_t sendLen,		///< Number of uint8_ts to transfer to the FIFO.
+ 379:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t *backData,///< nullptr or pointer to buffer if data should be read back after executing t
+ 380:../../lib/bsrfid/drivers/rc52x.c **** 		size_t *backLen,///< In: Max number of uint8_ts to write to *backData. Out: The number of uint8_t
+ 381:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t *validBits,	///< In/Out: The number of valid bits in the last uint8_t. 0 for 8 valid bits
+ 382:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t rxAlign,///< In: Defines the bit position in backData[0] for the first bit received. Defa
+ 383:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t *collisionPos,
+ 384:../../lib/bsrfid/drivers/rc52x.c **** 		bool sendCRC ,
+ARM GAS  /tmp/ccsj0CIu.s 			page 27
+
+
+ 385:../../lib/bsrfid/drivers/rc52x.c **** 		bool recvCRC
+ 386:../../lib/bsrfid/drivers/rc52x.c **** 		) {
+ 1077              		.loc 1 386 5
+ 1078              		.cfi_startproc
+ 1079              		@ args = 32, pretend = 0, frame = 32
+ 1080              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1081 0000 80B5     		push	{r7, lr}
+ 1082              		.cfi_def_cfa_offset 8
+ 1083              		.cfi_offset 7, -8
+ 1084              		.cfi_offset 14, -4
+ 1085 0002 88B0     		sub	sp, sp, #32
+ 1086              		.cfi_def_cfa_offset 40
+ 1087 0004 00AF     		add	r7, sp, #0
+ 1088              		.cfi_def_cfa_register 7
+ 1089 0006 F860     		str	r0, [r7, #12]
+ 1090 0008 7B60     		str	r3, [r7, #4]
+ 1091 000a 0B46     		mov	r3, r1
+ 1092 000c FB72     		strb	r3, [r7, #11]
+ 1093 000e 1346     		mov	r3, r2
+ 1094 0010 BB72     		strb	r3, [r7, #10]
+ 387:../../lib/bsrfid/drivers/rc52x.c **** 	// Prepare values for BitFramingReg
+ 388:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t txLastBits = validBits ? *validBits : 0;
+ 1095              		.loc 1 388 10
+ 1096 0012 7B6B     		ldr	r3, [r7, #52]
+ 1097 0014 002B     		cmp	r3, #0
+ 1098 0016 02D0     		beq	.L55
+ 1099              		.loc 1 388 10 is_stmt 0 discriminator 1
+ 1100 0018 7B6B     		ldr	r3, [r7, #52]
+ 1101 001a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1102 001c 00E0     		b	.L56
+ 1103              	.L55:
+ 1104              		.loc 1 388 10 discriminator 2
+ 1105 001e 0023     		movs	r3, #0
+ 1106              	.L56:
+ 1107              		.loc 1 388 10 discriminator 4
+ 1108 0020 3B77     		strb	r3, [r7, #28]
+ 389:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t bitFraming = (rxAlign << 4) + txLastBits;// RxAlign = BitFramingReg[6..4]. TxLastBits = Bi
+ 1109              		.loc 1 389 32 is_stmt 1 discriminator 4
+ 1110 0022 97F83830 		ldrb	r3, [r7, #56]
+ 1111 0026 1B01     		lsls	r3, r3, #4
+ 1112 0028 DAB2     		uxtb	r2, r3
+ 1113              		.loc 1 389 10 discriminator 4
+ 1114 002a 3B7F     		ldrb	r3, [r7, #28]
+ 1115 002c 1344     		add	r3, r3, r2
+ 1116 002e FB76     		strb	r3, [r7, #27]
+ 390:../../lib/bsrfid/drivers/rc52x.c **** 
+ 391:../../lib/bsrfid/drivers/rc52x.c **** 
+ 392:../../lib/bsrfid/drivers/rc52x.c **** 
+ 393:../../lib/bsrfid/drivers/rc52x.c **** 	if (sendCRC) {
+ 1117              		.loc 1 393 5 discriminator 4
+ 1118 0030 97F84030 		ldrb	r3, [r7, #64]	@ zero_extendqisi2
+ 1119 0034 002B     		cmp	r3, #0
+ 1120 0036 15D0     		beq	.L57
+ 1121              	.LBB6:
+ 394:../../lib/bsrfid/drivers/rc52x.c **** 		rc52x_result_t result = RC52X_CalculateCRC(rc52x, sendData, sendLen,
+ 1122              		.loc 1 394 27
+ 1123 0038 BB6A     		ldr	r3, [r7, #40]
+ARM GAS  /tmp/ccsj0CIu.s 			page 28
+
+
+ 1124 003a D9B2     		uxtb	r1, r3
+ 1125 003c 7A68     		ldr	r2, [r7, #4]
+ 1126 003e BB6A     		ldr	r3, [r7, #40]
+ 1127 0040 1344     		add	r3, r3, r2
+ 1128 0042 0A46     		mov	r2, r1
+ 1129 0044 7968     		ldr	r1, [r7, #4]
+ 1130 0046 F868     		ldr	r0, [r7, #12]
+ 1131 0048 FFF7FEFF 		bl	RC52X_CalculateCRC
+ 1132 004c 0346     		mov	r3, r0
+ 1133 004e BB76     		strb	r3, [r7, #26]
+ 395:../../lib/bsrfid/drivers/rc52x.c **** 				&sendData[sendLen]);
+ 396:../../lib/bsrfid/drivers/rc52x.c **** 		if (result != STATUS_OK) {
+ 1134              		.loc 1 396 6
+ 1135 0050 97F91A30 		ldrsb	r3, [r7, #26]
+ 1136 0054 002B     		cmp	r3, #0
+ 1137 0056 02D0     		beq	.L58
+ 397:../../lib/bsrfid/drivers/rc52x.c **** 			return result;
+ 1138              		.loc 1 397 11
+ 1139 0058 97F91A30 		ldrsb	r3, [r7, #26]
+ 1140 005c 05E1     		b	.L59
+ 1141              	.L58:
+ 398:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 399:../../lib/bsrfid/drivers/rc52x.c **** 		sendLen += 2;
+ 1142              		.loc 1 399 11
+ 1143 005e BB6A     		ldr	r3, [r7, #40]
+ 1144 0060 0233     		adds	r3, r3, #2
+ 1145 0062 BB62     		str	r3, [r7, #40]
+ 1146              	.L57:
+ 1147              	.LBE6:
+ 400:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 401:../../lib/bsrfid/drivers/rc52x.c **** 
+ 402:../../lib/bsrfid/drivers/rc52x.c **** 	RC52X_ClearRegisterBitMask(rc52x, RC52X_REG_CollReg, 0x80);
+ 1148              		.loc 1 402 2
+ 1149 0064 8022     		movs	r2, #128
+ 1150 0066 0E21     		movs	r1, #14
+ 1151 0068 F868     		ldr	r0, [r7, #12]
+ 1152 006a FFF7FEFF 		bl	RC52X_ClearRegisterBitMask
+ 403:../../lib/bsrfid/drivers/rc52x.c **** 
+ 404:../../lib/bsrfid/drivers/rc52x.c **** 
+ 405:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, RC52X_CMD_Idle);// Stop any active command.
+ 1153              		.loc 1 405 2
+ 1154 006e 0022     		movs	r2, #0
+ 1155 0070 0121     		movs	r1, #1
+ 1156 0072 F868     		ldr	r0, [r7, #12]
+ 1157 0074 FFF7FEFF 		bl	rc52x_set_reg8
+ 406:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_ComIrqReg, 0x7F);// Clear all seven interrupt request bits
+ 1158              		.loc 1 406 2
+ 1159 0078 7F22     		movs	r2, #127
+ 1160 007a 0421     		movs	r1, #4
+ 1161 007c F868     		ldr	r0, [r7, #12]
+ 1162 007e FFF7FEFF 		bl	rc52x_set_reg8
+ 407:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_FIFOLevelReg, 0x80);	// FlushBuffer = 1, FIFO initialization
+ 1163              		.loc 1 407 2
+ 1164 0082 8022     		movs	r2, #128
+ 1165 0084 0A21     		movs	r1, #10
+ 1166 0086 F868     		ldr	r0, [r7, #12]
+ 1167 0088 FFF7FEFF 		bl	rc52x_set_reg8
+ARM GAS  /tmp/ccsj0CIu.s 			page 29
+
+
+ 408:../../lib/bsrfid/drivers/rc52x.c **** 	mfrc522_send(rc52x, RC52X_REG_FIFODataReg, sendData, sendLen);// Write sendData to the FIFO
+ 1168              		.loc 1 408 2
+ 1169 008c BB6A     		ldr	r3, [r7, #40]
+ 1170 008e 7A68     		ldr	r2, [r7, #4]
+ 1171 0090 0921     		movs	r1, #9
+ 1172 0092 F868     		ldr	r0, [r7, #12]
+ 1173 0094 FFF7FEFF 		bl	mfrc522_send
+ 409:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_BitFramingReg, bitFraming);// Bit adjustments
+ 1174              		.loc 1 409 2
+ 1175 0098 FB7E     		ldrb	r3, [r7, #27]	@ zero_extendqisi2
+ 1176 009a 1A46     		mov	r2, r3
+ 1177 009c 0D21     		movs	r1, #13
+ 1178 009e F868     		ldr	r0, [r7, #12]
+ 1179 00a0 FFF7FEFF 		bl	rc52x_set_reg8
+ 410:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_set_reg8(rc52x, RC52X_REG_CommandReg, command);// Execute the command
+ 1180              		.loc 1 410 2
+ 1181 00a4 FB7A     		ldrb	r3, [r7, #11]	@ zero_extendqisi2
+ 1182 00a6 1A46     		mov	r2, r3
+ 1183 00a8 0121     		movs	r1, #1
+ 1184 00aa F868     		ldr	r0, [r7, #12]
+ 1185 00ac FFF7FEFF 		bl	rc52x_set_reg8
+ 411:../../lib/bsrfid/drivers/rc52x.c **** 	if (command == RC52X_CMD_Transceive) {
+ 1186              		.loc 1 411 5
+ 1187 00b0 FB7A     		ldrb	r3, [r7, #11]	@ zero_extendqisi2
+ 1188 00b2 0C2B     		cmp	r3, #12
+ 1189 00b4 04D1     		bne	.L60
+ 412:../../lib/bsrfid/drivers/rc52x.c **** 		//rc52x_set_reg8(rc52x, RC52X_REG_BitFramingReg, 0x80);// StartSend=1, transmission of data start
+ 413:../../lib/bsrfid/drivers/rc52x.c **** 		rc52x_or_reg8(rc52x, RC52X_REG_BitFramingReg, 0x80);	// StartSend=1, transmission of data starts
+ 1190              		.loc 1 413 3
+ 1191 00b6 8022     		movs	r2, #128
+ 1192 00b8 0D21     		movs	r1, #13
+ 1193 00ba F868     		ldr	r0, [r7, #12]
+ 1194 00bc FFF7FEFF 		bl	rc52x_or_reg8
+ 1195              	.L60:
+ 414:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 415:../../lib/bsrfid/drivers/rc52x.c **** 
+ 416:../../lib/bsrfid/drivers/rc52x.c **** 	// Wait for the command to complete.
+ 417:../../lib/bsrfid/drivers/rc52x.c **** 	// In RC52X_Init() we set the TAuto flag in TModeReg. This means the timer automatically starts wh
+ 418:../../lib/bsrfid/drivers/rc52x.c **** 	// Each iteration of the do-while-loop takes 17.86μs.
+ 419:../../lib/bsrfid/drivers/rc52x.c **** 	// TODO check/modify for other architectures than Arduino Uno 16bit
+ 420:../../lib/bsrfid/drivers/rc52x.c **** 	uint16_t i;
+ 421:../../lib/bsrfid/drivers/rc52x.c **** 	for (i = 2000; i > 0; i--) {
+ 1196              		.loc 1 421 9
+ 1197 00c0 4FF4FA63 		mov	r3, #2000
+ 1198 00c4 FB83     		strh	r3, [r7, #30]	@ movhi
+ 1199              		.loc 1 421 2
+ 1200 00c6 16E0     		b	.L61
+ 1201              	.L65:
+ 1202              	.LBB7:
+ 422:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t n = RC52X_ReadRegister(rc52x, RC52X_REG_ComIrqReg);// ComIrqReg[7..0] bits are: Set1 TxIR
+ 1203              		.loc 1 422 15
+ 1204 00c8 0421     		movs	r1, #4
+ 1205 00ca F868     		ldr	r0, [r7, #12]
+ 1206 00cc FFF7FEFF 		bl	RC52X_ReadRegister
+ 1207 00d0 0346     		mov	r3, r0
+ 1208 00d2 7B76     		strb	r3, [r7, #25]
+ 423:../../lib/bsrfid/drivers/rc52x.c **** 		if (n & waitIRq) {// One of the interrupts that signal success has been set.
+ARM GAS  /tmp/ccsj0CIu.s 			page 30
+
+
+ 1209              		.loc 1 423 7
+ 1210 00d4 7A7E     		ldrb	r2, [r7, #25]
+ 1211 00d6 BB7A     		ldrb	r3, [r7, #10]
+ 1212 00d8 1340     		ands	r3, r3, r2
+ 1213 00da DBB2     		uxtb	r3, r3
+ 1214              		.loc 1 423 6
+ 1215 00dc 002B     		cmp	r3, #0
+ 1216 00de 0ED1     		bne	.L82
+ 424:../../lib/bsrfid/drivers/rc52x.c **** 			break;
+ 425:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 426:../../lib/bsrfid/drivers/rc52x.c **** 		if (n & 0x01) {			// Timer interrupt - nothing received in 25ms
+ 1217              		.loc 1 426 9
+ 1218 00e0 7B7E     		ldrb	r3, [r7, #25]	@ zero_extendqisi2
+ 1219 00e2 03F00103 		and	r3, r3, #1
+ 1220              		.loc 1 426 6
+ 1221 00e6 002B     		cmp	r3, #0
+ 1222 00e8 02D0     		beq	.L64
+ 427:../../lib/bsrfid/drivers/rc52x.c **** 			return STATUS_TIMEOUT;
+ 1223              		.loc 1 427 11
+ 1224 00ea 6FF00303 		mvn	r3, #3
+ 1225 00ee BCE0     		b	.L59
+ 1226              	.L64:
+ 1227              	.LBE7:
+ 421:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t n = RC52X_ReadRegister(rc52x, RC52X_REG_ComIrqReg);// ComIrqReg[7..0] bits are: Set1 TxIR
+ 1228              		.loc 1 421 25 discriminator 2
+ 1229 00f0 FB8B     		ldrh	r3, [r7, #30]
+ 1230 00f2 013B     		subs	r3, r3, #1
+ 1231 00f4 FB83     		strh	r3, [r7, #30]	@ movhi
+ 1232              	.L61:
+ 421:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t n = RC52X_ReadRegister(rc52x, RC52X_REG_ComIrqReg);// ComIrqReg[7..0] bits are: Set1 TxIR
+ 1233              		.loc 1 421 19 discriminator 1
+ 1234 00f6 FB8B     		ldrh	r3, [r7, #30]
+ 1235 00f8 002B     		cmp	r3, #0
+ 1236 00fa E5D1     		bne	.L65
+ 1237 00fc 00E0     		b	.L63
+ 1238              	.L82:
+ 1239              	.LBB8:
+ 424:../../lib/bsrfid/drivers/rc52x.c **** 			break;
+ 1240              		.loc 1 424 4
+ 1241 00fe 00BF     		nop
+ 1242              	.L63:
+ 1243              	.LBE8:
+ 428:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 429:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 430:../../lib/bsrfid/drivers/rc52x.c **** 	// 35.7ms and nothing happend. Communication with the MFRC522 might be down.
+ 431:../../lib/bsrfid/drivers/rc52x.c **** 	if (i == 0) {
+ 1244              		.loc 1 431 5
+ 1245 0100 FB8B     		ldrh	r3, [r7, #30]
+ 1246 0102 002B     		cmp	r3, #0
+ 1247 0104 02D1     		bne	.L66
+ 432:../../lib/bsrfid/drivers/rc52x.c **** 		return STATUS_TIMEOUT;
+ 1248              		.loc 1 432 10
+ 1249 0106 6FF00303 		mvn	r3, #3
+ 1250 010a AEE0     		b	.L59
+ 1251              	.L66:
+ 433:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 434:../../lib/bsrfid/drivers/rc52x.c **** 
+ARM GAS  /tmp/ccsj0CIu.s 			page 31
+
+
+ 435:../../lib/bsrfid/drivers/rc52x.c **** 	// Stop now if any errors except collisions were detected.
+ 436:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t errorRegValue = RC52X_ReadRegister(rc52x, RC52X_REG_ErrorReg); // ErrorReg[7..0] bits are:
+ 1252              		.loc 1 436 26
+ 1253 010c 0621     		movs	r1, #6
+ 1254 010e F868     		ldr	r0, [r7, #12]
+ 1255 0110 FFF7FEFF 		bl	RC52X_ReadRegister
+ 1256 0114 0346     		mov	r3, r0
+ 1257 0116 3B76     		strb	r3, [r7, #24]
+ 437:../../lib/bsrfid/drivers/rc52x.c **** 	if (errorRegValue & 0x13) {	 // BufferOvfl ParityErr ProtocolErr
+ 1258              		.loc 1 437 20
+ 1259 0118 3B7E     		ldrb	r3, [r7, #24]	@ zero_extendqisi2
+ 1260 011a 03F01303 		and	r3, r3, #19
+ 1261              		.loc 1 437 5
+ 1262 011e 002B     		cmp	r3, #0
+ 1263 0120 02D0     		beq	.L67
+ 438:../../lib/bsrfid/drivers/rc52x.c **** 		return STATUS_ERROR;
+ 1264              		.loc 1 438 10
+ 1265 0122 4FF0FF33 		mov	r3, #-1
+ 1266 0126 A0E0     		b	.L59
+ 1267              	.L67:
+ 439:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 440:../../lib/bsrfid/drivers/rc52x.c **** 
+ 441:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t _validBits = 0;
+ 1268              		.loc 1 441 10
+ 1269 0128 0023     		movs	r3, #0
+ 1270 012a 7B77     		strb	r3, [r7, #29]
+ 442:../../lib/bsrfid/drivers/rc52x.c **** 
+ 443:../../lib/bsrfid/drivers/rc52x.c **** 	// If the caller wants data back, get it from the MFRC522.
+ 444:../../lib/bsrfid/drivers/rc52x.c **** 	if (backData && backLen) {
+ 1271              		.loc 1 444 5
+ 1272 012c FB6A     		ldr	r3, [r7, #44]
+ 1273 012e 002B     		cmp	r3, #0
+ 1274 0130 27D0     		beq	.L68
+ 1275              		.loc 1 444 15 discriminator 1
+ 1276 0132 3B6B     		ldr	r3, [r7, #48]
+ 1277 0134 002B     		cmp	r3, #0
+ 1278 0136 24D0     		beq	.L68
+ 1279              	.LBB9:
+ 445:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t n = RC52X_ReadRegister(rc52x, RC52X_REG_FIFOLevelReg);	// Number of uint8_ts in the FIFO
+ 1280              		.loc 1 445 15
+ 1281 0138 0A21     		movs	r1, #10
+ 1282 013a F868     		ldr	r0, [r7, #12]
+ 1283 013c FFF7FEFF 		bl	RC52X_ReadRegister
+ 1284 0140 0346     		mov	r3, r0
+ 1285 0142 FB75     		strb	r3, [r7, #23]
+ 446:../../lib/bsrfid/drivers/rc52x.c **** 		if (n > *backLen) {
+ 1286              		.loc 1 446 9
+ 1287 0144 FA7D     		ldrb	r2, [r7, #23]	@ zero_extendqisi2
+ 1288              		.loc 1 446 11
+ 1289 0146 3B6B     		ldr	r3, [r7, #48]
+ 1290 0148 1B68     		ldr	r3, [r3]
+ 1291              		.loc 1 446 6
+ 1292 014a 9A42     		cmp	r2, r3
+ 1293 014c 02D9     		bls	.L69
+ 447:../../lib/bsrfid/drivers/rc52x.c **** 			return STATUS_NO_ROOM;
+ 1294              		.loc 1 447 11
+ 1295 014e 6FF00403 		mvn	r3, #4
+ARM GAS  /tmp/ccsj0CIu.s 			page 32
+
+
+ 1296 0152 8AE0     		b	.L59
+ 1297              	.L69:
+ 448:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 449:../../lib/bsrfid/drivers/rc52x.c **** 		*backLen = n;							// Number of uint8_ts returned
+ 1298              		.loc 1 449 12
+ 1299 0154 FA7D     		ldrb	r2, [r7, #23]	@ zero_extendqisi2
+ 1300 0156 3B6B     		ldr	r3, [r7, #48]
+ 1301 0158 1A60     		str	r2, [r3]
+ 450:../../lib/bsrfid/drivers/rc52x.c **** 		mfrc522_recv(rc52x, RC52X_REG_FIFODataReg, backData, n);
+ 1302              		.loc 1 450 3
+ 1303 015a FB7D     		ldrb	r3, [r7, #23]	@ zero_extendqisi2
+ 1304 015c FA6A     		ldr	r2, [r7, #44]
+ 1305 015e 0921     		movs	r1, #9
+ 1306 0160 F868     		ldr	r0, [r7, #12]
+ 1307 0162 FFF7FEFF 		bl	mfrc522_recv
+ 451:../../lib/bsrfid/drivers/rc52x.c **** 		_validBits = RC52X_ReadRegister(rc52x, RC52X_REG_ControlReg) & 0x07;// RxLastBits[2:0] indicates 
+ 1308              		.loc 1 451 16
+ 1309 0166 0C21     		movs	r1, #12
+ 1310 0168 F868     		ldr	r0, [r7, #12]
+ 1311 016a FFF7FEFF 		bl	RC52X_ReadRegister
+ 1312 016e 0346     		mov	r3, r0
+ 1313              		.loc 1 451 14
+ 1314 0170 03F00703 		and	r3, r3, #7
+ 1315 0174 7B77     		strb	r3, [r7, #29]
+ 452:../../lib/bsrfid/drivers/rc52x.c **** 		if (validBits) {
+ 1316              		.loc 1 452 6
+ 1317 0176 7B6B     		ldr	r3, [r7, #52]
+ 1318 0178 002B     		cmp	r3, #0
+ 1319 017a 02D0     		beq	.L68
+ 453:../../lib/bsrfid/drivers/rc52x.c **** 			*validBits = _validBits;
+ 1320              		.loc 1 453 15
+ 1321 017c 7B6B     		ldr	r3, [r7, #52]
+ 1322 017e 7A7F     		ldrb	r2, [r7, #29]
+ 1323 0180 1A70     		strb	r2, [r3]
+ 1324              	.L68:
+ 1325              	.LBE9:
+ 454:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 455:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 456:../../lib/bsrfid/drivers/rc52x.c **** 
+ 457:../../lib/bsrfid/drivers/rc52x.c **** 	// Tell about collisions
+ 458:../../lib/bsrfid/drivers/rc52x.c **** 	if (errorRegValue & 0x08) {		// CollErr
+ 1326              		.loc 1 458 20
+ 1327 0182 3B7E     		ldrb	r3, [r7, #24]	@ zero_extendqisi2
+ 1328 0184 03F00803 		and	r3, r3, #8
+ 1329              		.loc 1 458 5
+ 1330 0188 002B     		cmp	r3, #0
+ 1331 018a 26D0     		beq	.L70
+ 1332              	.LBB10:
+ 459:../../lib/bsrfid/drivers/rc52x.c **** 		if (!collisionPos)
+ 1333              		.loc 1 459 6
+ 1334 018c FB6B     		ldr	r3, [r7, #60]
+ 1335 018e 002B     		cmp	r3, #0
+ 1336 0190 02D1     		bne	.L71
+ 460:../../lib/bsrfid/drivers/rc52x.c **** 			return STATUS_COLLISION;
+ 1337              		.loc 1 460 11
+ 1338 0192 6FF00203 		mvn	r3, #2
+ 1339 0196 68E0     		b	.L59
+ARM GAS  /tmp/ccsj0CIu.s 			page 33
+
+
+ 1340              	.L71:
+ 461:../../lib/bsrfid/drivers/rc52x.c **** 
+ 462:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t valueOfCollReg = RC52X_ReadRegister(rc52x, RC52X_REG_CollReg); // CollReg[7..0] bits are:
+ 1341              		.loc 1 462 28
+ 1342 0198 0E21     		movs	r1, #14
+ 1343 019a F868     		ldr	r0, [r7, #12]
+ 1344 019c FFF7FEFF 		bl	RC52X_ReadRegister
+ 1345 01a0 0346     		mov	r3, r0
+ 1346 01a2 7B75     		strb	r3, [r7, #21]
+ 463:../../lib/bsrfid/drivers/rc52x.c **** 		if (valueOfCollReg & 0x20) { // CollPosNotValid
+ 1347              		.loc 1 463 22
+ 1348 01a4 7B7D     		ldrb	r3, [r7, #21]	@ zero_extendqisi2
+ 1349 01a6 03F02003 		and	r3, r3, #32
+ 1350              		.loc 1 463 6
+ 1351 01aa 002B     		cmp	r3, #0
+ 1352 01ac 05D0     		beq	.L72
+ 464:../../lib/bsrfid/drivers/rc52x.c **** 			*collisionPos = -1;
+ 1353              		.loc 1 464 18
+ 1354 01ae FB6B     		ldr	r3, [r7, #60]
+ 1355 01b0 FF22     		movs	r2, #255
+ 1356 01b2 1A70     		strb	r2, [r3]
+ 465:../../lib/bsrfid/drivers/rc52x.c **** 			return STATUS_COLLISION; // Without a valid collision position we cannot continue
+ 1357              		.loc 1 465 11
+ 1358 01b4 6FF00203 		mvn	r3, #2
+ 1359 01b8 57E0     		b	.L59
+ 1360              	.L72:
+ 466:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 467:../../lib/bsrfid/drivers/rc52x.c **** 
+ 468:../../lib/bsrfid/drivers/rc52x.c **** 		*collisionPos = valueOfCollReg & 0x1F; // Values 0-31, 0 means bit 32.
+ 1361              		.loc 1 468 34
+ 1362 01ba 7B7D     		ldrb	r3, [r7, #21]
+ 1363 01bc 03F01F03 		and	r3, r3, #31
+ 1364 01c0 DAB2     		uxtb	r2, r3
+ 1365              		.loc 1 468 17
+ 1366 01c2 FB6B     		ldr	r3, [r7, #60]
+ 1367 01c4 1A70     		strb	r2, [r3]
+ 469:../../lib/bsrfid/drivers/rc52x.c **** 
+ 470:../../lib/bsrfid/drivers/rc52x.c **** 		if (*collisionPos == 0) {
+ 1368              		.loc 1 470 7
+ 1369 01c6 FB6B     		ldr	r3, [r7, #60]
+ 1370 01c8 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1371              		.loc 1 470 6
+ 1372 01ca 002B     		cmp	r3, #0
+ 1373 01cc 02D1     		bne	.L73
+ 471:../../lib/bsrfid/drivers/rc52x.c **** 			*collisionPos = 32;
+ 1374              		.loc 1 471 18
+ 1375 01ce FB6B     		ldr	r3, [r7, #60]
+ 1376 01d0 2022     		movs	r2, #32
+ 1377 01d2 1A70     		strb	r2, [r3]
+ 1378              	.L73:
+ 472:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 473:../../lib/bsrfid/drivers/rc52x.c **** 
+ 474:../../lib/bsrfid/drivers/rc52x.c **** 		return STATUS_COLLISION;
+ 1379              		.loc 1 474 10
+ 1380 01d4 6FF00203 		mvn	r3, #2
+ 1381 01d8 47E0     		b	.L59
+ 1382              	.L70:
+ARM GAS  /tmp/ccsj0CIu.s 			page 34
+
+
+ 1383              	.LBE10:
+ 475:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 476:../../lib/bsrfid/drivers/rc52x.c **** 
+ 477:../../lib/bsrfid/drivers/rc52x.c **** 	// Perform CRC_A validation if requested.
+ 478:../../lib/bsrfid/drivers/rc52x.c **** 	if (backData && backLen && recvCRC) {
+ 1384              		.loc 1 478 5
+ 1385 01da FB6A     		ldr	r3, [r7, #44]
+ 1386 01dc 002B     		cmp	r3, #0
+ 1387 01de 43D0     		beq	.L74
+ 1388              		.loc 1 478 15 discriminator 1
+ 1389 01e0 3B6B     		ldr	r3, [r7, #48]
+ 1390 01e2 002B     		cmp	r3, #0
+ 1391 01e4 40D0     		beq	.L74
+ 1392              		.loc 1 478 26 discriminator 2
+ 1393 01e6 97F84430 		ldrb	r3, [r7, #68]	@ zero_extendqisi2
+ 1394 01ea 002B     		cmp	r3, #0
+ 1395 01ec 3CD0     		beq	.L74
+ 1396              	.LBB11:
+ 479:../../lib/bsrfid/drivers/rc52x.c **** 		// In this case a MIFARE Classic NAK is not OK.
+ 480:../../lib/bsrfid/drivers/rc52x.c **** 		if (*backLen == 1 && _validBits == 4) {
+ 1397              		.loc 1 480 7
+ 1398 01ee 3B6B     		ldr	r3, [r7, #48]
+ 1399 01f0 1B68     		ldr	r3, [r3]
+ 1400              		.loc 1 480 6
+ 1401 01f2 012B     		cmp	r3, #1
+ 1402 01f4 05D1     		bne	.L75
+ 1403              		.loc 1 480 21 discriminator 1
+ 1404 01f6 7B7F     		ldrb	r3, [r7, #29]	@ zero_extendqisi2
+ 1405 01f8 042B     		cmp	r3, #4
+ 1406 01fa 02D1     		bne	.L75
+ 481:../../lib/bsrfid/drivers/rc52x.c **** 			return STATUS_MIFARE_NACK;
+ 1407              		.loc 1 481 11
+ 1408 01fc 6FF00803 		mvn	r3, #8
+ 1409 0200 33E0     		b	.L59
+ 1410              	.L75:
+ 482:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 483:../../lib/bsrfid/drivers/rc52x.c **** 		// We need at least the CRC_A value and all 8 bits of the last uint8_t must be received.
+ 484:../../lib/bsrfid/drivers/rc52x.c **** 		if (*backLen < 2 || _validBits != 0) {
+ 1411              		.loc 1 484 7
+ 1412 0202 3B6B     		ldr	r3, [r7, #48]
+ 1413 0204 1B68     		ldr	r3, [r3]
+ 1414              		.loc 1 484 6
+ 1415 0206 012B     		cmp	r3, #1
+ 1416 0208 02D9     		bls	.L77
+ 1417              		.loc 1 484 20 discriminator 1
+ 1418 020a 7B7F     		ldrb	r3, [r7, #29]	@ zero_extendqisi2
+ 1419 020c 002B     		cmp	r3, #0
+ 1420 020e 02D0     		beq	.L78
+ 1421              	.L77:
+ 485:../../lib/bsrfid/drivers/rc52x.c **** 			return STATUS_CRC_WRONG;
+ 1422              		.loc 1 485 11
+ 1423 0210 6FF00703 		mvn	r3, #7
+ 1424 0214 29E0     		b	.L59
+ 1425              	.L78:
+ 486:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 487:../../lib/bsrfid/drivers/rc52x.c **** 		// Verify CRC_A - do our own calculation and store the control in controlBuffer.
+ 488:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t controlBuffer[2];
+ARM GAS  /tmp/ccsj0CIu.s 			page 35
+
+
+ 489:../../lib/bsrfid/drivers/rc52x.c **** 		rc52x_result_t status = RC52X_CalculateCRC(rc52x, &backData[0],
+ 490:../../lib/bsrfid/drivers/rc52x.c **** 				*backLen - 2, &controlBuffer[0]);
+ 1426              		.loc 1 490 5
+ 1427 0216 3B6B     		ldr	r3, [r7, #48]
+ 1428 0218 1B68     		ldr	r3, [r3]
+ 489:../../lib/bsrfid/drivers/rc52x.c **** 				*backLen - 2, &controlBuffer[0]);
+ 1429              		.loc 1 489 27
+ 1430 021a DBB2     		uxtb	r3, r3
+ 1431 021c 023B     		subs	r3, r3, #2
+ 1432 021e DAB2     		uxtb	r2, r3
+ 1433 0220 07F11003 		add	r3, r7, #16
+ 1434 0224 F96A     		ldr	r1, [r7, #44]
+ 1435 0226 F868     		ldr	r0, [r7, #12]
+ 1436 0228 FFF7FEFF 		bl	RC52X_CalculateCRC
+ 1437 022c 0346     		mov	r3, r0
+ 1438 022e BB75     		strb	r3, [r7, #22]
+ 491:../../lib/bsrfid/drivers/rc52x.c **** 		if (status != STATUS_OK) {
+ 1439              		.loc 1 491 6
+ 1440 0230 97F91630 		ldrsb	r3, [r7, #22]
+ 1441 0234 002B     		cmp	r3, #0
+ 1442 0236 02D0     		beq	.L79
+ 492:../../lib/bsrfid/drivers/rc52x.c **** 			return status;
+ 1443              		.loc 1 492 11
+ 1444 0238 97F91630 		ldrsb	r3, [r7, #22]
+ 1445 023c 15E0     		b	.L59
+ 1446              	.L79:
+ 493:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 494:../../lib/bsrfid/drivers/rc52x.c **** 		if ((backData[*backLen - 2] != controlBuffer[0])
+ 1447              		.loc 1 494 17
+ 1448 023e 3B6B     		ldr	r3, [r7, #48]
+ 1449 0240 1B68     		ldr	r3, [r3]
+ 1450              		.loc 1 494 16
+ 1451 0242 023B     		subs	r3, r3, #2
+ 1452 0244 FA6A     		ldr	r2, [r7, #44]
+ 1453 0246 1344     		add	r3, r3, r2
+ 1454 0248 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 1455              		.loc 1 494 47
+ 1456 024a 3B7C     		ldrb	r3, [r7, #16]	@ zero_extendqisi2
+ 1457              		.loc 1 494 6
+ 1458 024c 9A42     		cmp	r2, r3
+ 1459 024e 08D1     		bne	.L80
+ 495:../../lib/bsrfid/drivers/rc52x.c **** 				|| (backData[*backLen - 1] != controlBuffer[1])) {
+ 1460              		.loc 1 495 18
+ 1461 0250 3B6B     		ldr	r3, [r7, #48]
+ 1462 0252 1B68     		ldr	r3, [r3]
+ 1463              		.loc 1 495 17
+ 1464 0254 013B     		subs	r3, r3, #1
+ 1465 0256 FA6A     		ldr	r2, [r7, #44]
+ 1466 0258 1344     		add	r3, r3, r2
+ 1467 025a 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 1468              		.loc 1 495 48
+ 1469 025c 7B7C     		ldrb	r3, [r7, #17]	@ zero_extendqisi2
+ 1470              		.loc 1 495 5
+ 1471 025e 9A42     		cmp	r2, r3
+ 1472 0260 02D0     		beq	.L74
+ 1473              	.L80:
+ 496:../../lib/bsrfid/drivers/rc52x.c **** 			return STATUS_CRC_WRONG;
+ARM GAS  /tmp/ccsj0CIu.s 			page 36
+
+
+ 1474              		.loc 1 496 11
+ 1475 0262 6FF00703 		mvn	r3, #7
+ 1476 0266 00E0     		b	.L59
+ 1477              	.L74:
+ 1478              	.LBE11:
+ 497:../../lib/bsrfid/drivers/rc52x.c **** 		}
+ 498:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 499:../../lib/bsrfid/drivers/rc52x.c **** 
+ 500:../../lib/bsrfid/drivers/rc52x.c **** 	return STATUS_OK;
+ 1479              		.loc 1 500 9
+ 1480 0268 0023     		movs	r3, #0
+ 1481              	.L59:
+ 501:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_CommunicateWithPICC()
+ 1482              		.loc 1 501 1
+ 1483 026a 1846     		mov	r0, r3
+ 1484 026c 2037     		adds	r7, r7, #32
+ 1485              		.cfi_def_cfa_offset 8
+ 1486 026e BD46     		mov	sp, r7
+ 1487              		.cfi_def_cfa_register 13
+ 1488              		@ sp needed
+ 1489 0270 80BD     		pop	{r7, pc}
+ 1490              		.cfi_endproc
+ 1491              	.LFE14:
+ 1493              		.section	.text.RC52X_Authenticate,"ax",%progbits
+ 1494              		.align	1
+ 1495              		.global	RC52X_Authenticate
+ 1496              		.syntax unified
+ 1497              		.thumb
+ 1498              		.thumb_func
+ 1499              		.fpu softvfp
+ 1501              	RC52X_Authenticate:
+ 1502              	.LFB15:
+ 502:../../lib/bsrfid/drivers/rc52x.c **** 
+ 503:../../lib/bsrfid/drivers/rc52x.c **** 
+ 504:../../lib/bsrfid/drivers/rc52x.c **** 
+ 505:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 506:../../lib/bsrfid/drivers/rc52x.c **** // Functions for communicating with MIFARE PICCs
+ 507:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 508:../../lib/bsrfid/drivers/rc52x.c **** 
+ 509:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 510:../../lib/bsrfid/drivers/rc52x.c ****  * Executes the MFRC522 MFAuthent command.
+ 511:../../lib/bsrfid/drivers/rc52x.c ****  * This command manages MIFARE authentication to enable a secure communication to any MIFARE Mini, 
+ 512:../../lib/bsrfid/drivers/rc52x.c ****  * The authentication is described in the MFRC522 datasheet section 10.3.1.9 and http://www.nxp.com
+ 513:../../lib/bsrfid/drivers/rc52x.c ****  * For use with MIFARE Classic PICCs.
+ 514:../../lib/bsrfid/drivers/rc52x.c ****  * The PICC must be selected - ie in state ACTIVE(*) - before calling this function.
+ 515:../../lib/bsrfid/drivers/rc52x.c ****  * Remember to call RC52X_StopCrypto1() after communicating with the authenticated PICC - otherwise
+ 516:../../lib/bsrfid/drivers/rc52x.c ****  *
+ 517:../../lib/bsrfid/drivers/rc52x.c ****  * All keys are set to FFFFFFFFFFFFh at chip delivery.
+ 518:../../lib/bsrfid/drivers/rc52x.c ****  *
+ 519:../../lib/bsrfid/drivers/rc52x.c ****  * @return STATUS_OK on success, STATUS_??? otherwise. Probably STATUS_TIMEOUT if you supply the wr
+ 520:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 521:../../lib/bsrfid/drivers/rc52x.c **** rc52x_result_t RC52X_Authenticate(rc52x_t *rc52x, uint8_t command, ///< PICC_CMD_MF_AUTH_KEY_A or P
+ 522:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t blockAddr, ///< The block number. See numbering in the comments in the .h file.
+ 523:../../lib/bsrfid/drivers/rc52x.c **** 		MIFARE_Key *key,	///< Pointer to the Crypteo1 key to use (6 uint8_ts)
+ 524:../../lib/bsrfid/drivers/rc52x.c **** 		picc_t *picc///< Pointer to Uid struct. The first 4 uint8_ts of the UID is used.
+ 525:../../lib/bsrfid/drivers/rc52x.c **** 		) {
+ 1503              		.loc 1 525 5
+ARM GAS  /tmp/ccsj0CIu.s 			page 37
+
+
+ 1504              		.cfi_startproc
+ 1505              		@ args = 4, pretend = 0, frame = 32
+ 1506              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1507 0000 80B5     		push	{r7, lr}
+ 1508              		.cfi_def_cfa_offset 8
+ 1509              		.cfi_offset 7, -8
+ 1510              		.cfi_offset 14, -4
+ 1511 0002 90B0     		sub	sp, sp, #64
+ 1512              		.cfi_def_cfa_offset 72
+ 1513 0004 08AF     		add	r7, sp, #32
+ 1514              		.cfi_def_cfa 7, 40
+ 1515 0006 F860     		str	r0, [r7, #12]
+ 1516 0008 7B60     		str	r3, [r7, #4]
+ 1517 000a 0B46     		mov	r3, r1
+ 1518 000c FB72     		strb	r3, [r7, #11]
+ 1519 000e 1346     		mov	r3, r2
+ 1520 0010 BB72     		strb	r3, [r7, #10]
+ 526:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t waitIRq = 0x10;		// IdleIRq
+ 1521              		.loc 1 526 10
+ 1522 0012 1023     		movs	r3, #16
+ 1523 0014 7B77     		strb	r3, [r7, #29]
+ 527:../../lib/bsrfid/drivers/rc52x.c **** 
+ 528:../../lib/bsrfid/drivers/rc52x.c **** 	// Build command buffer
+ 529:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t sendData[12];
+ 530:../../lib/bsrfid/drivers/rc52x.c **** 	sendData[0] = command;
+ 1524              		.loc 1 530 14
+ 1525 0016 FB7A     		ldrb	r3, [r7, #11]
+ 1526 0018 3B74     		strb	r3, [r7, #16]
+ 531:../../lib/bsrfid/drivers/rc52x.c **** 	sendData[1] = blockAddr;
+ 1527              		.loc 1 531 14
+ 1528 001a BB7A     		ldrb	r3, [r7, #10]
+ 1529 001c 7B74     		strb	r3, [r7, #17]
+ 1530              	.LBB12:
+ 532:../../lib/bsrfid/drivers/rc52x.c **** 	for (uint8_t i = 0; i < MF_KEY_SIZE; i++) {	// 6 key uint8_ts
+ 1531              		.loc 1 532 15
+ 1532 001e 0023     		movs	r3, #0
+ 1533 0020 FB77     		strb	r3, [r7, #31]
+ 1534              		.loc 1 532 2
+ 1535 0022 0BE0     		b	.L84
+ 1536              	.L85:
+ 533:../../lib/bsrfid/drivers/rc52x.c **** 		sendData[2 + i] = key->keyuint8_t[i];
+ 1537              		.loc 1 533 36 discriminator 3
+ 1538 0024 FA7F     		ldrb	r2, [r7, #31]	@ zero_extendqisi2
+ 1539              		.loc 1 533 14 discriminator 3
+ 1540 0026 FB7F     		ldrb	r3, [r7, #31]	@ zero_extendqisi2
+ 1541 0028 0233     		adds	r3, r3, #2
+ 1542              		.loc 1 533 36 discriminator 3
+ 1543 002a 7968     		ldr	r1, [r7, #4]
+ 1544 002c 8A5C     		ldrb	r2, [r1, r2]	@ zero_extendqisi2
+ 1545              		.loc 1 533 19 discriminator 3
+ 1546 002e 2033     		adds	r3, r3, #32
+ 1547 0030 3B44     		add	r3, r3, r7
+ 1548 0032 03F8102C 		strb	r2, [r3, #-16]
+ 532:../../lib/bsrfid/drivers/rc52x.c **** 	for (uint8_t i = 0; i < MF_KEY_SIZE; i++) {	// 6 key uint8_ts
+ 1549              		.loc 1 532 40 discriminator 3
+ 1550 0036 FB7F     		ldrb	r3, [r7, #31]	@ zero_extendqisi2
+ 1551 0038 0133     		adds	r3, r3, #1
+ARM GAS  /tmp/ccsj0CIu.s 			page 38
+
+
+ 1552 003a FB77     		strb	r3, [r7, #31]
+ 1553              	.L84:
+ 532:../../lib/bsrfid/drivers/rc52x.c **** 	for (uint8_t i = 0; i < MF_KEY_SIZE; i++) {	// 6 key uint8_ts
+ 1554              		.loc 1 532 24 discriminator 1
+ 1555 003c FB7F     		ldrb	r3, [r7, #31]	@ zero_extendqisi2
+ 1556 003e 052B     		cmp	r3, #5
+ 1557 0040 F0D9     		bls	.L85
+ 1558              	.LBE12:
+ 1559              	.LBB13:
+ 534:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 535:../../lib/bsrfid/drivers/rc52x.c **** 	// Use the last uid uint8_ts as specified in http://cache.nxp.com/documents/application_note/AN109
+ 536:../../lib/bsrfid/drivers/rc52x.c **** 	// section 3.2.5 "MIFARE Classic Authentication".
+ 537:../../lib/bsrfid/drivers/rc52x.c **** 	// The only missed case is the MF1Sxxxx shortcut activation,
+ 538:../../lib/bsrfid/drivers/rc52x.c **** 	// but it requires cascade tag (CT) uint8_t, that is not part of picc.
+ 539:../../lib/bsrfid/drivers/rc52x.c **** 	for (uint8_t i = 0; i < 4; i++) {		// The last 4 uint8_ts of the UID
+ 1560              		.loc 1 539 15
+ 1561 0042 0023     		movs	r3, #0
+ 1562 0044 BB77     		strb	r3, [r7, #30]
+ 1563              		.loc 1 539 2
+ 1564 0046 10E0     		b	.L86
+ 1565              	.L87:
+ 540:../../lib/bsrfid/drivers/rc52x.c **** 		sendData[8 + i] = picc->uidByte[i + picc->size - 4];
+ 1566              		.loc 1 540 37 discriminator 3
+ 1567 0048 BB7F     		ldrb	r3, [r7, #30]	@ zero_extendqisi2
+ 1568              		.loc 1 540 43 discriminator 3
+ 1569 004a BA6A     		ldr	r2, [r7, #40]
+ 1570 004c 5278     		ldrb	r2, [r2, #1]	@ zero_extendqisi2
+ 1571              		.loc 1 540 37 discriminator 3
+ 1572 004e 1344     		add	r3, r3, r2
+ 1573              		.loc 1 540 50 discriminator 3
+ 1574 0050 1A1F     		subs	r2, r3, #4
+ 1575              		.loc 1 540 14 discriminator 3
+ 1576 0052 BB7F     		ldrb	r3, [r7, #30]	@ zero_extendqisi2
+ 1577 0054 0833     		adds	r3, r3, #8
+ 1578              		.loc 1 540 34 discriminator 3
+ 1579 0056 B96A     		ldr	r1, [r7, #40]
+ 1580 0058 0A44     		add	r2, r2, r1
+ 1581 005a 9278     		ldrb	r2, [r2, #2]	@ zero_extendqisi2
+ 1582              		.loc 1 540 19 discriminator 3
+ 1583 005c 2033     		adds	r3, r3, #32
+ 1584 005e 3B44     		add	r3, r3, r7
+ 1585 0060 03F8102C 		strb	r2, [r3, #-16]
+ 539:../../lib/bsrfid/drivers/rc52x.c **** 		sendData[8 + i] = picc->uidByte[i + picc->size - 4];
+ 1586              		.loc 1 539 30 discriminator 3
+ 1587 0064 BB7F     		ldrb	r3, [r7, #30]	@ zero_extendqisi2
+ 1588 0066 0133     		adds	r3, r3, #1
+ 1589 0068 BB77     		strb	r3, [r7, #30]
+ 1590              	.L86:
+ 539:../../lib/bsrfid/drivers/rc52x.c **** 		sendData[8 + i] = picc->uidByte[i + picc->size - 4];
+ 1591              		.loc 1 539 24 discriminator 1
+ 1592 006a BB7F     		ldrb	r3, [r7, #30]	@ zero_extendqisi2
+ 1593 006c 032B     		cmp	r3, #3
+ 1594 006e EBD9     		bls	.L87
+ 1595              	.LBE13:
+ 541:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 542:../../lib/bsrfid/drivers/rc52x.c **** 
+ 543:../../lib/bsrfid/drivers/rc52x.c **** 	// Start the authentication.
+ARM GAS  /tmp/ccsj0CIu.s 			page 39
+
+
+ 544:../../lib/bsrfid/drivers/rc52x.c **** 	return RC52X_CommunicateWithPICC(rc52x, RC52X_CMD_MFAuthent, waitIRq,
+ 1596              		.loc 1 544 9
+ 1597 0070 07F11003 		add	r3, r7, #16
+ 1598 0074 7A7F     		ldrb	r2, [r7, #29]	@ zero_extendqisi2
+ 1599 0076 0021     		movs	r1, #0
+ 1600 0078 0791     		str	r1, [sp, #28]
+ 1601 007a 0021     		movs	r1, #0
+ 1602 007c 0691     		str	r1, [sp, #24]
+ 1603 007e 0021     		movs	r1, #0
+ 1604 0080 0591     		str	r1, [sp, #20]
+ 1605 0082 0021     		movs	r1, #0
+ 1606 0084 0491     		str	r1, [sp, #16]
+ 1607 0086 0021     		movs	r1, #0
+ 1608 0088 0391     		str	r1, [sp, #12]
+ 1609 008a 0021     		movs	r1, #0
+ 1610 008c 0291     		str	r1, [sp, #8]
+ 1611 008e 0021     		movs	r1, #0
+ 1612 0090 0191     		str	r1, [sp, #4]
+ 1613 0092 0C21     		movs	r1, #12
+ 1614 0094 0091     		str	r1, [sp]
+ 1615 0096 0E21     		movs	r1, #14
+ 1616 0098 F868     		ldr	r0, [r7, #12]
+ 1617 009a FFF7FEFF 		bl	RC52X_CommunicateWithPICC
+ 1618 009e 0346     		mov	r3, r0
+ 545:../../lib/bsrfid/drivers/rc52x.c **** 			&sendData[0], sizeof(sendData), NULL, 0, NULL, 0, NULL, false, false);
+ 546:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_Authenticate()
+ 1619              		.loc 1 546 1
+ 1620 00a0 1846     		mov	r0, r3
+ 1621 00a2 2037     		adds	r7, r7, #32
+ 1622              		.cfi_def_cfa_offset 8
+ 1623 00a4 BD46     		mov	sp, r7
+ 1624              		.cfi_def_cfa_register 13
+ 1625              		@ sp needed
+ 1626 00a6 80BD     		pop	{r7, pc}
+ 1627              		.cfi_endproc
+ 1628              	.LFE15:
+ 1630              		.section	.text.RC52X_StopCrypto1,"ax",%progbits
+ 1631              		.align	1
+ 1632              		.global	RC52X_StopCrypto1
+ 1633              		.syntax unified
+ 1634              		.thumb
+ 1635              		.thumb_func
+ 1636              		.fpu softvfp
+ 1638              	RC52X_StopCrypto1:
+ 1639              	.LFB16:
+ 547:../../lib/bsrfid/drivers/rc52x.c **** 
+ 548:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 549:../../lib/bsrfid/drivers/rc52x.c ****  * Used to exit the PCD from its authenticated state.
+ 550:../../lib/bsrfid/drivers/rc52x.c ****  * Remember to call this function after communicating with an authenticated PICC - otherwise no new
+ 551:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 552:../../lib/bsrfid/drivers/rc52x.c **** void RC52X_StopCrypto1(rc52x_t *rc52x) {
+ 1640              		.loc 1 552 40
+ 1641              		.cfi_startproc
+ 1642              		@ args = 0, pretend = 0, frame = 8
+ 1643              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1644 0000 80B5     		push	{r7, lr}
+ 1645              		.cfi_def_cfa_offset 8
+ARM GAS  /tmp/ccsj0CIu.s 			page 40
+
+
+ 1646              		.cfi_offset 7, -8
+ 1647              		.cfi_offset 14, -4
+ 1648 0002 82B0     		sub	sp, sp, #8
+ 1649              		.cfi_def_cfa_offset 16
+ 1650 0004 00AF     		add	r7, sp, #0
+ 1651              		.cfi_def_cfa_register 7
+ 1652 0006 7860     		str	r0, [r7, #4]
+ 553:../../lib/bsrfid/drivers/rc52x.c **** 	// Clear MFCrypto1On bit
+ 554:../../lib/bsrfid/drivers/rc52x.c **** 	RC52X_ClearRegisterBitMask(rc52x, RC52X_REG_Status2Reg, 0x08); // Status2Reg[7..0] bits are: TempS
+ 1653              		.loc 1 554 2
+ 1654 0008 0822     		movs	r2, #8
+ 1655 000a 0821     		movs	r1, #8
+ 1656 000c 7868     		ldr	r0, [r7, #4]
+ 1657 000e FFF7FEFF 		bl	RC52X_ClearRegisterBitMask
+ 555:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_StopCrypto1()
+ 1658              		.loc 1 555 1
+ 1659 0012 00BF     		nop
+ 1660 0014 0837     		adds	r7, r7, #8
+ 1661              		.cfi_def_cfa_offset 8
+ 1662 0016 BD46     		mov	sp, r7
+ 1663              		.cfi_def_cfa_register 13
+ 1664              		@ sp needed
+ 1665 0018 80BD     		pop	{r7, pc}
+ 1666              		.cfi_endproc
+ 1667              	.LFE16:
+ 1669              		.section	.text.RC52X_MIFARE_Transceive,"ax",%progbits
+ 1670              		.align	1
+ 1671              		.global	RC52X_MIFARE_Transceive
+ 1672              		.syntax unified
+ 1673              		.thumb
+ 1674              		.thumb_func
+ 1675              		.fpu softvfp
+ 1677              	RC52X_MIFARE_Transceive:
+ 1678              	.LFB17:
+ 556:../../lib/bsrfid/drivers/rc52x.c **** 
+ 557:../../lib/bsrfid/drivers/rc52x.c **** 
+ 558:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 559:../../lib/bsrfid/drivers/rc52x.c **** // Support functions
+ 560:../../lib/bsrfid/drivers/rc52x.c **** /////////////////////////////////////////////////////////////////////////////////////
+ 561:../../lib/bsrfid/drivers/rc52x.c **** 
+ 562:../../lib/bsrfid/drivers/rc52x.c **** /**
+ 563:../../lib/bsrfid/drivers/rc52x.c ****  * Wrapper for MIFARE protocol communication.
+ 564:../../lib/bsrfid/drivers/rc52x.c ****  * Adds CRC_A, executes the Transceive command and checks that the response is MF_ACK or a timeout.
+ 565:../../lib/bsrfid/drivers/rc52x.c ****  *
+ 566:../../lib/bsrfid/drivers/rc52x.c ****  * @return STATUS_OK on success, STATUS_??? otherwise.
+ 567:../../lib/bsrfid/drivers/rc52x.c ****  */
+ 568:../../lib/bsrfid/drivers/rc52x.c **** rc52x_result_t RC52X_MIFARE_Transceive(rc52x_t *rc52x, uint8_t *sendData,	///< Pointer to the data 
+ 569:../../lib/bsrfid/drivers/rc52x.c **** 		uint8_t sendLen,		///< Number of uint8_ts in sendData.
+ 570:../../lib/bsrfid/drivers/rc52x.c **** 		bool acceptTimeout	///< True => A timeout is also success
+ 571:../../lib/bsrfid/drivers/rc52x.c **** 		) {
+ 1679              		.loc 1 571 5
+ 1680              		.cfi_startproc
+ 1681              		@ args = 0, pretend = 0, frame = 40
+ 1682              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1683 0000 80B5     		push	{r7, lr}
+ 1684              		.cfi_def_cfa_offset 8
+ 1685              		.cfi_offset 7, -8
+ARM GAS  /tmp/ccsj0CIu.s 			page 41
+
+
+ 1686              		.cfi_offset 14, -4
+ 1687 0002 92B0     		sub	sp, sp, #72
+ 1688              		.cfi_def_cfa_offset 80
+ 1689 0004 08AF     		add	r7, sp, #32
+ 1690              		.cfi_def_cfa 7, 48
+ 1691 0006 F860     		str	r0, [r7, #12]
+ 1692 0008 B960     		str	r1, [r7, #8]
+ 1693 000a 1146     		mov	r1, r2
+ 1694 000c 1A46     		mov	r2, r3
+ 1695 000e 0B46     		mov	r3, r1
+ 1696 0010 FB71     		strb	r3, [r7, #7]
+ 1697 0012 1346     		mov	r3, r2
+ 1698 0014 BB71     		strb	r3, [r7, #6]
+ 572:../../lib/bsrfid/drivers/rc52x.c **** 	rc52x_result_t result;
+ 573:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t cmdBuffer[18]; // We need room for 16 uint8_ts data and 2 uint8_ts CRC_A.
+ 574:../../lib/bsrfid/drivers/rc52x.c **** 
+ 575:../../lib/bsrfid/drivers/rc52x.c **** 	// Sanity check
+ 576:../../lib/bsrfid/drivers/rc52x.c **** 	if (sendData == NULL || sendLen > 16) {
+ 1699              		.loc 1 576 5
+ 1700 0016 BB68     		ldr	r3, [r7, #8]
+ 1701 0018 002B     		cmp	r3, #0
+ 1702 001a 02D0     		beq	.L91
+ 1703              		.loc 1 576 23 discriminator 1
+ 1704 001c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1705 001e 102B     		cmp	r3, #16
+ 1706 0020 02D9     		bls	.L92
+ 1707              	.L91:
+ 577:../../lib/bsrfid/drivers/rc52x.c **** 		return STATUS_INVALID;
+ 1708              		.loc 1 577 10
+ 1709 0022 6FF00603 		mvn	r3, #6
+ 1710 0026 47E0     		b	.L99
+ 1711              	.L92:
+ 578:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 579:../../lib/bsrfid/drivers/rc52x.c **** 
+ 580:../../lib/bsrfid/drivers/rc52x.c **** 	/*// moved into CommunicateWithPICC
+ 581:../../lib/bsrfid/drivers/rc52x.c **** 	// Copy sendData[] to cmdBuffer[] and add CRC_A
+ 582:../../lib/bsrfid/drivers/rc52x.c **** 	memcpy(cmdBuffer, sendData, sendLen);
+ 583:../../lib/bsrfid/drivers/rc52x.c **** 	result = RC52X_CalculateCRC(rc52x, cmdBuffer, sendLen, &cmdBuffer[sendLen]);
+ 584:../../lib/bsrfid/drivers/rc52x.c **** 	if (result != STATUS_OK) {
+ 585:../../lib/bsrfid/drivers/rc52x.c **** 		return result;
+ 586:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 587:../../lib/bsrfid/drivers/rc52x.c **** 	sendLen += 2;
+ 588:../../lib/bsrfid/drivers/rc52x.c **** 	*/
+ 589:../../lib/bsrfid/drivers/rc52x.c **** 
+ 590:../../lib/bsrfid/drivers/rc52x.c **** 
+ 591:../../lib/bsrfid/drivers/rc52x.c **** 	// Transceive the data, store the reply in cmdBuffer[]
+ 592:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t waitIRq = 0x30;		// RxIRq and IdleIRq
+ 1712              		.loc 1 592 10
+ 1713 0028 3023     		movs	r3, #48
+ 1714 002a 87F82730 		strb	r3, [r7, #39]
+ 593:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t cmdBufferSize = sizeof(cmdBuffer);
+ 1715              		.loc 1 593 10
+ 1716 002e 1223     		movs	r3, #18
+ 1717 0030 FB74     		strb	r3, [r7, #19]
+ 594:../../lib/bsrfid/drivers/rc52x.c **** 	uint8_t validBits = 0;
+ 1718              		.loc 1 594 10
+ 1719 0032 0023     		movs	r3, #0
+ARM GAS  /tmp/ccsj0CIu.s 			page 42
+
+
+ 1720 0034 BB74     		strb	r3, [r7, #18]
+ 595:../../lib/bsrfid/drivers/rc52x.c **** 	result = RC52X_CommunicateWithPICC(rc52x, RC52X_CMD_Transceive, waitIRq,
+ 1721              		.loc 1 595 11
+ 1722 0036 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1723 0038 07F11400 		add	r0, r7, #20
+ 1724 003c 97F82710 		ldrb	r1, [r7, #39]	@ zero_extendqisi2
+ 1725 0040 0022     		movs	r2, #0
+ 1726 0042 0792     		str	r2, [sp, #28]
+ 1727 0044 0122     		movs	r2, #1
+ 1728 0046 0692     		str	r2, [sp, #24]
+ 1729 0048 0022     		movs	r2, #0
+ 1730 004a 0592     		str	r2, [sp, #20]
+ 1731 004c 0022     		movs	r2, #0
+ 1732 004e 0492     		str	r2, [sp, #16]
+ 1733 0050 07F11202 		add	r2, r7, #18
+ 1734 0054 0392     		str	r2, [sp, #12]
+ 1735 0056 07F11302 		add	r2, r7, #19
+ 1736 005a 0292     		str	r2, [sp, #8]
+ 1737 005c 07F11402 		add	r2, r7, #20
+ 1738 0060 0192     		str	r2, [sp, #4]
+ 1739 0062 0093     		str	r3, [sp]
+ 1740 0064 0346     		mov	r3, r0
+ 1741 0066 0A46     		mov	r2, r1
+ 1742 0068 0C21     		movs	r1, #12
+ 1743 006a F868     		ldr	r0, [r7, #12]
+ 1744 006c FFF7FEFF 		bl	RC52X_CommunicateWithPICC
+ 1745 0070 0346     		mov	r3, r0
+ 1746 0072 87F82630 		strb	r3, [r7, #38]
+ 596:../../lib/bsrfid/drivers/rc52x.c **** 			cmdBuffer, sendLen, cmdBuffer, &cmdBufferSize, &validBits, 0, NULL,
+ 597:../../lib/bsrfid/drivers/rc52x.c **** 			true, false );
+ 598:../../lib/bsrfid/drivers/rc52x.c **** 	if (acceptTimeout && result == STATUS_TIMEOUT) {
+ 1747              		.loc 1 598 5
+ 1748 0076 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 1749 0078 002B     		cmp	r3, #0
+ 1750 007a 06D0     		beq	.L94
+ 1751              		.loc 1 598 20 discriminator 1
+ 1752 007c 97F92630 		ldrsb	r3, [r7, #38]
+ 1753 0080 13F1040F 		cmn	r3, #4
+ 1754 0084 01D1     		bne	.L94
+ 599:../../lib/bsrfid/drivers/rc52x.c **** 		return STATUS_OK;
+ 1755              		.loc 1 599 10
+ 1756 0086 0023     		movs	r3, #0
+ 1757 0088 16E0     		b	.L99
+ 1758              	.L94:
+ 600:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 601:../../lib/bsrfid/drivers/rc52x.c **** 	if (result != STATUS_OK) {
+ 1759              		.loc 1 601 5
+ 1760 008a 97F92630 		ldrsb	r3, [r7, #38]
+ 1761 008e 002B     		cmp	r3, #0
+ 1762 0090 02D0     		beq	.L95
+ 602:../../lib/bsrfid/drivers/rc52x.c **** 		return result;
+ 1763              		.loc 1 602 10
+ 1764 0092 97F92630 		ldrsb	r3, [r7, #38]
+ 1765 0096 0FE0     		b	.L99
+ 1766              	.L95:
+ 603:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 604:../../lib/bsrfid/drivers/rc52x.c **** 	// The PICC must reply with a 4 bit ACK
+ARM GAS  /tmp/ccsj0CIu.s 			page 43
+
+
+ 605:../../lib/bsrfid/drivers/rc52x.c **** 	if (cmdBufferSize != 1 || validBits != 4) {
+ 1767              		.loc 1 605 20
+ 1768 0098 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1769              		.loc 1 605 5
+ 1770 009a 012B     		cmp	r3, #1
+ 1771 009c 02D1     		bne	.L96
+ 1772              		.loc 1 605 38 discriminator 1
+ 1773 009e BB7C     		ldrb	r3, [r7, #18]	@ zero_extendqisi2
+ 1774              		.loc 1 605 25 discriminator 1
+ 1775 00a0 042B     		cmp	r3, #4
+ 1776 00a2 02D0     		beq	.L97
+ 1777              	.L96:
+ 606:../../lib/bsrfid/drivers/rc52x.c **** 		return STATUS_ERROR;
+ 1778              		.loc 1 606 10
+ 1779 00a4 4FF0FF33 		mov	r3, #-1
+ 1780 00a8 06E0     		b	.L99
+ 1781              	.L97:
+ 607:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 608:../../lib/bsrfid/drivers/rc52x.c **** 	if (cmdBuffer[0] != MF_ACK) {
+ 1782              		.loc 1 608 15
+ 1783 00aa 3B7D     		ldrb	r3, [r7, #20]	@ zero_extendqisi2
+ 1784              		.loc 1 608 5
+ 1785 00ac 0A2B     		cmp	r3, #10
+ 1786 00ae 02D0     		beq	.L98
+ 609:../../lib/bsrfid/drivers/rc52x.c **** 		return STATUS_MIFARE_NACK;
+ 1787              		.loc 1 609 10
+ 1788 00b0 6FF00803 		mvn	r3, #8
+ 1789 00b4 00E0     		b	.L99
+ 1790              	.L98:
+ 610:../../lib/bsrfid/drivers/rc52x.c **** 	}
+ 611:../../lib/bsrfid/drivers/rc52x.c **** 	return STATUS_OK;
+ 1791              		.loc 1 611 9
+ 1792 00b6 0023     		movs	r3, #0
+ 1793              	.L99:
+ 612:../../lib/bsrfid/drivers/rc52x.c **** } // End RC52X_MIFARE_Transceive()
+ 1794              		.loc 1 612 1 discriminator 1
+ 1795 00b8 1846     		mov	r0, r3
+ 1796 00ba 2837     		adds	r7, r7, #40
+ 1797              		.cfi_def_cfa_offset 8
+ 1798 00bc BD46     		mov	sp, r7
+ 1799              		.cfi_def_cfa_register 13
+ 1800              		@ sp needed
+ 1801 00be 80BD     		pop	{r7, pc}
+ 1802              		.cfi_endproc
+ 1803              	.LFE17:
+ 1805              		.section	.text.rc52x_set_bit_framing,"ax",%progbits
+ 1806              		.align	1
+ 1807              		.global	rc52x_set_bit_framing
+ 1808              		.syntax unified
+ 1809              		.thumb
+ 1810              		.thumb_func
+ 1811              		.fpu softvfp
+ 1813              	rc52x_set_bit_framing:
+ 1814              	.LFB18:
+ 613:../../lib/bsrfid/drivers/rc52x.c **** 
+ 614:../../lib/bsrfid/drivers/rc52x.c **** 
+ 615:../../lib/bsrfid/drivers/rc52x.c **** rc52x_result_t rc52x_set_bit_framing(bs_pdc_t*pdc, int rxAlign, int txLastBits) {
+ARM GAS  /tmp/ccsj0CIu.s 			page 44
+
+
+ 1815              		.loc 1 615 81
+ 1816              		.cfi_startproc
+ 1817              		@ args = 0, pretend = 0, frame = 16
+ 1818              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1819 0000 80B5     		push	{r7, lr}
+ 1820              		.cfi_def_cfa_offset 8
+ 1821              		.cfi_offset 7, -8
+ 1822              		.cfi_offset 14, -4
+ 1823 0002 84B0     		sub	sp, sp, #16
+ 1824              		.cfi_def_cfa_offset 24
+ 1825 0004 00AF     		add	r7, sp, #0
+ 1826              		.cfi_def_cfa_register 7
+ 1827 0006 F860     		str	r0, [r7, #12]
+ 1828 0008 B960     		str	r1, [r7, #8]
+ 1829 000a 7A60     		str	r2, [r7, #4]
+ 616:../../lib/bsrfid/drivers/rc52x.c **** 	return rc52x_set_reg8(pdc, RC52X_REG_BitFramingReg, 	(rxAlign << 4) | txLastBits);// RxAlign = Bit
+ 1830              		.loc 1 616 64
+ 1831 000c BB68     		ldr	r3, [r7, #8]
+ 1832 000e 1B01     		lsls	r3, r3, #4
+ 1833              		.loc 1 616 70
+ 1834 0010 5AB2     		sxtb	r2, r3
+ 1835 0012 7B68     		ldr	r3, [r7, #4]
+ 1836 0014 5BB2     		sxtb	r3, r3
+ 1837 0016 1343     		orrs	r3, r3, r2
+ 1838 0018 5BB2     		sxtb	r3, r3
+ 1839              		.loc 1 616 9
+ 1840 001a DBB2     		uxtb	r3, r3
+ 1841 001c 1A46     		mov	r2, r3
+ 1842 001e 0D21     		movs	r1, #13
+ 1843 0020 F868     		ldr	r0, [r7, #12]
+ 1844 0022 FFF7FEFF 		bl	rc52x_set_reg8
+ 1845 0026 0346     		mov	r3, r0
+ 1846 0028 5BB2     		sxtb	r3, r3
+ 617:../../lib/bsrfid/drivers/rc52x.c **** }
+ 1847              		.loc 1 617 1
+ 1848 002a 1846     		mov	r0, r3
+ 1849 002c 1037     		adds	r7, r7, #16
+ 1850              		.cfi_def_cfa_offset 8
+ 1851 002e BD46     		mov	sp, r7
+ 1852              		.cfi_def_cfa_register 13
+ 1853              		@ sp needed
+ 1854 0030 80BD     		pop	{r7, pc}
+ 1855              		.cfi_endproc
+ 1856              	.LFE18:
+ 1858              		.text
+ 1859              	.Letext0:
+ 1860              		.file 2 "/usr/lib/gcc/arm-none-eabi/11.2.0/include/stddef.h"
+ 1861              		.file 3 "/usr/arm-none-eabi/include/machine/_default_types.h"
+ 1862              		.file 4 "/usr/arm-none-eabi/include/sys/_stdint.h"
+ 1863              		.file 5 "../../lib/bsrfid/cards/iso14443a.h"
+ 1864              		.file 6 "../../lib/bsrfid/drivers/pdc.h"
+ 1865              		.file 7 "../../lib/bsrfid/cards/picc.h"
+ 1866              		.file 8 "../../lib/bsrfid/drivers/rc52x.h"
+ARM GAS  /tmp/ccsj0CIu.s 			page 45
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 rc52x.c
+     /tmp/ccsj0CIu.s:16     .text.rc52x_get_chip_version:0000000000000000 $t
+     /tmp/ccsj0CIu.s:24     .text.rc52x_get_chip_version:0000000000000000 rc52x_get_chip_version
+     /tmp/ccsj0CIu.s:64     .rodata.MFRC522_firmware_referenceV0_0:0000000000000000 MFRC522_firmware_referenceV0_0
+     /tmp/ccsj0CIu.s:61     .rodata.MFRC522_firmware_referenceV0_0:0000000000000000 $d
+     /tmp/ccsj0CIu.s:74     .rodata.MFRC522_firmware_referenceV1_0:0000000000000000 MFRC522_firmware_referenceV1_0
+     /tmp/ccsj0CIu.s:71     .rodata.MFRC522_firmware_referenceV1_0:0000000000000000 $d
+     /tmp/ccsj0CIu.s:84     .rodata.MFRC522_firmware_referenceV2_0:0000000000000000 MFRC522_firmware_referenceV2_0
+     /tmp/ccsj0CIu.s:81     .rodata.MFRC522_firmware_referenceV2_0:0000000000000000 $d
+     /tmp/ccsj0CIu.s:94     .rodata.FM17522_firmware_reference:0000000000000000 FM17522_firmware_reference
+     /tmp/ccsj0CIu.s:91     .rodata.FM17522_firmware_reference:0000000000000000 $d
+     /tmp/ccsj0CIu.s:100    .text.RC52X_ReadRegister:0000000000000000 $t
+     /tmp/ccsj0CIu.s:107    .text.RC52X_ReadRegister:0000000000000000 RC52X_ReadRegister
+     /tmp/ccsj0CIu.s:145    .text.RC52X_ClearRegisterBitMask:0000000000000000 $t
+     /tmp/ccsj0CIu.s:152    .text.RC52X_ClearRegisterBitMask:0000000000000000 RC52X_ClearRegisterBitMask
+     /tmp/ccsj0CIu.s:192    .text.RC52X_CalculateCRC:0000000000000000 $t
+     /tmp/ccsj0CIu.s:199    .text.RC52X_CalculateCRC:0000000000000000 RC52X_CalculateCRC
+     /tmp/ccsj0CIu.s:319    .text.RC52X_Init:0000000000000000 $t
+     /tmp/ccsj0CIu.s:326    .text.RC52X_Init:0000000000000000 RC52X_Init
+     /tmp/ccsj0CIu.s:419    .text.RC52X_Reset:0000000000000000 RC52X_Reset
+     /tmp/ccsj0CIu.s:487    .text.RC52X_AntennaOn:0000000000000000 RC52X_AntennaOn
+     /tmp/ccsj0CIu.s:407    .text.RC52X_Init:000000000000007c $d
+     /tmp/ccsj0CIu.s:1012   .text.RC52X_TransceiveData:0000000000000000 RC52X_TransceiveData
+     /tmp/ccsj0CIu.s:412    .text.RC52X_Reset:0000000000000000 $t
+     /tmp/ccsj0CIu.s:480    .text.RC52X_AntennaOn:0000000000000000 $t
+     /tmp/ccsj0CIu.s:535    .text.RC52X_AntennaOff:0000000000000000 $t
+     /tmp/ccsj0CIu.s:542    .text.RC52X_AntennaOff:0000000000000000 RC52X_AntennaOff
+     /tmp/ccsj0CIu.s:574    .text.RC52X_GetAntennaGain:0000000000000000 $t
+     /tmp/ccsj0CIu.s:581    .text.RC52X_GetAntennaGain:0000000000000000 RC52X_GetAntennaGain
+     /tmp/ccsj0CIu.s:616    .text.RC52X_SetAntennaGain:0000000000000000 $t
+     /tmp/ccsj0CIu.s:623    .text.RC52X_SetAntennaGain:0000000000000000 RC52X_SetAntennaGain
+     /tmp/ccsj0CIu.s:676    .text.RC52X_PerformSelfTest:0000000000000000 $t
+     /tmp/ccsj0CIu.s:683    .text.RC52X_PerformSelfTest:0000000000000000 RC52X_PerformSelfTest
+     /tmp/ccsj0CIu.s:806    .text.RC52X_PerformSelfTest:00000000000000d8 $d
+     /tmp/ccsj0CIu.s:817    .text.RC52X_PerformSelfTest:0000000000000104 $t
+     /tmp/ccsj0CIu.s:861    .text.RC52X_PerformSelfTest:000000000000012c $d
+     /tmp/ccsj0CIu.s:869    .text.RC52X_SoftPowerDown:0000000000000000 $t
+     /tmp/ccsj0CIu.s:876    .text.RC52X_SoftPowerDown:0000000000000000 RC52X_SoftPowerDown
+     /tmp/ccsj0CIu.s:919    .text.RC52X_SoftPowerUp:0000000000000000 $t
+     /tmp/ccsj0CIu.s:926    .text.RC52X_SoftPowerUp:0000000000000000 RC52X_SoftPowerUp
+     /tmp/ccsj0CIu.s:1005   .text.RC52X_TransceiveData:0000000000000000 $t
+     /tmp/ccsj0CIu.s:1075   .text.RC52X_CommunicateWithPICC:0000000000000000 RC52X_CommunicateWithPICC
+     /tmp/ccsj0CIu.s:1068   .text.RC52X_CommunicateWithPICC:0000000000000000 $t
+     /tmp/ccsj0CIu.s:1494   .text.RC52X_Authenticate:0000000000000000 $t
+     /tmp/ccsj0CIu.s:1501   .text.RC52X_Authenticate:0000000000000000 RC52X_Authenticate
+     /tmp/ccsj0CIu.s:1631   .text.RC52X_StopCrypto1:0000000000000000 $t
+     /tmp/ccsj0CIu.s:1638   .text.RC52X_StopCrypto1:0000000000000000 RC52X_StopCrypto1
+     /tmp/ccsj0CIu.s:1670   .text.RC52X_MIFARE_Transceive:0000000000000000 $t
+     /tmp/ccsj0CIu.s:1677   .text.RC52X_MIFARE_Transceive:0000000000000000 RC52X_MIFARE_Transceive
+     /tmp/ccsj0CIu.s:1806   .text.rc52x_set_bit_framing:0000000000000000 $t
+     /tmp/ccsj0CIu.s:1813   .text.rc52x_set_bit_framing:0000000000000000 rc52x_set_bit_framing
+                           .group:0000000000000000 wm4.0.1098e563ef56396ca346ad6c5e97276e
+                           .group:0000000000000000 wm4.ieeefp.h.77.af21f134a392aadc2c66139cb51ca3a9
+                           .group:0000000000000000 wm4._newlib_version.h.4.bfdf54b0af045d4a71376ae00f63a22c
+                           .group:0000000000000000 wm4.newlib.h.18.1c9fedb6b3cd797cff253cc0fd593ef2
+                           .group:0000000000000000 wm4.features.h.22.fad1cec3bc7ff06488171438dbdcfd02
+ARM GAS  /tmp/ccsj0CIu.s 			page 46
+
+
+                           .group:0000000000000000 wm4.config.h.224.c701144a7b0518c6ee9b9b5465b79f81
+                           .group:0000000000000000 wm4._ansi.h.31.de524f58584151836e90d8620a16f8e8
+                           .group:0000000000000000 wm4.stdlib.h.13.4ed386f5c1a80d71e72172885d946ef2
+                           .group:0000000000000000 wm4.stddef.h.181.13772e73e5434e8cc4fafaaddad2b5da
+                           .group:0000000000000000 wm4.stddef.h.39.cf3ebec0bc8c9e3d2f276a64e0fe5e7a
+                           .group:0000000000000000 wm4._types.h.20.dd0d04dca3800a0d2a6129b87f3adbb2
+                           .group:0000000000000000 wm4.stddef.h.155.3588ebfdd1e8c7ede80509bb9c3b8009
+                           .group:0000000000000000 wm4._default_types.h.6.959254cf5f09734ea7516c89e8bb21bd
+                           .group:0000000000000000 wm4._types.h.127.34941de1b2539d59d5cac00e0dd27a45
+                           .group:0000000000000000 wm4.reent.h.17.e292bf8b0bec6c96e131a54347145a30
+                           .group:0000000000000000 wm4.lock.h.2.1461d1fff82dffe8bfddc23307f6484f
+                           .group:0000000000000000 wm4.reent.h.77.dcd6129ff07fe81bd5636db29abe53b2
+                           .group:0000000000000000 wm4.cdefs.h.49.39045112216f6a021dbdffe3bf5accce
+                           .group:0000000000000000 wm4.alloca.h.8.dfc0c703c47ec3e69746825b17d9e66d
+                           .group:0000000000000000 wm4.stdlib.h.56.f4862cfbf4363a1db01842d5bdf72c18
+                           .group:0000000000000000 wm4._intsup.h.10.48bafbb683905c4daa4565a85aeeb264
+                           .group:0000000000000000 wm4._stdint.h.10.c24fa3af3bc1706662bb5593a907e841
+                           .group:0000000000000000 wm4.stdint.h.23.d53047a68f4a85177f80b422d52785ed
+                           .group:0000000000000000 wm4.stdbool.h.29.4a1c88fe569adb8d03217dd16982ca34
+                           .group:0000000000000000 wm4.rc52x_transport.h.46.e00f748dacb465ef5aee29224882433d
+                           .group:0000000000000000 wm4.rc52x.h.89.3b03ebad2574fe56a04d8e82a6b92f70
+                           .group:0000000000000000 wm4.string.h.8.c4b8571ce60dff2817f43fec8b86aecd
+                           .group:0000000000000000 wm4.stddef.h.155.ba788add86a0e365f264484f110c3c29
+
+UNDEFINED SYMBOLS
+mfrc522_recv
+rc52x_get_reg8
+rc52x_and_reg8
+rc52x_set_reg8
+mfrc522_send
+RC52X_SetRegisterBitMask
+millis
+rc52x_or_reg8

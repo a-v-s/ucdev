@@ -1,0 +1,606 @@
+ARM GAS  /tmp/cc04WtHU.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 6
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"bshal_delay.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.delay_cycles_asm,"ax",%progbits
+  16              		.align	1
+  17              		.global	delay_cycles_asm
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	delay_cycles_asm:
+  25              	.LFB65:
+  26              		.file 1 "../../lib/libhalglue/common/bshal_delay.c"
+   1:../../lib/libhalglue/common/bshal_delay.c **** /*
+   2:../../lib/libhalglue/common/bshal_delay.c ****  * Copyright (c) 2021
+   3:../../lib/libhalglue/common/bshal_delay.c ****  * 				André van Schoubroeck <andre@blaatschaap.be>
+   4:../../lib/libhalglue/common/bshal_delay.c ****  *
+   5:../../lib/libhalglue/common/bshal_delay.c ****  * Based upon nrfx_coredep.h from nrfx by Nordic:
+   6:../../lib/libhalglue/common/bshal_delay.c ****  *
+   7:../../lib/libhalglue/common/bshal_delay.c ****  * Copyright (c) 2018 - 2021, Nordic Semiconductor ASA
+   8:../../lib/libhalglue/common/bshal_delay.c ****  * All rights reserved.
+   9:../../lib/libhalglue/common/bshal_delay.c ****  *
+  10:../../lib/libhalglue/common/bshal_delay.c ****  *
+  11:../../lib/libhalglue/common/bshal_delay.c ****  * SPDX-License-Identifier: BSD-3-Clause
+  12:../../lib/libhalglue/common/bshal_delay.c ****  *
+  13:../../lib/libhalglue/common/bshal_delay.c ****  * Redistribution and use in source and binary forms, with or without
+  14:../../lib/libhalglue/common/bshal_delay.c ****  * modification, are permitted provided that the following conditions are met:
+  15:../../lib/libhalglue/common/bshal_delay.c ****  *
+  16:../../lib/libhalglue/common/bshal_delay.c ****  * 1. Redistributions of source code must retain the above copyright notice, this
+  17:../../lib/libhalglue/common/bshal_delay.c ****  *    list of conditions and the following disclaimer.
+  18:../../lib/libhalglue/common/bshal_delay.c ****  *
+  19:../../lib/libhalglue/common/bshal_delay.c ****  * 2. Redistributions in binary form must reproduce the above copyright
+  20:../../lib/libhalglue/common/bshal_delay.c ****  *    notice, this list of conditions and the following disclaimer in the
+  21:../../lib/libhalglue/common/bshal_delay.c ****  *    documentation and/or other materials provided with the distribution.
+  22:../../lib/libhalglue/common/bshal_delay.c ****  *
+  23:../../lib/libhalglue/common/bshal_delay.c ****  * 3. Neither the name of the copyright holder nor the names of its
+  24:../../lib/libhalglue/common/bshal_delay.c ****  *    contributors may be used to endorse or promote products derived from this
+  25:../../lib/libhalglue/common/bshal_delay.c ****  *    software without specific prior written permission.
+  26:../../lib/libhalglue/common/bshal_delay.c ****  *
+  27:../../lib/libhalglue/common/bshal_delay.c ****  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  28:../../lib/libhalglue/common/bshal_delay.c ****  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  29:../../lib/libhalglue/common/bshal_delay.c ****  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  30:../../lib/libhalglue/common/bshal_delay.c ****  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+  31:../../lib/libhalglue/common/bshal_delay.c ****  * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  32:../../lib/libhalglue/common/bshal_delay.c ****  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ARM GAS  /tmp/cc04WtHU.s 			page 2
+
+
+  33:../../lib/libhalglue/common/bshal_delay.c ****  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  34:../../lib/libhalglue/common/bshal_delay.c ****  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  35:../../lib/libhalglue/common/bshal_delay.c ****  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  36:../../lib/libhalglue/common/bshal_delay.c ****  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  37:../../lib/libhalglue/common/bshal_delay.c ****  * POSSIBILITY OF SUCH DAMAGE.
+  38:../../lib/libhalglue/common/bshal_delay.c ****  */
+  39:../../lib/libhalglue/common/bshal_delay.c **** 
+  40:../../lib/libhalglue/common/bshal_delay.c **** #include "bshal_delay.h"
+  41:../../lib/libhalglue/common/bshal_delay.c **** #include "system.h"
+  42:../../lib/libhalglue/common/bshal_delay.c **** 
+  43:../../lib/libhalglue/common/bshal_delay.c **** #ifdef __arm__
+  44:../../lib/libhalglue/common/bshal_delay.c **** #include "arm_cpuid.h"
+  45:../../lib/libhalglue/common/bshal_delay.c **** #endif
+  46:../../lib/libhalglue/common/bshal_delay.c **** 
+  47:../../lib/libhalglue/common/bshal_delay.c **** // Should probably a ramfuncion
+  48:../../lib/libhalglue/common/bshal_delay.c **** void delay_cycles_asm(uint32_t time_cycles) {
+  27              		.loc 1 48 45
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 8
+  30              		@ frame_needed = 1, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32 0000 80B4     		push	{r7}
+  33              		.cfi_def_cfa_offset 4
+  34              		.cfi_offset 7, -4
+  35 0002 83B0     		sub	sp, sp, #12
+  36              		.cfi_def_cfa_offset 16
+  37 0004 00AF     		add	r7, sp, #0
+  38              		.cfi_def_cfa_register 7
+  39 0006 7860     		str	r0, [r7, #4]
+  49:../../lib/libhalglue/common/bshal_delay.c **** #if (defined __thumb2__)
+  50:../../lib/libhalglue/common/bshal_delay.c **** 	static uint32_t cycles_per_loop = 3;
+  51:../../lib/libhalglue/common/bshal_delay.c **** 	asm("loop:" );
+  40              		.loc 1 51 2
+  41              		.syntax unified
+  42              	@ 51 "../../lib/libhalglue/common/bshal_delay.c" 1
+  43              		loop:
+  44              	@ 0 "" 2
+  52:../../lib/libhalglue/common/bshal_delay.c **** 	asm("subs  r0, %0" :: "r" (cycles_per_loop) ); 	// 1 cycle
+  45              		.loc 1 52 2
+  46              		.thumb
+  47              		.syntax unified
+  48 0008 044B     		ldr	r3, .L2
+  49 000a 1B68     		ldr	r3, [r3]
+  50              		.syntax unified
+  51              	@ 52 "../../lib/libhalglue/common/bshal_delay.c" 1
+  52 000c C01A     		subs  r0, r3
+  53              	@ 0 "" 2
+  53:../../lib/libhalglue/common/bshal_delay.c **** 	asm("bhi loop"); 								// 2 cycles
+  54              		.loc 1 53 2
+  55              	@ 53 "../../lib/libhalglue/common/bshal_delay.c" 1
+  56 000e FBD8     		bhi loop
+  57              	@ 0 "" 2
+  54:../../lib/libhalglue/common/bshal_delay.c **** #elif (__thumb__)
+  55:../../lib/libhalglue/common/bshal_delay.c **** 	// TODO VERIFY THIS 
+  56:../../lib/libhalglue/common/bshal_delay.c **** 	// THis sub in stead of subs would be wrong (not updating the flags? or?)
+  57:../../lib/libhalglue/common/bshal_delay.c **** 	// On an M3, using sub in stead of subs make loop only once rather then
+  58:../../lib/libhalglue/common/bshal_delay.c **** 	// counting down
+ARM GAS  /tmp/cc04WtHU.s 			page 3
+
+
+  59:../../lib/libhalglue/common/bshal_delay.c **** 	static uint32_t cycles_per_loop = 3;
+  60:../../lib/libhalglue/common/bshal_delay.c **** 	asm("loop:" );
+  61:../../lib/libhalglue/common/bshal_delay.c **** 	asm("sub  r0, %0" :: "l" (cycles_per_loop) ); 	
+  62:../../lib/libhalglue/common/bshal_delay.c **** 	asm("bhi loop");
+  63:../../lib/libhalglue/common/bshal_delay.c **** #else 				
+  64:../../lib/libhalglue/common/bshal_delay.c **** #error "CPU Architecture Not Supported"
+  65:../../lib/libhalglue/common/bshal_delay.c **** #endif
+  66:../../lib/libhalglue/common/bshal_delay.c **** }
+  58              		.loc 1 66 1
+  59              		.thumb
+  60              		.syntax unified
+  61 0010 00BF     		nop
+  62 0012 0C37     		adds	r7, r7, #12
+  63              		.cfi_def_cfa_offset 4
+  64 0014 BD46     		mov	sp, r7
+  65              		.cfi_def_cfa_register 13
+  66              		@ sp needed
+  67 0016 80BC     		pop	{r7}
+  68              		.cfi_restore 7
+  69              		.cfi_def_cfa_offset 0
+  70 0018 7047     		bx	lr
+  71              	.L3:
+  72 001a 00BF     		.align	2
+  73              	.L2:
+  74 001c 00000000 		.word	cycles_per_loop.0
+  75              		.cfi_endproc
+  76              	.LFE65:
+  78              		.global	bshal_delay_cycles
+  79              		.section	.data.bshal_delay_cycles,"aw"
+  80              		.align	2
+  83              	bshal_delay_cycles:
+  84 0000 00000000 		.word	delay_cycles_asm
+  85              		.section	.text.delay_cycles_dwt,"ax",%progbits
+  86              		.align	1
+  87              		.syntax unified
+  88              		.thumb
+  89              		.thumb_func
+  90              		.fpu softvfp
+  92              	delay_cycles_dwt:
+  93              	.LFB66:
+  67:../../lib/libhalglue/common/bshal_delay.c **** 
+  68:../../lib/libhalglue/common/bshal_delay.c **** delay_fn bshal_delay_cycles = delay_cycles_asm;
+  69:../../lib/libhalglue/common/bshal_delay.c **** 
+  70:../../lib/libhalglue/common/bshal_delay.c **** 
+  71:../../lib/libhalglue/common/bshal_delay.c **** #if ( __ARM_ARCH >= 7 ) && ( __ARM_ARCH_PROFILE == 'M' )
+  72:../../lib/libhalglue/common/bshal_delay.c **** static void delay_cycles_dwt(uint32_t time_cycles) {
+  94              		.loc 1 72 52
+  95              		.cfi_startproc
+  96              		@ args = 0, pretend = 0, frame = 24
+  97              		@ frame_needed = 1, uses_anonymous_args = 0
+  98              		@ link register save eliminated.
+  99 0000 80B4     		push	{r7}
+ 100              		.cfi_def_cfa_offset 4
+ 101              		.cfi_offset 7, -4
+ 102 0002 87B0     		sub	sp, sp, #28
+ 103              		.cfi_def_cfa_offset 32
+ 104 0004 00AF     		add	r7, sp, #0
+ARM GAS  /tmp/cc04WtHU.s 			page 4
+
+
+ 105              		.cfi_def_cfa_register 7
+ 106 0006 7860     		str	r0, [r7, #4]
+  73:../../lib/libhalglue/common/bshal_delay.c **** 	// Based upon nrfx_coredep.h from nrfx by Nordic:
+  74:../../lib/libhalglue/common/bshal_delay.c **** 
+  75:../../lib/libhalglue/common/bshal_delay.c **** 	// Save the current state of the DEMCR register to be able to restore it before exiting
+  76:../../lib/libhalglue/common/bshal_delay.c **** 	// this function. Enable the trace and debug blocks (including DWT).
+  77:../../lib/libhalglue/common/bshal_delay.c **** 	uint32_t core_debug = CoreDebug->DEMCR;
+ 107              		.loc 1 77 33
+ 108 0008 124B     		ldr	r3, .L6
+ 109              		.loc 1 77 11
+ 110 000a DB68     		ldr	r3, [r3, #12]
+ 111 000c 7B61     		str	r3, [r7, #20]
+  78:../../lib/libhalglue/common/bshal_delay.c **** 	CoreDebug->DEMCR = core_debug | CoreDebug_DEMCR_TRCENA_Msk;
+ 112              		.loc 1 78 11
+ 113 000e 114A     		ldr	r2, .L6
+ 114              		.loc 1 78 32
+ 115 0010 7B69     		ldr	r3, [r7, #20]
+ 116 0012 43F08073 		orr	r3, r3, #16777216
+ 117              		.loc 1 78 19
+ 118 0016 D360     		str	r3, [r2, #12]
+  79:../../lib/libhalglue/common/bshal_delay.c **** 
+  80:../../lib/libhalglue/common/bshal_delay.c **** 	// Save the current state of the CTRL register in the DWT block. Make sure
+  81:../../lib/libhalglue/common/bshal_delay.c **** 	// that the cycle counter is enabled.
+  82:../../lib/libhalglue/common/bshal_delay.c **** 	uint32_t dwt_ctrl = DWT->CTRL;
+ 119              		.loc 1 82 25
+ 120 0018 0F4B     		ldr	r3, .L6+4
+ 121              		.loc 1 82 11
+ 122 001a 1B68     		ldr	r3, [r3]
+ 123 001c 3B61     		str	r3, [r7, #16]
+  83:../../lib/libhalglue/common/bshal_delay.c **** 	DWT->CTRL = dwt_ctrl | DWT_CTRL_CYCCNTENA_Msk;
+ 124              		.loc 1 83 5
+ 125 001e 0E4A     		ldr	r2, .L6+4
+ 126              		.loc 1 83 23
+ 127 0020 3B69     		ldr	r3, [r7, #16]
+ 128 0022 43F00103 		orr	r3, r3, #1
+ 129              		.loc 1 83 12
+ 130 0026 1360     		str	r3, [r2]
+  84:../../lib/libhalglue/common/bshal_delay.c **** 
+  85:../../lib/libhalglue/common/bshal_delay.c **** 	// Store start value of the cycle counter.
+  86:../../lib/libhalglue/common/bshal_delay.c **** 	uint32_t cyccnt_initial = DWT->CYCCNT;
+ 131              		.loc 1 86 31
+ 132 0028 0B4B     		ldr	r3, .L6+4
+ 133              		.loc 1 86 11
+ 134 002a 5B68     		ldr	r3, [r3, #4]
+ 135 002c FB60     		str	r3, [r7, #12]
+  87:../../lib/libhalglue/common/bshal_delay.c **** 
+  88:../../lib/libhalglue/common/bshal_delay.c **** 	// Delay required time.
+  89:../../lib/libhalglue/common/bshal_delay.c **** 	while ((DWT->CYCCNT - cyccnt_initial) < time_cycles)
+ 136              		.loc 1 89 8
+ 137 002e 00BF     		nop
+ 138              	.L5:
+ 139              		.loc 1 89 13 discriminator 1
+ 140 0030 094B     		ldr	r3, .L6+4
+ 141 0032 5A68     		ldr	r2, [r3, #4]
+ 142              		.loc 1 89 22 discriminator 1
+ 143 0034 FB68     		ldr	r3, [r7, #12]
+ 144 0036 D31A     		subs	r3, r2, r3
+ARM GAS  /tmp/cc04WtHU.s 			page 5
+
+
+ 145              		.loc 1 89 40 discriminator 1
+ 146 0038 7A68     		ldr	r2, [r7, #4]
+ 147 003a 9A42     		cmp	r2, r3
+ 148 003c F8D8     		bhi	.L5
+  90:../../lib/libhalglue/common/bshal_delay.c **** 		;
+  91:../../lib/libhalglue/common/bshal_delay.c **** 
+  92:../../lib/libhalglue/common/bshal_delay.c **** 	// Restore preserved registers.
+  93:../../lib/libhalglue/common/bshal_delay.c **** 	DWT->CTRL = dwt_ctrl;
+ 149              		.loc 1 93 5
+ 150 003e 064A     		ldr	r2, .L6+4
+ 151              		.loc 1 93 12
+ 152 0040 3B69     		ldr	r3, [r7, #16]
+ 153 0042 1360     		str	r3, [r2]
+  94:../../lib/libhalglue/common/bshal_delay.c **** 	CoreDebug->DEMCR = core_debug;
+ 154              		.loc 1 94 11
+ 155 0044 034A     		ldr	r2, .L6
+ 156              		.loc 1 94 19
+ 157 0046 7B69     		ldr	r3, [r7, #20]
+ 158 0048 D360     		str	r3, [r2, #12]
+  95:../../lib/libhalglue/common/bshal_delay.c **** }
+ 159              		.loc 1 95 1
+ 160 004a 00BF     		nop
+ 161 004c 1C37     		adds	r7, r7, #28
+ 162              		.cfi_def_cfa_offset 4
+ 163 004e BD46     		mov	sp, r7
+ 164              		.cfi_def_cfa_register 13
+ 165              		@ sp needed
+ 166 0050 80BC     		pop	{r7}
+ 167              		.cfi_restore 7
+ 168              		.cfi_def_cfa_offset 0
+ 169 0052 7047     		bx	lr
+ 170              	.L7:
+ 171              		.align	2
+ 172              	.L6:
+ 173 0054 F0ED00E0 		.word	-536810000
+ 174 0058 001000E0 		.word	-536866816
+ 175              		.cfi_endproc
+ 176              	.LFE66:
+ 178              		.section	.text.bshal_delay_us,"ax",%progbits
+ 179              		.align	1
+ 180              		.global	bshal_delay_us
+ 181              		.syntax unified
+ 182              		.thumb
+ 183              		.thumb_func
+ 184              		.fpu softvfp
+ 186              	bshal_delay_us:
+ 187              	.LFB67:
+  96:../../lib/libhalglue/common/bshal_delay.c **** #endif
+  97:../../lib/libhalglue/common/bshal_delay.c **** 
+  98:../../lib/libhalglue/common/bshal_delay.c **** 
+  99:../../lib/libhalglue/common/bshal_delay.c **** void bshal_delay_us(uint32_t delay_us) {
+ 188              		.loc 1 99 40
+ 189              		.cfi_startproc
+ 190              		@ args = 0, pretend = 0, frame = 8
+ 191              		@ frame_needed = 1, uses_anonymous_args = 0
+ 192 0000 80B5     		push	{r7, lr}
+ 193              		.cfi_def_cfa_offset 8
+ARM GAS  /tmp/cc04WtHU.s 			page 6
+
+
+ 194              		.cfi_offset 7, -8
+ 195              		.cfi_offset 14, -4
+ 196 0002 82B0     		sub	sp, sp, #8
+ 197              		.cfi_def_cfa_offset 16
+ 198 0004 00AF     		add	r7, sp, #0
+ 199              		.cfi_def_cfa_register 7
+ 200 0006 7860     		str	r0, [r7, #4]
+ 100:../../lib/libhalglue/common/bshal_delay.c **** 	bshal_delay_cycles(delay_us * (SystemCoreClock / 1000000));
+ 201              		.loc 1 100 2
+ 202 0008 084B     		ldr	r3, .L9
+ 203 000a 1B68     		ldr	r3, [r3]
+ 204              		.loc 1 100 49
+ 205 000c 084A     		ldr	r2, .L9+4
+ 206 000e 1268     		ldr	r2, [r2]
+ 207 0010 0849     		ldr	r1, .L9+8
+ 208 0012 A1FB0212 		umull	r1, r2, r1, r2
+ 209 0016 920C     		lsrs	r2, r2, #18
+ 210              		.loc 1 100 2
+ 211 0018 7968     		ldr	r1, [r7, #4]
+ 212 001a 01FB02F2 		mul	r2, r1, r2
+ 213 001e 1046     		mov	r0, r2
+ 214 0020 9847     		blx	r3
+ 215              	.LVL0:
+ 101:../../lib/libhalglue/common/bshal_delay.c **** }
+ 216              		.loc 1 101 1
+ 217 0022 00BF     		nop
+ 218 0024 0837     		adds	r7, r7, #8
+ 219              		.cfi_def_cfa_offset 8
+ 220 0026 BD46     		mov	sp, r7
+ 221              		.cfi_def_cfa_register 13
+ 222              		@ sp needed
+ 223 0028 80BD     		pop	{r7, pc}
+ 224              	.L10:
+ 225 002a 00BF     		.align	2
+ 226              	.L9:
+ 227 002c 00000000 		.word	bshal_delay_cycles
+ 228 0030 00000000 		.word	SystemCoreClock
+ 229 0034 83DE1B43 		.word	1125899907
+ 230              		.cfi_endproc
+ 231              	.LFE67:
+ 233              		.section	.text.bshal_delay_ms,"ax",%progbits
+ 234              		.align	1
+ 235              		.global	bshal_delay_ms
+ 236              		.syntax unified
+ 237              		.thumb
+ 238              		.thumb_func
+ 239              		.fpu softvfp
+ 241              	bshal_delay_ms:
+ 242              	.LFB68:
+ 102:../../lib/libhalglue/common/bshal_delay.c **** 
+ 103:../../lib/libhalglue/common/bshal_delay.c **** void bshal_delay_ms(uint32_t delay_ms) {
+ 243              		.loc 1 103 40
+ 244              		.cfi_startproc
+ 245              		@ args = 0, pretend = 0, frame = 8
+ 246              		@ frame_needed = 1, uses_anonymous_args = 0
+ 247 0000 80B5     		push	{r7, lr}
+ 248              		.cfi_def_cfa_offset 8
+ARM GAS  /tmp/cc04WtHU.s 			page 7
+
+
+ 249              		.cfi_offset 7, -8
+ 250              		.cfi_offset 14, -4
+ 251 0002 82B0     		sub	sp, sp, #8
+ 252              		.cfi_def_cfa_offset 16
+ 253 0004 00AF     		add	r7, sp, #0
+ 254              		.cfi_def_cfa_register 7
+ 255 0006 7860     		str	r0, [r7, #4]
+ 104:../../lib/libhalglue/common/bshal_delay.c **** 	bshal_delay_us(delay_ms * 1000);
+ 256              		.loc 1 104 2
+ 257 0008 7B68     		ldr	r3, [r7, #4]
+ 258 000a 4FF47A72 		mov	r2, #1000
+ 259 000e 02FB03F3 		mul	r3, r2, r3
+ 260 0012 1846     		mov	r0, r3
+ 261 0014 FFF7FEFF 		bl	bshal_delay_us
+ 105:../../lib/libhalglue/common/bshal_delay.c **** }
+ 262              		.loc 1 105 1
+ 263 0018 00BF     		nop
+ 264 001a 0837     		adds	r7, r7, #8
+ 265              		.cfi_def_cfa_offset 8
+ 266 001c BD46     		mov	sp, r7
+ 267              		.cfi_def_cfa_register 13
+ 268              		@ sp needed
+ 269 001e 80BD     		pop	{r7, pc}
+ 270              		.cfi_endproc
+ 271              	.LFE68:
+ 273              		.section	.text.bshal_delay_init,"ax",%progbits
+ 274              		.align	1
+ 275              		.global	bshal_delay_init
+ 276              		.syntax unified
+ 277              		.thumb
+ 278              		.thumb_func
+ 279              		.fpu softvfp
+ 281              	bshal_delay_init:
+ 282              	.LFB69:
+ 106:../../lib/libhalglue/common/bshal_delay.c **** 
+ 107:../../lib/libhalglue/common/bshal_delay.c **** int bshal_delay_init(void) {
+ 283              		.loc 1 107 28
+ 284              		.cfi_startproc
+ 285              		@ args = 0, pretend = 0, frame = 8
+ 286              		@ frame_needed = 1, uses_anonymous_args = 0
+ 287              		@ link register save eliminated.
+ 288 0000 80B4     		push	{r7}
+ 289              		.cfi_def_cfa_offset 4
+ 290              		.cfi_offset 7, -4
+ 291 0002 83B0     		sub	sp, sp, #12
+ 292              		.cfi_def_cfa_offset 16
+ 293 0004 00AF     		add	r7, sp, #0
+ 294              		.cfi_def_cfa_register 7
+ 108:../../lib/libhalglue/common/bshal_delay.c **** 	// Check whether our current core supports DWT
+ 109:../../lib/libhalglue/common/bshal_delay.c **** #if ( __ARM_ARCH >= 7 ) && ( __ARM_ARCH_PROFILE == 'M' )
+ 110:../../lib/libhalglue/common/bshal_delay.c **** 
+ 111:../../lib/libhalglue/common/bshal_delay.c **** 	// ATMv7-M Architecture Reference Manual
+ 112:../../lib/libhalglue/common/bshal_delay.c **** 	// page 742 Table C1-2
+ 113:../../lib/libhalglue/common/bshal_delay.c **** 	// ROM Table Entry ROMDWT[0]
+ 114:../../lib/libhalglue/common/bshal_delay.c **** 
+ 115:../../lib/libhalglue/common/bshal_delay.c **** 	// Page 744 - Table C1-3
+ 116:../../lib/libhalglue/common/bshal_delay.c **** 	// Points to the Data Watchpoint and Trace unit at 0xE0001000.
+ARM GAS  /tmp/cc04WtHU.s 			page 8
+
+
+ 117:../../lib/libhalglue/common/bshal_delay.c **** 	// Bit[0] is set to 1 if a DWT is fitted.
+ 118:../../lib/libhalglue/common/bshal_delay.c **** 	// Page 798 -
+ 119:../../lib/libhalglue/common/bshal_delay.c **** 	// NOCYCCNT, bit[25] 0 - Cycle counter supported.
+ 120:../../lib/libhalglue/common/bshal_delay.c **** 
+ 121:../../lib/libhalglue/common/bshal_delay.c **** 	// TODO: Is there a mask defined for this?
+ 122:../../lib/libhalglue/common/bshal_delay.c **** 	// Also... can we make use a struct with bitfields instead
+ 123:../../lib/libhalglue/common/bshal_delay.c **** 	bool use_dwt = (CORTEX_M_ROMTABLE->dwt & 1) && (!(DWT->CTRL & (1 << 25)));
+ 295              		.loc 1 123 35
+ 296 0006 124B     		ldr	r3, .L17
+ 297 0008 5B68     		ldr	r3, [r3, #4]
+ 298              		.loc 1 123 41
+ 299 000a 03F00103 		and	r3, r3, #1
+ 300              		.loc 1 123 46
+ 301 000e 002B     		cmp	r3, #0
+ 302 0010 07D0     		beq	.L13
+ 303              		.loc 1 123 55 discriminator 1
+ 304 0012 104B     		ldr	r3, .L17+4
+ 305 0014 1B68     		ldr	r3, [r3]
+ 306              		.loc 1 123 62 discriminator 1
+ 307 0016 03F00073 		and	r3, r3, #33554432
+ 308              		.loc 1 123 46 discriminator 1
+ 309 001a 002B     		cmp	r3, #0
+ 310 001c 01D1     		bne	.L13
+ 311              		.loc 1 123 46 is_stmt 0 discriminator 3
+ 312 001e 0123     		movs	r3, #1
+ 313 0020 00E0     		b	.L14
+ 314              	.L13:
+ 315              		.loc 1 123 46 discriminator 4
+ 316 0022 0023     		movs	r3, #0
+ 317              	.L14:
+ 318              		.loc 1 123 7 is_stmt 1 discriminator 6
+ 319 0024 FB71     		strb	r3, [r7, #7]
+ 320 0026 FB79     		ldrb	r3, [r7, #7]
+ 321 0028 03F00103 		and	r3, r3, #1
+ 322 002c FB71     		strb	r3, [r7, #7]
+ 124:../../lib/libhalglue/common/bshal_delay.c **** 
+ 125:../../lib/libhalglue/common/bshal_delay.c **** 	if (use_dwt)
+ 323              		.loc 1 125 5 discriminator 6
+ 324 002e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 325 0030 002B     		cmp	r3, #0
+ 326 0032 03D0     		beq	.L15
+ 126:../../lib/libhalglue/common/bshal_delay.c **** 		bshal_delay_cycles = delay_cycles_dwt;
+ 327              		.loc 1 126 22
+ 328 0034 084B     		ldr	r3, .L17+8
+ 329 0036 094A     		ldr	r2, .L17+12
+ 330 0038 1A60     		str	r2, [r3]
+ 331 003a 02E0     		b	.L16
+ 332              	.L15:
+ 127:../../lib/libhalglue/common/bshal_delay.c **** 	else
+ 128:../../lib/libhalglue/common/bshal_delay.c **** #endif
+ 129:../../lib/libhalglue/common/bshal_delay.c **** 		bshal_delay_cycles = delay_cycles_asm;
+ 333              		.loc 1 129 22
+ 334 003c 064B     		ldr	r3, .L17+8
+ 335 003e 084A     		ldr	r2, .L17+16
+ 336 0040 1A60     		str	r2, [r3]
+ 337              	.L16:
+ 130:../../lib/libhalglue/common/bshal_delay.c **** }
+ARM GAS  /tmp/cc04WtHU.s 			page 9
+
+
+ 338              		.loc 1 130 1
+ 339 0042 00BF     		nop
+ 340 0044 1846     		mov	r0, r3
+ 341 0046 0C37     		adds	r7, r7, #12
+ 342              		.cfi_def_cfa_offset 4
+ 343 0048 BD46     		mov	sp, r7
+ 344              		.cfi_def_cfa_register 13
+ 345              		@ sp needed
+ 346 004a 80BC     		pop	{r7}
+ 347              		.cfi_restore 7
+ 348              		.cfi_def_cfa_offset 0
+ 349 004c 7047     		bx	lr
+ 350              	.L18:
+ 351 004e 00BF     		.align	2
+ 352              	.L17:
+ 353 0050 00F00FE0 		.word	-535826432
+ 354 0054 001000E0 		.word	-536866816
+ 355 0058 00000000 		.word	bshal_delay_cycles
+ 356 005c 00000000 		.word	delay_cycles_dwt
+ 357 0060 00000000 		.word	delay_cycles_asm
+ 358              		.cfi_endproc
+ 359              	.LFE69:
+ 361              		.section	.data.cycles_per_loop.0,"aw"
+ 362              		.align	2
+ 365              	cycles_per_loop.0:
+ 366 0000 03000000 		.word	3
+ 367              		.text
+ 368              	.Letext0:
+ 369              		.file 2 "/usr/arm-none-eabi/include/machine/_default_types.h"
+ 370              		.file 3 "/usr/arm-none-eabi/include/sys/_stdint.h"
+ 371              		.file 4 "../../lib/libhalglue/common/bshal_delay.h"
+ 372              		.file 5 "../../ext/STM32CubeF1/Drivers/CMSIS/Core/Include/core_cm3.h"
+ 373              		.file 6 "../../lib/libhalglue/common/arm_cpuid.h"
+ 374              		.file 7 "../../ext/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h"
+ARM GAS  /tmp/cc04WtHU.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 bshal_delay.c
+     /tmp/cc04WtHU.s:16     .text.delay_cycles_asm:0000000000000000 $t
+     /tmp/cc04WtHU.s:24     .text.delay_cycles_asm:0000000000000000 delay_cycles_asm
+     /tmp/cc04WtHU.s:43     .text.delay_cycles_asm:0000000000000008 loop
+     /tmp/cc04WtHU.s:74     .text.delay_cycles_asm:000000000000001c $d
+     /tmp/cc04WtHU.s:365    .data.cycles_per_loop.0:0000000000000000 cycles_per_loop.0
+     /tmp/cc04WtHU.s:83     .data.bshal_delay_cycles:0000000000000000 bshal_delay_cycles
+     /tmp/cc04WtHU.s:80     .data.bshal_delay_cycles:0000000000000000 $d
+     /tmp/cc04WtHU.s:86     .text.delay_cycles_dwt:0000000000000000 $t
+     /tmp/cc04WtHU.s:92     .text.delay_cycles_dwt:0000000000000000 delay_cycles_dwt
+     /tmp/cc04WtHU.s:173    .text.delay_cycles_dwt:0000000000000054 $d
+     /tmp/cc04WtHU.s:179    .text.bshal_delay_us:0000000000000000 $t
+     /tmp/cc04WtHU.s:186    .text.bshal_delay_us:0000000000000000 bshal_delay_us
+     /tmp/cc04WtHU.s:227    .text.bshal_delay_us:000000000000002c $d
+     /tmp/cc04WtHU.s:234    .text.bshal_delay_ms:0000000000000000 $t
+     /tmp/cc04WtHU.s:241    .text.bshal_delay_ms:0000000000000000 bshal_delay_ms
+     /tmp/cc04WtHU.s:274    .text.bshal_delay_init:0000000000000000 $t
+     /tmp/cc04WtHU.s:281    .text.bshal_delay_init:0000000000000000 bshal_delay_init
+     /tmp/cc04WtHU.s:353    .text.bshal_delay_init:0000000000000050 $d
+     /tmp/cc04WtHU.s:362    .data.cycles_per_loop.0:0000000000000000 $d
+                           .group:0000000000000000 wm4.0.1098e563ef56396ca346ad6c5e97276e
+                           .group:0000000000000000 wm4._newlib_version.h.4.bfdf54b0af045d4a71376ae00f63a22c
+                           .group:0000000000000000 wm4.newlib.h.18.1c9fedb6b3cd797cff253cc0fd593ef2
+                           .group:0000000000000000 wm4.ieeefp.h.77.af21f134a392aadc2c66139cb51ca3a9
+                           .group:0000000000000000 wm4.features.h.22.fad1cec3bc7ff06488171438dbdcfd02
+                           .group:0000000000000000 wm4.config.h.224.c701144a7b0518c6ee9b9b5465b79f81
+                           .group:0000000000000000 wm4._intsup.h.10.48bafbb683905c4daa4565a85aeeb264
+                           .group:0000000000000000 wm4._ansi.h.8.aeadd4934928258a76627d21910677e3
+                           .group:0000000000000000 wm4._default_types.h.6.959254cf5f09734ea7516c89e8bb21bd
+                           .group:0000000000000000 wm4._stdint.h.10.c24fa3af3bc1706662bb5593a907e841
+                           .group:0000000000000000 wm4.stdint.h.23.d53047a68f4a85177f80b422d52785ed
+                           .group:0000000000000000 wm4.stddef.h.260.a563f68b1b4acaeb10448e3f261a0d35
+                           .group:0000000000000000 wm4.inttypes.h.28.684aa7736e7ecc9a6ffc44acc61c7a90
+                           .group:0000000000000000 wm4.stdbool.h.29.4a1c88fe569adb8d03217dd16982ca34
+                           .group:0000000000000000 wm4.stm32f1xx.h.39.e8c98c5ce2cd95856eed179966374e12
+                           .group:0000000000000000 wm4.stm32f103xb.h.38.ec967d5ad9d3269cb0788eebda048e38
+                           .group:0000000000000000 wm4.cmsis_version.h.32.4d5822004c01a829a975260e854b5f8e
+                           .group:0000000000000000 wm4.core_cm3.h.66.fc46cac19810db8f98d67da7ef88f42c
+                           .group:0000000000000000 wm4.cmsis_gcc.h.26.4f5798e999d5690b80e6ded3ecc94b37
+                           .group:0000000000000000 wm4.core_cm3.h.127.f4474120f1a7524deb56f9d74ff175da
+                           .group:0000000000000000 wm4.stm32f103xb.h.573.10249aa7473ca93be896fed94046a725
+                           .group:0000000000000000 wm4.stm32f1xx.h.162.96b09079a093c34dbd7f0b85cbd0ddee
+                           .group:0000000000000000 wm4.stm32f1xx_hal_conf.h.24.fb218a6cd2ee35d840b3eac0f5fb4119
+                           .group:0000000000000000 wm4.stm32_hal_legacy.h.23.91ba5b544a4c2be2620a1e7ff0049e10
+                           .group:0000000000000000 wm4.stddef.h.39.a86e5c4e08aba1ad5a6df16101d82943
+                           .group:0000000000000000 wm4.stm32f1xx_hal_def.h.57.18d01ce1aa74e9fb44dbf16f821a574a
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rcc.h.95.21591bbc513aaa813c0b8640c3b32517
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rcc_ex.h.22.8763f99bc1e3e2dcf0febe9161d81b37
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rcc.h.1202.f8e5f9e0cf4eef7840facf5396029056
+                           .group:0000000000000000 wm4.stm32f1xx_hal_gpio.h.22.fa638d688dcc57ca806fe6a7831b0d04
+                           .group:0000000000000000 wm4.stm32f1xx_hal_gpio_ex.h.22.51a50ef3512cd78017ce666a32d364bf
+                           .group:0000000000000000 wm4.stm32f1xx_hal_gpio.h.263.f5ebf2f545ade59412ab9261c8e35dc4
+                           .group:0000000000000000 wm4.stm32f1xx_hal_exti.h.22.e26491d042c8079c3ca67eca341af862
+                           .group:0000000000000000 wm4.stm32f1xx_hal_dma.h.22.3c14338534886827bf3aeaa2a7f412a1
+                           .group:0000000000000000 wm4.stm32f1xx_hal_dma_ex.h.22.001ac4d7f81ccbdcae49bd65c13858c8
+                           .group:0000000000000000 wm4.stm32f1xx_hal_dma.h.409.cafcd2cfe701091535636be537c18293
+ARM GAS  /tmp/cc04WtHU.s 			page 11
+
+
+                           .group:0000000000000000 wm4.stm32f1xx_hal_can.h.22.9c5cbafab9070e25b2f93744f73f31d3
+                           .group:0000000000000000 wm4.stm32f1xx_hal_cortex.h.22.b5f4174bb6a50d95405567b8f50e0900
+                           .group:0000000000000000 wm4.stm32f1xx_hal_adc.h.23.7d9534ac2977bed50266ba8246ab0e90
+                           .group:0000000000000000 wm4.stm32f1xx_hal_adc_ex.h.22.3f3261b879b4e7059748d94dd89f7d18
+                           .group:0000000000000000 wm4.stm32f1xx_hal_crc.h.22.87a86a55c6bcf304cab68a78bda4e4b0
+                           .group:0000000000000000 wm4.stm32f1xx_hal_flash.h.22.5cea9a7210e6315b41724b47b5fdf203
+                           .group:0000000000000000 wm4.stm32f1xx_hal_flash_ex.h.22.d4e19c21f2a86fa2f8ec2c2d5f1ab2af
+                           .group:0000000000000000 wm4.stm32f1xx_hal_i2c.h.22.ad52786857e2aa8ebdf15f14f11ce081
+                           .group:0000000000000000 wm4.stm32f1xx_hal_iwdg.h.22.fb89d7d74008a11634b49f24b2a7251c
+                           .group:0000000000000000 wm4.stm32f1xx_hal_pwr.h.22.3438c476faafc3240bf146f143df3fcd
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rtc.h.22.2e6c4901b3fecdb0d30ea29b38e42312
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rtc_ex.h.22.7132215fff3c2f214804b30db0033252
+                           .group:0000000000000000 wm4.stm32f1xx_hal_spi.h.22.b31d455e8b6e1263b36c3848e181fcd3
+                           .group:0000000000000000 wm4.stm32f1xx_hal_tim.h.22.a16e206564e97dbace9faae59a0d6008
+                           .group:0000000000000000 wm4.stm32f1xx_hal_uart.h.22.5f7992e497faa36aa98f09f7214f4dbb
+                           .group:0000000000000000 wm4.stm32f1xx_hal_usart.h.22.2faa5f38db3b50ec6d148ec053db51df
+                           .group:0000000000000000 wm4.stm32f1xx_hal_irda.h.22.d5842d01b8e511da8aab9dac5eab084d
+                           .group:0000000000000000 wm4.stm32f1xx_hal_smartcard.h.22.910d31efb108bad068ed688d89837f4b
+                           .group:0000000000000000 wm4.stm32f1xx_hal_wwdg.h.22.b35f34e70a149b77d65030a8695a70d2
+                           .group:0000000000000000 wm4.stm32f1xx_ll_usb.h.22.573a89b5589ed8d93ea72c39c5d12974
+                           .group:0000000000000000 wm4.stm32f1xx_hal_pcd.h.161.76733d98d42c8efa1b20a15947173729
+                           .group:0000000000000000 wm4.stm32f1xx_hal.h.88.91065c0692bed6019c34f1e9c00589fd
+                           .group:0000000000000000 wm4.arm_cpuid.h.28.a837135f8fd99522010eba001d9b4220
+
+UNDEFINED SYMBOLS
+SystemCoreClock

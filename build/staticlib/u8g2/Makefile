@@ -6,6 +6,12 @@ UCDEV_ROOT = ../../../
 
 U8G2_DIR 	= $(UCDEV_ROOT)/ext/u8g2/csrc
 
+
+## Library Compile Time COnfig
+
+CFLAGS += -DU8X8_WITH_USER_PTR
+
+
 #######################################
 # source of the library
 #######################################

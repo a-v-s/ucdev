@@ -8,7 +8,12 @@ static u8g2_t m_u8g2;
 extern bshal_i2cm_instance_t *gp_i2c;
 
 void display_init(void) {
+
+#ifdef U8X8_WITH_USER_PTR
+	u8g2_SetUserPtr(&m_u8g2,gp_i2c);
+#else
 	bshal_u8x8_i2c_init(&m_u8g2, gp_i2c);
+#endif
 
 	// Screen with either ssd1306 or sh1106 are shipped by AliBay sellers
 	// They are mostly compatible, but the display content will be shifted 2 pixels

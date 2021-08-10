@@ -1,0 +1,336 @@
+ARM GAS  /tmp/ccU5Y5X2.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 6
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"u8x8_i2c.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.bshal_u8x8_byte_i2c,"ax",%progbits
+  16              		.align	1
+  17              		.global	bshal_u8x8_byte_i2c
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	bshal_u8x8_byte_i2c:
+  25              	.LFB65:
+  26              		.file 1 "../../lib/libhalglue/bshal/extlib/u8x8_i2c.c"
+   1:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+   2:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+   3:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** #include "u8x8_i2c.h"
+   4:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+   5:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** //----------------------------------------------------------------------//
+   6:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** // https://github.com/olikraus/u8g2/wiki/Porting-to-new-MCU-platform    //
+   7:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** //----------------------------------------------------------------------//
+   8:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+   9:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+  10:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+  11:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** #ifndef U8X8_WITH_USER_PTR
+  12:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** #warning please use U8X8_WITH_USER_PTR
+  13:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** static bshal_i2cm_instance_t *mp_i2c;
+  14:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** static u8g2_t *mp_u8g2;
+  15:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** void bshal_u8x8_i2c_init(u8g2_t *p_u8g2, bshal_i2cm_instance_t *p_i2c) {
+  16:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	mp_u8g2 = p_u8g2;
+  17:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	mp_i2c = p_i2c;
+  18:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** }
+  19:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** #endif
+  20:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+  21:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+  22:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** uint8_t bshal_u8x8_byte_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
+  23:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		void *arg_ptr) {
+  27              		.loc 1 23 18
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 24
+  30              		@ frame_needed = 1, uses_anonymous_args = 0
+  31 0000 80B5     		push	{r7, lr}
+  32              		.cfi_def_cfa_offset 8
+  33              		.cfi_offset 7, -8
+  34              		.cfi_offset 14, -4
+  35 0002 88B0     		sub	sp, sp, #32
+ARM GAS  /tmp/ccU5Y5X2.s 			page 2
+
+
+  36              		.cfi_def_cfa_offset 40
+  37 0004 02AF     		add	r7, sp, #8
+  38              		.cfi_def_cfa 7, 32
+  39 0006 F860     		str	r0, [r7, #12]
+  40 0008 7B60     		str	r3, [r7, #4]
+  41 000a 0B46     		mov	r3, r1
+  42 000c FB72     		strb	r3, [r7, #11]
+  43 000e 1346     		mov	r3, r2
+  44 0010 BB72     		strb	r3, [r7, #10]
+  24:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	static uint8_t buffer[32]; /* u8g2/u8x8 will never send more than 32 bytes between START_TRANSFER 
+  25:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	static uint8_t buf_idx;
+  26:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	uint8_t *data;
+  27:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+  28:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** #ifdef U8X8_WITH_USER_PTR
+  29:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	bshal_i2cm_instance_t *p_i2cm = u8x8->user_ptr;
+  45              		.loc 1 29 25
+  46 0012 FB68     		ldr	r3, [r7, #12]
+  47 0014 DB6A     		ldr	r3, [r3, #44]
+  48 0016 3B61     		str	r3, [r7, #16]
+  30:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** #else
+  31:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	bshal_i2cm_instance_t *p_i2cm = mp_i2c;
+  32:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** #endif
+  33:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 
+  34:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	switch (msg) {
+  49              		.loc 1 34 2
+  50 0018 FB7A     		ldrb	r3, [r7, #11]	@ zero_extendqisi2
+  51 001a 143B     		subs	r3, r3, #20
+  52 001c 0C2B     		cmp	r3, #12
+  53 001e 47D8     		bhi	.L2
+  54 0020 01A2     		adr	r2, .L4
+  55 0022 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+  56 0026 00BF     		.p2align 2
+  57              	.L4:
+  58 0028 B5000000 		.word	.L13+1
+  59 002c B1000000 		.word	.L2+1
+  60 0030 B1000000 		.word	.L2+1
+  61 0034 5D000000 		.word	.L7+1
+  62 0038 8D000000 		.word	.L6+1
+  63 003c 95000000 		.word	.L5+1
+  64 0040 B1000000 		.word	.L2+1
+  65 0044 B1000000 		.word	.L2+1
+  66 0048 B1000000 		.word	.L2+1
+  67 004c B1000000 		.word	.L2+1
+  68 0050 B1000000 		.word	.L2+1
+  69 0054 B1000000 		.word	.L2+1
+  70 0058 B5000000 		.word	.L13+1
+  71              		.p2align 1
+  72              	.L7:
+  35:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	case U8X8_MSG_BYTE_SEND:
+  36:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		data = (uint8_t*) arg_ptr;
+  73              		.loc 1 36 8
+  74 005c 7B68     		ldr	r3, [r7, #4]
+  75 005e 7B61     		str	r3, [r7, #20]
+  37:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		while (arg_int > 0) {
+  76              		.loc 1 37 9
+  77 0060 10E0     		b	.L9
+  78              	.L10:
+ARM GAS  /tmp/ccU5Y5X2.s 			page 3
+
+
+  38:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 			buffer[buf_idx++] = *data;
+  79              		.loc 1 38 18
+  80 0062 174B     		ldr	r3, .L14
+  81 0064 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  82 0066 5A1C     		adds	r2, r3, #1
+  83 0068 D1B2     		uxtb	r1, r2
+  84 006a 154A     		ldr	r2, .L14
+  85 006c 1170     		strb	r1, [r2]
+  86 006e 1A46     		mov	r2, r3
+  87              		.loc 1 38 24
+  88 0070 7B69     		ldr	r3, [r7, #20]
+  89 0072 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+  90              		.loc 1 38 22
+  91 0074 134B     		ldr	r3, .L14+4
+  92 0076 9954     		strb	r1, [r3, r2]
+  39:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 			data++;
+  93              		.loc 1 39 8
+  94 0078 7B69     		ldr	r3, [r7, #20]
+  95 007a 0133     		adds	r3, r3, #1
+  96 007c 7B61     		str	r3, [r7, #20]
+  40:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 			arg_int--;
+  97              		.loc 1 40 11
+  98 007e BB7A     		ldrb	r3, [r7, #10]	@ zero_extendqisi2
+  99 0080 013B     		subs	r3, r3, #1
+ 100 0082 BB72     		strb	r3, [r7, #10]
+ 101              	.L9:
+  37:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 			buffer[buf_idx++] = *data;
+ 102              		.loc 1 37 18
+ 103 0084 BB7A     		ldrb	r3, [r7, #10]	@ zero_extendqisi2
+ 104 0086 002B     		cmp	r3, #0
+ 105 0088 EBD1     		bne	.L10
+  41:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		}
+  42:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		break;
+ 106              		.loc 1 42 3
+ 107 008a 14E0     		b	.L11
+ 108              	.L6:
+  43:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	case U8X8_MSG_BYTE_INIT:
+  44:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		/* add your custom code to init i2c subsystem */
+  45:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		// For our use, we expect an already initialised I²C bus being provided
+  46:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		// Why? We assume the I²C bus is being shared, and it's beyond the
+  47:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		// responsibility of the graphics library interfacing  layer
+  48:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		break;
+  49:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	case U8X8_MSG_BYTE_SET_DC:
+  50:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		/* ignored for i2c */
+  51:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		break;
+  52:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	case U8X8_MSG_BYTE_START_TRANSFER:
+  53:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		buf_idx = 0;
+ 109              		.loc 1 53 11
+ 110 008c 0C4B     		ldr	r3, .L14
+ 111 008e 0022     		movs	r2, #0
+ 112 0090 1A70     		strb	r2, [r3]
+  54:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		break;
+ 113              		.loc 1 54 3
+ 114 0092 10E0     		b	.L11
+ 115              	.L5:
+  55:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	case U8X8_MSG_BYTE_END_TRANSFER:
+  56:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		// u8x8 uses 8 bit addressing
+ARM GAS  /tmp/ccU5Y5X2.s 			page 4
+
+
+  57:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		// bshal uses 7 bit addressing
+  58:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		bshal_i2cm_send(p_i2cm, u8x8->i2c_address >> 1, buffer,
+ 116              		.loc 1 58 31
+ 117 0094 FB68     		ldr	r3, [r7, #12]
+ 118 0096 93F82430 		ldrb	r3, [r3, #36]	@ zero_extendqisi2
+ 119              		.loc 1 58 3
+ 120 009a 5B08     		lsrs	r3, r3, #1
+ 121 009c D9B2     		uxtb	r1, r3
+ 122 009e 084B     		ldr	r3, .L14
+ 123 00a0 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 124 00a2 0022     		movs	r2, #0
+ 125 00a4 0092     		str	r2, [sp]
+ 126 00a6 074A     		ldr	r2, .L14+4
+ 127 00a8 3869     		ldr	r0, [r7, #16]
+ 128 00aa FFF7FEFF 		bl	bshal_i2cm_send
+  59:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 				buf_idx, false);
+  60:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		break;
+ 129              		.loc 1 60 3
+ 130 00ae 02E0     		b	.L11
+ 131              	.L2:
+  61:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	default:
+  62:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 		return 0;
+ 132              		.loc 1 62 10
+ 133 00b0 0023     		movs	r3, #0
+ 134 00b2 01E0     		b	.L12
+ 135              	.L13:
+  48:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	case U8X8_MSG_BYTE_SET_DC:
+ 136              		.loc 1 48 3
+ 137 00b4 00BF     		nop
+ 138              	.L11:
+  63:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	}
+  64:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** 	return 1;
+ 139              		.loc 1 64 9
+ 140 00b6 0123     		movs	r3, #1
+ 141              	.L12:
+  65:../../lib/libhalglue/bshal/extlib/u8x8_i2c.c **** }
+ 142              		.loc 1 65 1
+ 143 00b8 1846     		mov	r0, r3
+ 144 00ba 1837     		adds	r7, r7, #24
+ 145              		.cfi_def_cfa_offset 8
+ 146 00bc BD46     		mov	sp, r7
+ 147              		.cfi_def_cfa_register 13
+ 148              		@ sp needed
+ 149 00be 80BD     		pop	{r7, pc}
+ 150              	.L15:
+ 151              		.align	2
+ 152              	.L14:
+ 153 00c0 00000000 		.word	buf_idx.1
+ 154 00c4 00000000 		.word	buffer.0
+ 155              		.cfi_endproc
+ 156              	.LFE65:
+ 158              		.section	.bss.buf_idx.1,"aw",%nobits
+ 161              	buf_idx.1:
+ 162 0000 00       		.space	1
+ 163              		.section	.bss.buffer.0,"aw",%nobits
+ 164              		.align	2
+ 167              	buffer.0:
+ARM GAS  /tmp/ccU5Y5X2.s 			page 5
+
+
+ 168 0000 00000000 		.space	32
+ 168      00000000 
+ 168      00000000 
+ 168      00000000 
+ 168      00000000 
+ 169              		.text
+ 170              	.Letext0:
+ 171              		.file 2 "/usr/arm-none-eabi/include/machine/_default_types.h"
+ 172              		.file 3 "/usr/arm-none-eabi/include/sys/_stdint.h"
+ 173              		.file 4 "../../ext/u8g2/csrc/u8x8.h"
+ 174              		.file 5 "../../lib/libhalglue/bshal/bshal_i2cm.h"
+ARM GAS  /tmp/ccU5Y5X2.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 u8x8_i2c.c
+     /tmp/ccU5Y5X2.s:16     .text.bshal_u8x8_byte_i2c:0000000000000000 $t
+     /tmp/ccU5Y5X2.s:24     .text.bshal_u8x8_byte_i2c:0000000000000000 bshal_u8x8_byte_i2c
+     /tmp/ccU5Y5X2.s:58     .text.bshal_u8x8_byte_i2c:0000000000000028 $d
+     /tmp/ccU5Y5X2.s:71     .text.bshal_u8x8_byte_i2c:000000000000005c $t
+     /tmp/ccU5Y5X2.s:153    .text.bshal_u8x8_byte_i2c:00000000000000c0 $d
+     /tmp/ccU5Y5X2.s:161    .bss.buf_idx.1:0000000000000000 buf_idx.1
+     /tmp/ccU5Y5X2.s:167    .bss.buffer.0:0000000000000000 buffer.0
+     /tmp/ccU5Y5X2.s:162    .bss.buf_idx.1:0000000000000000 $d
+     /tmp/ccU5Y5X2.s:164    .bss.buffer.0:0000000000000000 $d
+                           .group:0000000000000000 wm4.0.1098e563ef56396ca346ad6c5e97276e
+                           .group:0000000000000000 wm4._newlib_version.h.4.bfdf54b0af045d4a71376ae00f63a22c
+                           .group:0000000000000000 wm4.features.h.33.318b64d71e0957639cfb30f1db1f7ec8
+                           .group:0000000000000000 wm4._default_types.h.15.247e5cd201eca3442cbf5404108c4935
+                           .group:0000000000000000 wm4._intsup.h.10.48bafbb683905c4daa4565a85aeeb264
+                           .group:0000000000000000 wm4._stdint.h.10.c24fa3af3bc1706662bb5593a907e841
+                           .group:0000000000000000 wm4.stdint.h.23.d53047a68f4a85177f80b422d52785ed
+                           .group:0000000000000000 wm4.stm32f1xx.h.39.e8c98c5ce2cd95856eed179966374e12
+                           .group:0000000000000000 wm4.stm32f103xb.h.38.ec967d5ad9d3269cb0788eebda048e38
+                           .group:0000000000000000 wm4.cmsis_version.h.32.4d5822004c01a829a975260e854b5f8e
+                           .group:0000000000000000 wm4.core_cm3.h.66.fc46cac19810db8f98d67da7ef88f42c
+                           .group:0000000000000000 wm4.cmsis_gcc.h.26.4f5798e999d5690b80e6ded3ecc94b37
+                           .group:0000000000000000 wm4.core_cm3.h.127.f4474120f1a7524deb56f9d74ff175da
+                           .group:0000000000000000 wm4.stm32f103xb.h.573.10249aa7473ca93be896fed94046a725
+                           .group:0000000000000000 wm4.stm32f1xx.h.162.96b09079a093c34dbd7f0b85cbd0ddee
+                           .group:0000000000000000 wm4.stm32f1xx_hal_conf.h.24.fb218a6cd2ee35d840b3eac0f5fb4119
+                           .group:0000000000000000 wm4.stm32_hal_legacy.h.23.91ba5b544a4c2be2620a1e7ff0049e10
+                           .group:0000000000000000 wm4.stddef.h.39.144cf5ddcd53cbfdac30259dc1a6c87f
+                           .group:0000000000000000 wm4.stm32f1xx_hal_def.h.57.18d01ce1aa74e9fb44dbf16f821a574a
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rcc.h.95.21591bbc513aaa813c0b8640c3b32517
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rcc_ex.h.22.8763f99bc1e3e2dcf0febe9161d81b37
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rcc.h.1202.f8e5f9e0cf4eef7840facf5396029056
+                           .group:0000000000000000 wm4.stm32f1xx_hal_gpio.h.22.fa638d688dcc57ca806fe6a7831b0d04
+                           .group:0000000000000000 wm4.stm32f1xx_hal_gpio_ex.h.22.51a50ef3512cd78017ce666a32d364bf
+                           .group:0000000000000000 wm4.stm32f1xx_hal_gpio.h.263.f5ebf2f545ade59412ab9261c8e35dc4
+                           .group:0000000000000000 wm4.stm32f1xx_hal_exti.h.22.e26491d042c8079c3ca67eca341af862
+                           .group:0000000000000000 wm4.stm32f1xx_hal_dma.h.22.3c14338534886827bf3aeaa2a7f412a1
+                           .group:0000000000000000 wm4.stm32f1xx_hal_dma_ex.h.22.001ac4d7f81ccbdcae49bd65c13858c8
+                           .group:0000000000000000 wm4.stm32f1xx_hal_dma.h.409.cafcd2cfe701091535636be537c18293
+                           .group:0000000000000000 wm4.stm32f1xx_hal_can.h.22.9c5cbafab9070e25b2f93744f73f31d3
+                           .group:0000000000000000 wm4.stm32f1xx_hal_cortex.h.22.b5f4174bb6a50d95405567b8f50e0900
+                           .group:0000000000000000 wm4.stm32f1xx_hal_adc.h.23.7d9534ac2977bed50266ba8246ab0e90
+                           .group:0000000000000000 wm4.stm32f1xx_hal_adc_ex.h.22.3f3261b879b4e7059748d94dd89f7d18
+                           .group:0000000000000000 wm4.stm32f1xx_hal_crc.h.22.87a86a55c6bcf304cab68a78bda4e4b0
+                           .group:0000000000000000 wm4.stm32f1xx_hal_flash.h.22.5cea9a7210e6315b41724b47b5fdf203
+                           .group:0000000000000000 wm4.stm32f1xx_hal_flash_ex.h.22.d4e19c21f2a86fa2f8ec2c2d5f1ab2af
+                           .group:0000000000000000 wm4.stm32f1xx_hal_i2c.h.22.ad52786857e2aa8ebdf15f14f11ce081
+                           .group:0000000000000000 wm4.stm32f1xx_hal_iwdg.h.22.fb89d7d74008a11634b49f24b2a7251c
+                           .group:0000000000000000 wm4.stm32f1xx_hal_pwr.h.22.3438c476faafc3240bf146f143df3fcd
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rtc.h.22.2e6c4901b3fecdb0d30ea29b38e42312
+                           .group:0000000000000000 wm4.stm32f1xx_hal_rtc_ex.h.22.7132215fff3c2f214804b30db0033252
+                           .group:0000000000000000 wm4.stm32f1xx_hal_spi.h.22.b31d455e8b6e1263b36c3848e181fcd3
+                           .group:0000000000000000 wm4.stm32f1xx_hal_tim.h.22.a16e206564e97dbace9faae59a0d6008
+                           .group:0000000000000000 wm4.stm32f1xx_hal_uart.h.22.5f7992e497faa36aa98f09f7214f4dbb
+                           .group:0000000000000000 wm4.stm32f1xx_hal_usart.h.22.2faa5f38db3b50ec6d148ec053db51df
+                           .group:0000000000000000 wm4.stm32f1xx_hal_irda.h.22.d5842d01b8e511da8aab9dac5eab084d
+ARM GAS  /tmp/ccU5Y5X2.s 			page 7
+
+
+                           .group:0000000000000000 wm4.stm32f1xx_hal_smartcard.h.22.910d31efb108bad068ed688d89837f4b
+                           .group:0000000000000000 wm4.stm32f1xx_hal_wwdg.h.22.b35f34e70a149b77d65030a8695a70d2
+                           .group:0000000000000000 wm4.stm32f1xx_ll_usb.h.22.573a89b5589ed8d93ea72c39c5d12974
+                           .group:0000000000000000 wm4.stm32f1xx_hal_pcd.h.161.76733d98d42c8efa1b20a15947173729
+                           .group:0000000000000000 wm4.stm32f1xx_hal.h.88.91065c0692bed6019c34f1e9c00589fd
+                           .group:0000000000000000 wm4.u8x8.h.86.cabc7409edfb1837158d17befff7110f
+                           .group:0000000000000000 wm4.stdarg.h.31.b55da1089056868966f25de5dbfc7d3c
+                           .group:0000000000000000 wm4.newlib.h.8.7cb3972cd43265932d4782d5eb589854
+                           .group:0000000000000000 wm4.cdefs.h.49.39045112216f6a021dbdffe3bf5accce
+                           .group:0000000000000000 wm4.syslimits.h.34.de5cbd310098bc5895998b6bde577ed2
+                           .group:0000000000000000 wm4.limits.h.9.70fb0ada6f71b16202a66baaa6d8ea70
+                           .group:0000000000000000 wm4.limits.h.60.56a1ae353e2028a24298ec6463b8b593
+                           .group:0000000000000000 wm4.u8x8.h.143.822f477279833be4088a86fb9f81d8c6
+                           .group:0000000000000000 wm4.u8g2.h.77.171dd9fbb9bf5ec4dc8a7f60edfc7e1f
+                           .group:0000000000000000 wm4.stdbool.h.29.4a1c88fe569adb8d03217dd16982ca34
+                           .group:0000000000000000 wm4.bshal_i2cm.h.17.c7329ec6dbd3040670862aca99bbdc7c
+
+UNDEFINED SYMBOLS
+bshal_i2cm_send
