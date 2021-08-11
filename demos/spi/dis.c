@@ -27,8 +27,14 @@ int display_init(bshal_spim_t *bsspim) {
 
 }
 void print(char* str, int line) {
-	ucg_SetFont(&m_ucg, ucg_font_5x8_tf);
-	ucg_SetFontMode(&m_ucg, UCG_FONT_MODE_TRANSPARENT);
+	//ucg_SetFont(&m_ucg, ucg_font_5x8_tf);
+	//ucg_SetFontMode(&m_ucg, UCG_FONT_MODE_TRANSPARENT);
+
+	ucg_SetColor( &m_ucg, 0, 0xff, 0xff, 0xff);
+	ucg_SetColor( &m_ucg, 1, 0x00, 0x00, 0x00);
+
+	ucg_SetFont(&m_ucg, ucg_font_5x8_mf);
+	ucg_SetFontMode(&m_ucg, UCG_FONT_MODE_SOLID);
 	ucg_SetFontPosTop(&m_ucg);
 	ucg_DrawString(&m_ucg, 0, line*8, 0, str);
 }
