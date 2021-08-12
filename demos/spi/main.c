@@ -120,6 +120,7 @@ uint32_t test_flash_spi_read_id() {
 	// The values we are getting are consistent, also, they are coming from the
 	// flash chip, as when we move the chip select to a different pin we get 0.
 	// So, this means, the data comes from the chip... but something else is off...
+	// The same results by another flash chip so it wasn't a bad chip.
 
 
 
@@ -143,7 +144,7 @@ uint32_t test_flash_spi_read_id() {
 	}
 
 
-	// Expected values:
+	// Expected values for W25Q32JV :
 	// MF7 - MF0 = EFh			// answer to 90
 	// ID7 - ID0 = 15h			// answer to ABh, 90h, 92h, 94h
 	// ID15 - ID0 = 4016h		// answer to 9F
