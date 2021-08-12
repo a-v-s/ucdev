@@ -84,13 +84,72 @@ uint8_t test_adxl_spi_read_id() {
 	uint8_t get_id = 0x00 |  0x80;
 	bshal_spim_transmit(&adxl_spi_config, &get_id, 1, true);
 
-	bshal_spim_receive(&adxl_spi_config, &get_id, 1, true);
-
+	// expected o345 // 0xe5
+	bshal_spim_receive(&adxl_spi_config, &get_id, 1, false);
 
 	//return result;
 	return get_id;
 }
 
+
+
+uint32_t test_flash_spi_read_id() {
+
+		static bshal_spim_t flash_spi_config;
+		flash_spi_config.frequency = 1000000;
+		flash_spi_config.bit_order = 0; //MSB
+		flash_spi_config.mode = 0;
+
+		flash_spi_config.hw_nr = 2; // SPI2
+		flash_spi_config.miso_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_14);
+		flash_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
+		flash_spi_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
+
+		flash_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOB,GPIO_PIN_12);
+		flash_spi_config.nrs_pin = -1;
+		flash_spi_config.ncd_pin = -1;
+		flash_spi_config.irq_pin = -1;
+
+		bshal_spim_init(&flash_spi_config);
+
+	uint8_t result = -1;
+
+	uint32_t device_id = 0;
+
+	// So we are getting values from the flash chip, but not the expected values
+	// The values we are getting are consistent, also, they are coming from the
+	// flash chip, as when we move the chip select to a different pin we get 0.
+	// So, this means, the data comes from the chip... but something else is off...
+
+
+
+	{
+	uint8_t get_id = 0x9F;
+	bshal_spim_transmit(&flash_spi_config, &get_id, 1, true);
+	bshal_spim_receive(&flash_spi_config, &device_id, 2, false);
+	//0xEE  expect 4016
+	}
+	{
+	uint8_t get_id[4] = {0xAB, 0x00, 0x00, 0x00};
+	bshal_spim_transmit(&flash_spi_config, get_id,4, true);
+	bshal_spim_receive(&flash_spi_config, &device_id, 1, false);
+	// got 0x00  expect 15
+	}
+	{
+	uint8_t get_id[4] = {0x90, 0x00, 0x00, 0x00};
+	bshal_spim_transmit(&flash_spi_config, get_id,4, true);
+	bshal_spim_receive(&flash_spi_config, &device_id, 2, false);
+	// got 0x0eee // expect ef
+	}
+
+
+	// Expected values:
+	// MF7 - MF0 = EFh			// answer to 90
+	// ID7 - ID0 = 15h			// answer to ABh, 90h, 92h, 94h
+	// ID15 - ID0 = 4016h		// answer to 9F
+	//return result;
+	return device_id;
+}
 
 void screen_init() {
 	static bshal_spim_t screen_spi_config;
@@ -172,7 +231,10 @@ int main() {
 
 	version = test_adxl_spi_read_id();
 	sprintf(str, "ADXL ID  %03o", version);
-		print(str, 5);
+	print(str, 5);
+
+
+	uint32_t flash_id = test_flash_spi_read_id();
 
 	while (1) {
 
