@@ -93,6 +93,42 @@ uint8_t test_adxl_spi_read_id() {
 
 
 
+uint32_t test_sdmmc_spi_read_id() {
+	static bshal_spim_t flash_sdmmc_config;
+	flash_sdmmc_config.frequency = 1000000;
+	flash_sdmmc_config.bit_order = 0; //MSB
+	flash_sdmmc_config.mode = 0;
+
+	flash_sdmmc_config.hw_nr = 2; // SPI2
+	flash_sdmmc_config.miso_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_14);
+	flash_sdmmc_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
+	flash_sdmmc_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
+
+	flash_sdmmc_config.nss_pin = bshal_gpio_encode_pin(GPIOA,GPIO_PIN_8);
+	flash_sdmmc_config.nrs_pin = -1;
+	flash_sdmmc_config.ncd_pin = -1;
+	flash_sdmmc_config.irq_pin = -1;
+
+	bshal_spim_init(&flash_sdmmc_config);
+
+	// We should toggle the clock without being selected
+	// But as other devices have been read at this point
+	// That would be the case by now
+	// So for now skip such
+
+	ssdmmc_resq_t init = SDMMC_REQ_CMD_INIT_SD;
+
+	bshal_spim_transmit(&flash_sdmmc_config, &init, sizeof(init), true);
+	bshal_spim_receive(&flash_sdmmc_config, &init, sizeof(init), false);
+	// This returns us all zeros. We are expecting some bits to be set.
+
+
+
+uint8_t result = -1;
+
+uint32_t device_id = 0;
+}
+
 uint32_t test_flash_spi_read_id() {
 
 		static bshal_spim_t flash_spi_config;
@@ -236,6 +272,8 @@ int main() {
 
 
 	uint32_t flash_id = test_flash_spi_read_id();
+
+	test_sdmmc_spi_read_id();
 
 	while (1) {
 

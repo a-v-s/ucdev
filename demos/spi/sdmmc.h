@@ -13,6 +13,8 @@
 
 #pragma pack(push,1)
 
+
+
 typedef struct {
 	unsigned int raz:1;
 	unsigned int error_param : 1;
@@ -130,19 +132,23 @@ static_assert(sizeof(sdmmc_csd_t) == 15 , "CSD should be 15 bytes ");
 // Reponse 1,3,6 , 7
 // Note: we are in Most Significant Bit mode, right
 // thus reverser the order
-typedef struct {
-	unsigned int command : 6;
-	unsigned int transmission_bit : 1 ;	// direction: 0 = card->host, 1 = host->card,
-	unsigned int start_bit : 1 ;	// set to 0
-	union {
-		uint32_t argument;
-		sdmmc_card_status_t card_status;
-		sdmmc_ocr_t ocr;
+typedef union {
+	struct {
+		unsigned int command :6;
+		unsigned int transmission_bit :1;// direction: 0 = card->host, 1 = host->card,
+		unsigned int start_bit :1;	// set to 0
+		union {
+			uint32_t argument;
+			sdmmc_card_status_t card_status;
+			sdmmc_ocr_t ocr;
+		};
+		unsigned int end_bit :1; // set to 1
+		unsigned int crc7 :7;
 	};
-	unsigned int end_bit : 1; // set to 1
-	unsigned int crc7 : 7;
-
+	uint8_t raw[6];
 } ssdmmc_resq_t;
+
+#define SDMMC_REQ_CMD_INIT_SD {.start_bit = 0, 	.transmission_bit=1, .command = 0, .end_bit=1, .crc7= 0x4A, }
 
 typedef struct {
 	unsigned int command : 6;
@@ -157,7 +163,7 @@ typedef struct {
 	unsigned int crc7 : 7;
 } ssdmmc_resp3_t; // response 3
 
-#define SDMMC_REQ_CMD_INIT_SD (ssdmmc_req_cmd_t) {0,1, SSDMMC_CMD0, 0, 0x4A, 1}
+
 
 
 
