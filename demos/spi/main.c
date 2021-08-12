@@ -43,6 +43,8 @@
 #include "rc52x_transport.h"
 #include "rc52x.h"
 
+#include "sdmmc.h"
+
 rc52x_t g_rc52x;
 
 void HardFault_Handler(void) {
@@ -57,7 +59,37 @@ void SystemClock_Config(void) {
 	ClockSetup_HSE8_SYS72();
 }
 
+uint8_t test_adxl_spi_read_id() {
 
+		static bshal_spim_t adxl_spi_config;
+		adxl_spi_config.frequency = 1000000;
+		adxl_spi_config.bit_order = 0; //MSB
+		adxl_spi_config.mode = 0;
+
+		adxl_spi_config.hw_nr = 2; // SPI2
+		adxl_spi_config.miso_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_14);
+		adxl_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
+		adxl_spi_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
+
+		adxl_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOA,GPIO_PIN_10);
+		adxl_spi_config.nrs_pin = -1;
+		adxl_spi_config.ncd_pin = -1;
+		adxl_spi_config.irq_pin = -1;
+
+		bshal_spim_init(&adxl_spi_config);
+
+	uint8_t result = -1;
+
+	// device id is register 0 // Read us 0x80
+	uint8_t get_id = 0x00 |  0x80;
+	bshal_spim_transmit(&adxl_spi_config, &get_id, 1, true);
+
+	bshal_spim_receive(&adxl_spi_config, &get_id, 1, true);
+
+
+	//return result;
+	return get_id;
+}
 
 
 void screen_init() {
@@ -71,9 +103,11 @@ void screen_init() {
 	screen_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
 	screen_spi_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
 
-	screen_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOA,GPIO_PIN_2);
-	screen_spi_config.nrs_pin = bshal_gpio_encode_pin(GPIOA,GPIO_PIN_1);
-	screen_spi_config.ncd_pin = bshal_gpio_encode_pin(GPIOA,GPIO_PIN_0);
+	screen_spi_config.ncd_pin = bshal_gpio_encode_pin(GPIOB,GPIO_PIN_9);
+	screen_spi_config.nrs_pin = bshal_gpio_encode_pin(GPIOB,GPIO_PIN_8);
+	screen_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOB,GPIO_PIN_7);
+
+
 	screen_spi_config.irq_pin = -1;//
 
 	bshal_spim_init(&screen_spi_config);
@@ -98,10 +132,12 @@ void rfid5_init(rc52x_t *rc52x){
 	rfid_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
 	rfid_spi_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
 
-	rfid_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_5);
-	rfid_spi_config.nrs_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_4);
-	rfid_spi_config.ncd_pin = -1;
+
+	rfid_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_6);
+	rfid_spi_config.nrs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_5);
 	rfid_spi_config.irq_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_3);
+
+	rfid_spi_config.ncd_pin = -1;
 
 	bshal_spim_init(&rfid_spi_config);
 	rc52x->transport = mfrc_transport_spi;
@@ -130,9 +166,13 @@ int main() {
 	char str[32];
 	uint8_t version = -1;
 	rc52x_get_chip_version(&g_rc52x, &version);
-	sprintf(str, "VERSION %02X", version);
+	sprintf(str, "MFRC522 %02X", version);
 	print(str, 4);
 
+
+	version = test_adxl_spi_read_id();
+	sprintf(str, "ADXL ID  %03o", version);
+		print(str, 5);
 
 	while (1) {
 
