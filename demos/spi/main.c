@@ -43,6 +43,8 @@
 #include "rc52x_transport.h"
 #include "rc52x.h"
 
+rc52x_t g_rc52x;
+
 void HardFault_Handler(void) {
 
 }
@@ -104,6 +106,7 @@ void rfid5_init(rc52x_t *rc52x){
 	bshal_spim_init(&rfid_spi_config);
 	rc52x->transport = mfrc_transport_spi;
 	rc52x->transport_config=&rfid_spi_config;
+	rc52x->delay_ms = bshal_delay_ms;
 }
 
 int main() {
@@ -121,7 +124,16 @@ int main() {
 
 	print("Hello World!",3);
 
-	framebuffer_apply();
+	rfid5_init(&g_rc52x);
+
+
+	char str[32];
+	uint8_t version = -1;
+	rc52x_get_chip_version(&g_rc52x, &version);
+	sprintf(str, "VERSION %02X", version);
+	print(str, 4);
+
+
 	while (1) {
 
 	}

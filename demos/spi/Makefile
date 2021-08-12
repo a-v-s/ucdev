@@ -15,6 +15,7 @@ UCDEV_ROOT=../..
 
 
 UCGLIB_DIR = $(UCDEV_ROOT)/ext/ucglib/csrc
+U8G2_DIR = $(UCDEV_ROOT)/ext/u8g2/csrc
 
 ################################################################################
 # Sources
@@ -47,6 +48,8 @@ C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/cards/picc.c
 # Includes
 ################################################################################
 C_INCLUDES += $(UCGLIB_DIR) 
+C_INCLUDES += $(U8G2_DIR)
+
 
 C_INCLUDES += $(LIBHALGLUE_ROOT)/bshal/extlib/
 C_INCLUDES += $(LIBHALGLUE_ROOT)/common/
@@ -61,6 +64,8 @@ C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/cards
 LDSCRIPT = $(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).ld
 
 LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/ucg/debug/arm_m3  -lucg
+
+LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/arm_m3  -lu8g2
 
 LDFLAGS += -u _printf_float
 

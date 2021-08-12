@@ -8,6 +8,8 @@
 
 #include "ucg_spi.h"
 
+#include "u8g2.h"
+
 static ucg_t m_ucg;
 
 #include "bshal_spim.h"
@@ -25,20 +27,46 @@ int display_init(bshal_spim_t *bsspim) {
 	ucg_SetFontMode(&m_ucg, UCG_FONT_MODE_TRANSPARENT);
 	ucg_ClearScreen(&m_ucg);
 
+//	ucg_SetColor(&m_ucg, 0, 0xFF,0,0);
+//	ucg_SetColor(&m_ucg, 1 , 0,0, 0xFF);
+//	ucg_SetColor(&m_ucg, 2 , 0, 0xFF, 0 );
+//	ucg_SetColor(&m_ucg, 3 , 0, 0, 0 );
+
+	//ucg_DrawGradientBox(&m_ucg, 0, 0, m_ucg.dimension.w, m_ucg.dimension.h);
+
+
+
+
+
 }
 void print(char* str, int line) {
-	//ucg_SetFont(&m_ucg, ucg_font_5x8_tf);
-	//ucg_SetFontMode(&m_ucg, UCG_FONT_MODE_TRANSPARENT);
+	ucg_SetColor(&m_ucg, 0, 0xFF,0xFF,0xFF);
+	ucg_SetFont(&m_ucg, u8g2_font_5x8_tf);
+	ucg_SetFont(&m_ucg, ucg_font_5x8_tf);
+	ucg_SetFontMode(&m_ucg, UCG_FONT_MODE_TRANSPARENT);
+	//ucg_SetFont(&m_ucg, ucg_font_5x8_mf);
 
-	ucg_SetColor( &m_ucg, 0, 0xff, 0xff, 0xff);
-	ucg_SetColor( &m_ucg, 1, 0x00, 0x00, 0x00);
+	//ucg_SetFontMode(&m_ucg, UCG_FONT_MODE_SOLID);
 
-	ucg_SetFont(&m_ucg, ucg_font_5x8_mf);
-	ucg_SetFontMode(&m_ucg, UCG_FONT_MODE_SOLID);
+	//ucg_SetFont(&m_ucg, ucg_font_profont11_mf);
 	ucg_SetFontPosTop(&m_ucg);
 	ucg_DrawString(&m_ucg, 0, line*8, 0, str);
 }
 
 void framebuffer_apply(){
+	//ucg_SetColor(&m_ucg, 0,0,0 ,0x3F);
+	//ucg_DrawBox(&m_ucg, m_ucg.dimension.w/4, m_ucg.dimension.h/4, m_ucg.dimension.w/2, m_ucg.dimension.h/2);
 
+	ucg_SetColor(&m_ucg, 0, 0xFF,0,0);
+	ucg_SetColor(&m_ucg, 1 , 0,0, 0xFF);
+	ucg_SetColor(&m_ucg, 2 , 0, 0xFF, 0 );
+	ucg_SetColor(&m_ucg, 3 , 0xFF, 0xFF, 0xFF );
+
+	// SO they should over lap
+	ucg_Draw90Line(&m_ucg, 16, 26, 8, 0, 0);
+	ucg_Draw90Line(&m_ucg, 16+7, 25, 8, 2, 2);
+
+	// SO they should over lap
+	ucg_Draw90Line(&m_ucg, 26, 16, 8, 1, 1);
+	ucg_Draw90Line(&m_ucg, 25, 16+7, 8, 3, 3);
 }
