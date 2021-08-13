@@ -91,9 +91,15 @@ uint8_t test_adxl_spi_read_id() {
 	return get_id;
 }
 
-uint32_t test_sdmmc_spi_read_id() {
+uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
+	if (sdcard_id) {
+		memset(sdcard_id, 0, 6);
+	}
+
+
 	static bshal_spim_t flash_sdmmc_config;
-	flash_sdmmc_config.frequency = 1000000;
+	//flash_sdmmc_config.frequency = 1000000;
+	flash_sdmmc_config.frequency = 100000;
 	flash_sdmmc_config.bit_order = 0; //MSB
 	flash_sdmmc_config.mode = 0;
 
@@ -102,27 +108,157 @@ uint32_t test_sdmmc_spi_read_id() {
 	flash_sdmmc_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
 	flash_sdmmc_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
 
-	flash_sdmmc_config.nss_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_8);
+	//flash_sdmmc_config.nss_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_8);
+	flash_sdmmc_config.nss_pin = -1;
 	flash_sdmmc_config.nrs_pin = -1;
 	flash_sdmmc_config.ncd_pin = -1;
 	flash_sdmmc_config.irq_pin = -1;
 
 	bshal_spim_init(&flash_sdmmc_config);
 
+
 	// We should toggle the clock without being selected
 	// But as other devices have been read at this point
 	// That would be the case by now
-	// So for now skip such
+	// Let's try it anyway on out slow clock
+	// Wiggle the clock witout a select
+	if (1) {
+		uint8_t buff[24];
+		//uint8_t buff[48];  // Do we need more wiggling?
+		memset(buff,-1,sizeof(buff));
+		bshal_spim_transmit(&flash_sdmmc_config, &buff, sizeof(buff), false);
+	}
 
-	ssdmmc_resq_t init = SDMMC_REQ_CMD_INIT_SD;
 
+	// set the cs pin back again
+	flash_sdmmc_config.nss_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_8);
+	bshal_spim_init(&flash_sdmmc_config);
+
+
+
+	// Initialisation command
+	ssdmmc_resq_t init = SDMMC_REQ_CMD_INIT;
 	bshal_spim_transmit(&flash_sdmmc_config, &init, sizeof(init), true);
-	bshal_spim_receive(&flash_sdmmc_config, &init, sizeof(init), false);
-	// This returns us all zeros. We are expecting some bits to be set.
 
-	uint8_t result = -1;
+	/*
+	uint8_t buff[512];
+	bshal_spim_receive(&flash_sdmmc_config, buff, sizeof(buff), true);
+	return -1;
+	*/
 
-	uint32_t device_id = 0;
+
+	int retries = 512;
+	// Watch in SPI mode, the response misses the headers we would
+	// get in SD mode.
+	sdmmc_card_status_t resp;
+	resp.raw=0xFF;
+	// An SD card should return 0xFF while it is initialising
+	// So we read one byte untill we read something different,
+	// And then we read the rest of the data.
+	// At least, after the clock wiggling we're getting the 0xFF
+	// rather then 0x00, but no response yet. Do we need more wiggling?
+	while(resp.raw==0xff) {
+		bshal_spim_receive(&flash_sdmmc_config, &resp, 1, true);
+		retries--;
+		if (!retries)
+			break;
+	}
+
+	if (!retries) {
+		// timeout
+		return -1;
+	}
+	uint8_t buff[32] = {0};
+	sdmmc_spi_resp_cid_t cid = {0};
+	if (!resp.raz && resp.idle) {
+
+
+
+
+		bshal_gpio_write_pin(flash_sdmmc_config.nss_pin, true);
+
+
+		ssdmmc_resq_t vhs = SDMMC_REQ_CMD_VHS;
+		bshal_spim_transmit(&flash_sdmmc_config, &vhs, sizeof(vhs), true);
+		// now we should get response format 7;
+		// As the first byte is r1, we use our card status
+		// Interestingly, we get CRC error. Shouldn't CRC be disabled
+		// now we are in SPI mode?
+		// It seems for this command CRC is enabled
+		// "The CMD8 CRC verification is always enabled" page 230
+		// For now, I copy-pasted the value from ulibSD (1BSD license)
+		// The 64 MB card accepts it, the 2GB and 4GB cards don't
+		uint8_t response[5] = {0xFF} ;
+		resp.raw=0xFF;
+		while(resp.raw==0xff) {
+			bshal_spim_receive(&flash_sdmmc_config, &resp, 1, true);
+			retries--;
+			if (!retries)
+				break;
+		}
+		response[0]= resp.raw;
+		bshal_spim_receive(&flash_sdmmc_config, response+1, 4, false);
+
+		// Look at page 229 for SPI initialisation flow
+		// At least we know we should send ACMD41
+		// If this fails, we're talking to an MMC card and retry with CMD1
+
+
+
+
+		// We are getting some data. The PNM of the card in use
+		// is "APPSD".  But we are not getting it right yet.
+		// We see that data in the buffer, but the alignment is off
+
+		ssdmmc_resq_t get_cid = SDMMC_REQ_CMD_GETCID;
+
+		bshal_spim_transmit(&flash_sdmmc_config, &get_cid, sizeof(get_cid), true);
+
+		// standard response token (Refer to Figure 7-3) followed by a data block of 16
+		// bytes suffixed with a 16-bit CRC.
+
+		retries= 512;
+
+
+		// We are getting 0x01 , 0xFF, 0xFE before the CID
+		// I guess 0x01 is a status, 0xFF is busy, 0xFE is start of block
+		// So this 0x01 would be an R1 ... so we should elaborate parsing
+		// while (0xFF) skip, parse as R1, if no error,
+		// while (0xFF) skip, if (0xFE) start receiving CID
+
+		// This works for a 64 MB card
+		// but a 4 GB card gives 0xFF, 0x05 (status: command error) fo
+		// For cards greater then 2 GB, we should send CMD8 first
+		// A 2 GB card gives 0xff 0x01 (OK) but then endless 0xFF
+		// We should do cmd8 anyways as we should by spec.
+
+		while(retries) {
+			uint8_t wait_for_start_of_block_token = 0xFF;
+			bshal_spim_transceive(&flash_sdmmc_config, &wait_for_start_of_block_token, 1, true);
+			sdmmc_card_status_t test;
+			test.raw = wait_for_start_of_block_token;
+
+			// The start of a data block is indicated by 0xFE
+			// Page 246, 7.3.3.2
+			if (wait_for_start_of_block_token == 0xFE) break;
+			retries--;
+		}
+		if (!retries) {
+			// timeout
+			return -1;
+		}
+		bshal_spim_transceive(&flash_sdmmc_config, cid.raw, sizeof(cid), true);
+
+		if (sdcard_id) {
+			memcpy(sdcard_id, cid.cid.PNM, 5);
+		}
+	} else {
+		// Bad response from card
+		return -2;
+	}
+
+
+	return 0;
 }
 
 uint32_t test_flash_spi_read_id() {
@@ -272,7 +408,11 @@ int main() {
 
 	uint32_t flash_id = test_flash_spi_read_id();
 
-	test_sdmmc_spi_read_id();
+	char sdcard_name[6];
+	test_sdmmc_spi_read_id(&sdcard_name);
+	sdcard_name[5]=0;
+	sprintf(str, "SD: %s", sdcard_name);
+	print(str, 6);
 
 	while (1) {
 
