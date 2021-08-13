@@ -351,9 +351,25 @@ uint32_t test_flash_spi_read_id() {
 	// ANSWER TO AB		//					ID7-ID0:	15
 
 
-	// GD25Q32C:  0x151640c8
-	// W25Q32JV:  0x151640ef
-	// XM25QH32B: 0x15164020
+	// Verified in test:
+	// GD25Q32C:  	0x151640c8
+	// W25Q32JV:  	0x151640ef
+	// XM25QH32B: 	0x15164020
+
+	// From the datasheet, we expect
+	// HG25Q32:		0x151640E0
+	// BY25Q32BS:	0x15164068
+
+	// According to the XM25QH32B datasheet
+	// Manufacturer = 0x20
+	// Memory Type  = 0x40 for SPI / 0x60 got QSPI
+	// Capacity     = 0x16		// Thus 0x16 means 32 Mbit?
+	// Numbers seem consequent between 32 Mbit chips from different manufacturers
+	// Only the manufacturer byte changes. Thus... are these (semi-)standardised or not?
+	// Look at
+	// https://github.com/espressif/esp-idf/blob/master/components/spi_flash/spi_flash_chip_generic.c  line 107
+	// https://github.com/espressif/esptool/issues/105
+
 
 	return device_id;
 }
