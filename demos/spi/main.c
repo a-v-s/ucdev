@@ -282,7 +282,7 @@ uint32_t test_flash_spi_read_id() {
 
 	uint8_t result = -1;
 
-	uint32_t device_id = 0;
+	//uint32_t device_id = 0;
 
 	// So we are getting values from the flash chip, but not the expected values
 	// The values we are getting are consistent, also, they are coming from the
@@ -290,27 +290,53 @@ uint32_t test_flash_spi_read_id() {
 	// So, this means, the data comes from the chip... but something else is off...
 	// The same results by another flash chip so it wasn't a bad chip.
 
+	// I have identified the problem: I need to transmit 0xFF while receiving.
+
+/*
 	{
 		uint8_t get_id = 0x9F;
 		bshal_spim_transmit(&flash_spi_config, &get_id, 1, true);
-		bshal_spim_receive(&flash_spi_config, &device_id, 2, false);
+		device_id = -1;
+		bshal_spim_transceive(&flash_spi_config, &device_id, 4, false);
 		//W25Q32JV: 0xEE  expect 4016
-		//GD25Q32C: 0xC0  expect 4016
+		//GD25Q32C:
 	}
 	{
 		uint8_t get_id[4] = { 0xAB, 0x00, 0x00, 0x00 };
 		bshal_spim_transmit(&flash_spi_config, get_id, 4, true);
-		bshal_spim_receive(&flash_spi_config, &device_id, 1, false);
+		device_id = -1;
+		bshal_spim_transceive(&flash_spi_config, &device_id, 1, false);
 		//W25Q32JV: got 0x00  expect 15
 		//GD25Q32C: got 0x15  expect 0x15 : OK
 	}
 	{
 		uint8_t get_id[4] = { 0x90, 0x00, 0x00, 0x00 };
 		bshal_spim_transmit(&flash_spi_config, get_id, 4, true);
-		bshal_spim_receive(&flash_spi_config, &device_id, 2, false);
+		device_id = -1;
+		bshal_spim_transceive(&flash_spi_config, &device_id, 2, false);
 		//W25Q32JV: got 0x0eee // expect ef
 		//GD25Q32C: got 0xcc0 // expect 15 c8
 	}
+*/
+
+
+	uint32_t device_id = -1;
+	uint8_t* bytes = (uint8_t*)&device_id;
+
+
+
+	uint8_t rdid[1] = { 0x9F };
+	bshal_spim_transmit(&flash_spi_config, rdid, sizeof(rdid), true);
+	bshal_spim_transceive(&flash_spi_config, bytes, 3, false);
+
+	uint8_t rdi[4] = { 0xAB, 0x00, 0x00, 0x00 };
+	bshal_spim_transmit(&flash_spi_config, rdi, sizeof(rdi), true);
+	bshal_spim_transceive(&flash_spi_config, bytes + 3, 1, false);
+
+
+
+
+
 
 	// Expected values for W25Q32JV :
 
@@ -321,9 +347,13 @@ uint32_t test_flash_spi_read_id() {
 
 	// Values for GD25Q32C (page 15)
 	// ANSWER to 90		//					ID7-ID0:	15	MID = 0xc8
-	// ANSWER to 9F		//	ID15-ID8: 40	ID7-ID0: 	16
+	// ANSWER to 9F		//	MID7-MID0: 0xC8 ID15-ID8: 0x 40	ID7-ID0: 	0x 16
 	// ANSWER TO AB		//					ID7-ID0:	15
 
+
+	// GD25Q32C:  0x151640c8
+	// W25Q32JV:  0x151640ef
+	// XM25QH32B: 0x15164020
 
 	return device_id;
 }
@@ -392,7 +422,7 @@ int main() {
 	bshal_delay_us(10);
 	screen_init();
 
-	print("Hello World!", 3);
+	print("Hello World!", 1);
 
 	rfid5_init(&g_rc52x);
 
@@ -400,19 +430,21 @@ int main() {
 	uint8_t version = -1;
 	rc52x_get_chip_version(&g_rc52x, &version);
 	sprintf(str, "MFRC522 %02X", version);
-	print(str, 4);
+	print(str, 2);
 
 	version = test_adxl_spi_read_id();
 	sprintf(str, "ADXL ID  %03o", version);
-	print(str, 5);
+	print(str, 3);
 
 	uint32_t flash_id = test_flash_spi_read_id();
+	sprintf(str, "FLASH  %08X", flash_id);
+	print(str, 4);
 
 	char sdcard_name[6];
 	test_sdmmc_spi_read_id(&sdcard_name);
 	sdcard_name[5]=0;
 	sprintf(str, "SD: %s", sdcard_name);
-	print(str, 6);
+	print(str, 5);
 
 	while (1) {
 
