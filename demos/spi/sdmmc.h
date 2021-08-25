@@ -131,6 +131,11 @@ typedef struct {
 } sdmmc_csd_t;
 static_assert(sizeof(sdmmc_csd_t) == 15 , "CSD should be 15 bytes ");
 
+
+typedef struct {
+
+} sdmmc_acmd55_t;
+
 // This encodes a request and 48 bit  reponses
 // Reponse 1,3,6 , 7
 // Note: we are in Most Significant Bit mode, right
@@ -155,7 +160,14 @@ typedef union {
 #define SDMMC_REQ_CMD_INIT {.start_bit = 0, 	.transmission_bit=1, .command = 0, .end_bit=1, .crc7= 0x4A, }
 #define SDMMC_REQ_CMD_GETCID {.start_bit = 0, 	.transmission_bit=1, .command = 10, .end_bit=1, .crc7= -1, }
 
-#define SDMMC_REQ_CMD_VHS {.start_bit = 0, 	.transmission_bit=1, .command = 8, .vhs.vhs=1, .vhs.check_pattern=0xAA, .end_bit=1, .crc7= 0x43, }
+#define SDMMC_REQ_CMD8_VHS {.start_bit = 0, 	.transmission_bit=1, .command = 8, .vhs.vhs=1, .vhs.check_pattern=0xAA, .end_bit=1, .crc7= 0x43, }
+
+#define SDMMC_REQ_CMD_ACMD {.start_bit = 0, 	.transmission_bit=1, .command = 55, .end_bit=1, .crc7= -1, }
+
+// Note: we should give it some parameters, at least say SDHC capable
+// Page 241 suggest only setting CSS, but page ... suggest a voltage must be set?
+#define SDMMC_REQ_ACMD41 {.start_bit = 0, 	.transmission_bit=1, .command = 51,.ocr.CCS = 1, .ocr._3V3_3V4=0,  .end_bit=1, .crc7= -1, }
+#define SDMMC_REQ_CMD1 {.start_bit = 0, 	.transmission_bit=1, .command = 1, .end_bit=1, .crc7= -1, }
 
 typedef struct {
 	uint8_t raw;

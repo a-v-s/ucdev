@@ -178,7 +178,7 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 		bshal_gpio_write_pin(flash_sdmmc_config.nss_pin, true);
 
 
-		ssdmmc_resq_t vhs = SDMMC_REQ_CMD_VHS;
+		ssdmmc_resq_t vhs = SDMMC_REQ_CMD8_VHS;
 		bshal_spim_transmit(&flash_sdmmc_config, &vhs, sizeof(vhs), true);
 		// now we should get response format 7;
 		// As the first byte is r1, we use our card status
@@ -199,10 +199,84 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 		response[0]= resp.raw;
 		bshal_spim_receive(&flash_sdmmc_config, response+1, 4, false);
 
+		// Should check for response 0x05 illegal command
+		// THen card is SD v1 or MMC v3
+		// stated here http://elm-chan.org/docs/mmc/mmc_e.html
+		// ( What does MMC < 3 do???? )
+
 		// Look at page 229 for SPI initialisation flow
 		// At least we know we should send ACMD41
 		// If this fails, we're talking to an MMC card and retry with CMD1
 
+
+		// See page 49 for ACMD41
+		// ACMD means first do a CMD55 see page 79
+		bool can_acmd41;
+		ssdmmc_resq_t acmd = SDMMC_REQ_CMD_ACMD;
+		bshal_spim_transmit(&flash_sdmmc_config, &acmd, sizeof(acmd), true);
+		retries = 512;
+		resp.raw=0xFF;
+		while(resp.raw==0xff) {
+			bshal_spim_receive(&flash_sdmmc_config, &resp, 1, true);
+			retries--;
+			if (!retries)
+				break;
+		}
+		bshal_gpio_write_pin(flash_sdmmc_config.nss_pin, true);
+		if (!retries) {
+			// timeout
+			return -1;
+		}
+
+		can_acmd41 = resp.raw==0x01;
+
+		ssdmmc_resq_t acmd41_resp;
+		if (can_acmd41) {
+			ssdmmc_resq_t acmd41 = SDMMC_REQ_ACMD41;
+			bshal_spim_transmit(&flash_sdmmc_config, &acmd41, sizeof(acmd41), true);
+			retries = 512;
+			resp.raw=0xFF;
+			bshal_delay_ms(1000); // test a delay to give it time to initialise
+			while(resp.raw==0xff) {
+				bshal_spim_receive(&flash_sdmmc_config, &resp, 1, true);
+				retries--;
+				if (!retries)
+					break;
+			}
+
+
+
+			bshal_gpio_write_pin(flash_sdmmc_config.nss_pin, true);
+			if (!retries) {
+				// timeout
+				return -1;
+			}
+
+			can_acmd41 = resp.raw==0x01;
+		}
+
+
+		if (!can_acmd41) {
+			// SD card initialisation failed
+			// retry with MMC initialisation
+			 // SDC Ver.1 or MMC Ver.3
+
+			ssdmmc_resq_t cmd1 = SDMMC_REQ_CMD1;
+			bshal_spim_transmit(&flash_sdmmc_config, &cmd1, sizeof(cmd1), true);
+			retries = 512;
+			resp.raw=0xFF;
+			while(resp.raw==0xff) {
+				bshal_spim_receive(&flash_sdmmc_config, &resp, 1, true);
+				retries--;
+				if (!retries)
+					break;
+			}
+			bshal_gpio_write_pin(flash_sdmmc_config.nss_pin, true);
+			if (!retries) {
+				// timeout
+				return -1;
+			}
+		}
 
 
 
@@ -217,7 +291,7 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 		// standard response token (Refer to Figure 7-3) followed by a data block of 16
 		// bytes suffixed with a 16-bit CRC.
 
-		retries= 512;
+
 
 
 		// We are getting 0x01 , 0xFF, 0xFE before the CID
@@ -232,6 +306,26 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 		// A 2 GB card gives 0xff 0x01 (OK) but then endless 0xFF
 		// We should do cmd8 anyways as we should by spec.
 
+
+
+
+		retries = 512;
+		resp.raw=0xFF;
+		while(resp.raw==0xff) {
+			bshal_spim_receive(&flash_sdmmc_config, &resp, 1, true);
+			retries--;
+			if (!retries)
+				break;
+		}
+
+
+		if (!retries) {
+			// timeout
+			return -1;
+		}
+		retries= 1024;
+
+
 		while(retries) {
 			uint8_t wait_for_start_of_block_token = 0xFF;
 			bshal_spim_transceive(&flash_sdmmc_config, &wait_for_start_of_block_token, 1, true);
@@ -241,6 +335,15 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 			// The start of a data block is indicated by 0xFE
 			// Page 246, 7.3.3.2
 			if (wait_for_start_of_block_token == 0xFE) break;
+
+			if (wait_for_start_of_block_token != 0xFF) {
+				// On the working card, I get
+				//0x00,0x00,0x00,0x33,0x0e
+				// Before the start of data token
+				// What is this data ?
+				//__BKPT();
+			}
+
 			retries--;
 		}
 		if (!retries) {

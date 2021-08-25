@@ -44,6 +44,7 @@
 #include "bh1750.h"
 #include "hcd1080.h"
 #include "si70xx.h"
+#include "ccs811.h"
 
 #include "rc52x_transport.h"
 #include "rc52x.h"
@@ -111,6 +112,12 @@ int main() {
 	bh1750_t bh1750 = { 0 };
 	si70xx_t si70xx = { 0 };
 	hcd1080_t hcd1080 = { 0 };
+	ccs811_t ccs811 = { 0 };
+
+	if (0 == bshal_i2cm_isok(gp_i2c, CCS811_I2C_ADDR1)) {
+		ccs811.addr = CCS811_I2C_ADDR1;
+		ccs811.p_i2c = gp_i2c;
+	}
 
 	if (0 == bshal_i2cm_isok(gp_i2c, LM75B_ADDR)) {
 		lm75b.addr = LM75B_ADDR;
@@ -156,60 +163,22 @@ int main() {
 	rfid5_init(&rc52x);
 	rc52x_version = 0;
 	rc52x_get_chip_version(&rc52x, &rc52x_version);
-	sprintf(str, "VERSION %02X", rc52x_version);
 
-	print(str, 4);
-	framebuffer_apply();
-
-	int card_test = 0;
-	while (card_test) {
-
-		framebuffer_apply();
-		draw_plain_background();
-
-		picc_t picc = { 0 };
-
-		rc52x_result_t status = 0;
-		status = PICC_RequestA(&rc52x, &picc);
-
-		if (status) {
-			status = PICC_RequestA(&rc52x, &picc);
-		}
-
-		if (!status) {
-			sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
-			//print(str, 0);
-			status = PICC_Select(&rc52x, &picc, 0);
-		}
-		if (!status) {
-
-			sprintf(str, "UID  ");
-			for (int i = 0; i < picc.size; i++)
-				sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
-			print(str, 1);
-			//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
-			//print(str, 1);
-		} else {
-			print("No Card found", 1);
-		}
+	if (ccs811.addr) {
+		__BKPT(0);
+		ccs811_init(&ccs811);
+		while (1) {
+				css811_measure(&ccs811);
+			}
 	}
-	///
 
-	print("Board 1", 0);
+
+	print("I²C DEMO", 0);
 	framebuffer_apply();
 
 	int count = 0;
-	char buff[25];
+	char buff[64];
 
-	while (0) {
-		// Keypad test
-		buff[0] = get_key();
-		buff[1] = 0;
-		print(buff, 6);
-
-		framebuffer_apply();
-		draw_plain_background();
-	}
 
 	while (1) {
 		draw_plain_background();
@@ -222,36 +191,8 @@ int main() {
 
 			accum temperature_a;
 			lm75b_get_temperature_C_accum(&lm75b, &temperature_a);
-			sprintf(buff, "LM75B: %3d.%02d °C  ", (int) temperature_a,
+			sprintf(buff, "LM75B:   %3d.%02d°C  ", (int) temperature_a,
 					(int) (100 * temperature_a) % 100);
-			print(buff, line);
-			line++;
-		}
-
-		//?? stoort met rc522
-		if (sht3x.addr) {
-			accum temperature_a;
-			accum huminity_a;
-			sht3x_get_humidity_accum(&sht3x, &huminity_a);
-			sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
-			sprintf(buff, "SHT3X: %3d.%02d °C %3d.%02d %%  ",
-					(int) temperature_a, abs((int) (100 * temperature_a)) % 100,
-					(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
-			print(buff, line);
-			line++;
-
-		}
-
-		if (bh1750.addr) {
-			static int lux;
-
-			// Reading it too fast stops it from updating
-			// Therefore only reading it every 10 rounds
-			static int swipswap;
-			if (!(swipswap%10))
-				bh1750_measure_ambient_light(&bh1750, &lux);
-			swipswap++;
-			sprintf(buff, "BH1750: %6d lx", lux);
 			print(buff, line);
 			line++;
 		}
@@ -264,20 +205,19 @@ int main() {
 
 			hcd1080_get_temperature_C_accum(&hcd1080, &temperature_a);
 
-			sprintf(buff, "HCD1080: %3d.%02d °C %3d.%02d %%  ",
+			sprintf(buff, "HCD1080: %3d.%02d°C %3d.%02d%%  ",
 					(int) temperature_a, abs((int) (100 * temperature_a)) % 100,
 					(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
 			print(buff, line);
 			line++;
 		}
 		if (si70xx.addr) {
-			print("SI70XX", 1);
 			accum temperature_a;
 			si70xx_get_temperature_C_accum(&si70xx, &temperature_a);
 			accum huminity_a;
 			si70xx_get_humidity_accum(&si70xx, &huminity_a);
 
-			sprintf(buff, "SI70XX: %3d.%02d °C %3d.%02d %%  ",
+			sprintf(buff, "SI70XX:  %3d.%02d°C %3d.%02d%%  ",
 					(int) temperature_a, abs((int) (100 * temperature_a)) % 100,
 					(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
 			print(buff, line);
@@ -285,48 +225,79 @@ int main() {
 
 		}
 
-		if (rc52x_version) {
-			// When either SHT3x or HCD1080 are being read,
-			// The mfrc522 stops reading cards
-			// This will need more investigation
-			{
+		//?? stoort met rc522
+		if (sht3x.addr) {
+			accum temperature_a;
+			accum huminity_a;
+			sht3x_get_humidity_accum(&sht3x, &huminity_a);
+			sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
 
-				picc_t picc = { 0 };
+			sprintf(buff, "SHT3X:   %3d.%02d°C %3d.%02d%%  ",
+					(int) temperature_a, abs((int) (100 * temperature_a)) % 100,
+					(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+			print(buff, line);
 
-				rc52x_result_t status = 0;
-				status = PICC_RequestA(&rc52x, &picc);
+			print(buff, line);
+			line++;
 
-				if (status) {
-					status = PICC_RequestA(&rc52x, &picc);
-				}
-
-				if (!status) {
-					sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
-					//print(str, 0);
-					status = PICC_Select(&rc52x, &picc, 0);
-				}
-				if (!status) {
-
-					sprintf(str, "UID  ");
-					for (int i = 0; i < picc.size; i++)
-						sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
-					print(str, line);
-					//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
-					//print(str, 1);
-				} else {
-					print("No Card found", line);
-				}
-				line++;
-			}
 		}
 
-		sprintf(buff, "Keypad:  ");
-		buff[8] = get_key();
-		print(buff, line);
-		line++;
+		if (bh1750.addr) {
+			static int lux;
 
-		framebuffer_apply();
+			// Reading it too fast stops it from updating
+			// Therefore only reading it every 10 rounds
+			static int swipswap;
+			if (!(swipswap % 10))
+				bh1750_measure_ambient_light(&bh1750, &lux);
+			swipswap++;
+			sprintf(buff, "BH1750:  %6d lux", lux);
+			print(buff, line);
+			line++;
 
+			if (rc52x_version) {
+				// When either SHT3x or HCD1080 are being read,
+				// The mfrc522 stops reading cards
+				// This will need more investigation
+				{
+
+					picc_t picc = { 0 };
+
+					rc52x_result_t status = 0;
+					status = PICC_RequestA(&rc52x, &picc);
+
+					if (status) {
+						status = PICC_RequestA(&rc52x, &picc);
+					}
+
+					if (!status) {
+						sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
+						//print(str, 0);
+						status = PICC_Select(&rc52x, &picc, 0);
+					}
+					if (!status) {
+
+						sprintf(str, "UID  ");
+						for (int i = 0; i < picc.size; i++)
+							sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
+						print(str, line);
+						//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
+						//print(str, 1);
+					} else {
+						print("No Card found", line);
+					}
+					line++;
+				}
+			}
+
+			sprintf(buff, "Keypad:  ");
+			buff[8] = get_key();
+
+			print(buff, line);
+			line++;
+
+			framebuffer_apply();
+
+		}
 	}
-
 }
