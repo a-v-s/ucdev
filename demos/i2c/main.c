@@ -165,20 +165,16 @@ int main() {
 	rc52x_get_chip_version(&rc52x, &rc52x_version);
 
 	if (ccs811.addr) {
-		__BKPT(0);
-		ccs811_init(&ccs811);
-		while (1) {
-				css811_measure(&ccs811);
-			}
-	}
 
+		ccs811_init(&ccs811);
+
+	}
 
 	print("I²C DEMO", 0);
 	framebuffer_apply();
 
 	int count = 0;
 	char buff[64];
-
 
 	while (1) {
 		draw_plain_background();
@@ -254,50 +250,63 @@ int main() {
 			sprintf(buff, "BH1750:  %6d lux", lux);
 			print(buff, line);
 			line++;
+		}
+		if (ccs811.addr) {
+//			static uint16_t TVOC = 0;
+//			static uint16_t eCO2 = 0;
+//			css811_measure(&ccs811, &eCO2, &TVOC);
+//			sprintf(buff, "CCS811:  TVOC %4d eCO2 %4d", TVOC, eCO2);
 
-			if (rc52x_version) {
-				// When either SHT3x or HCD1080 are being read,
-				// The mfrc522 stops reading cards
-				// This will need more investigation
-				{
-
-					picc_t picc = { 0 };
-
-					rc52x_result_t status = 0;
-					status = PICC_RequestA(&rc52x, &picc);
-
-					if (status) {
-						status = PICC_RequestA(&rc52x, &picc);
-					}
-
-					if (!status) {
-						sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
-						//print(str, 0);
-						status = PICC_Select(&rc52x, &picc, 0);
-					}
-					if (!status) {
-
-						sprintf(str, "UID  ");
-						for (int i = 0; i < picc.size; i++)
-							sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
-						print(str, line);
-						//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
-						//print(str, 1);
-					} else {
-						print("No Card found", line);
-					}
-					line++;
-				}
-			}
-
-			sprintf(buff, "Keypad:  ");
-			buff[8] = get_key();
-
+			static uint16_t TVOC = 0;
+			css811_measure(&ccs811, NULL, &TVOC);
+			sprintf(buff, "CCS811:   %4d ppb TVOC", TVOC);
 			print(buff, line);
 			line++;
-
-			framebuffer_apply();
-
 		}
+
+		if (rc52x_version) {
+			// When either SHT3x or HCD1080 are being read,
+			// The mfrc522 stops reading cards
+			// This will need more investigation
+			{
+
+				picc_t picc = { 0 };
+
+				rc52x_result_t status = 0;
+				status = PICC_RequestA(&rc52x, &picc);
+
+				if (status) {
+					status = PICC_RequestA(&rc52x, &picc);
+				}
+
+				if (!status) {
+					sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
+					//print(str, 0);
+					status = PICC_Select(&rc52x, &picc, 0);
+				}
+				if (!status) {
+
+					sprintf(str, "UID  ");
+					for (int i = 0; i < picc.size; i++)
+						sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
+					print(str, line);
+					//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
+					//print(str, 1);
+				} else {
+					print("No Card found", line);
+				}
+				line++;
+			}
+		}
+
+		sprintf(buff, "Keypad:  ");
+		buff[8] = get_key();
+
+		print(buff, line);
+		line++;
+
+		framebuffer_apply();
+
 	}
+
 }

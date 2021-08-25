@@ -15,7 +15,7 @@ typedef struct {
 	uint8_t addr;
 } ccs811_t;
 
-#pragma pack(pop,1)
+#pragma pack(push,1)
 typedef struct {
 	unsigned int : 1;
 	unsigned int int_tresh : 1;
@@ -40,7 +40,7 @@ typedef struct {
 	uint8_t error_id;
 	uint16_t raw_data;
 } ccs811_alg_result_data_t;
-#pragma pack(push)
+#pragma pack(pop)
 
 #define CCS811_I2C_ADDR1 				0x5A
 #define CCS811_I2C_ADDR2 				0x5B
@@ -66,5 +66,8 @@ typedef struct {
 
 
 #define CCS811_VAL_HW_ID				0x81
+
+int ccs811_init(ccs811_t *css811) ;
+int css811_measure(ccs811_t *css811, uint16_t *eCO2, uint16_t *TVOC );
 
 #endif /* CCS811_H_ */
