@@ -463,11 +463,11 @@ int main() {
 						}
 						break;
 					case 4:
-						if (((datetimestring[5] == '0' && datetimestring[6] == '2')
-								|| key_pressed != '3')
-								&& (key_pressed >= '0' && key_pressed <= '3')
-
-						) {
+						if ((key_pressed != '3' || !
+								(datetimestring[5] == '0' && datetimestring[6] == '2')
+								 )
+								&& (key_pressed >= '0' && key_pressed <= '3'))
+						 {
 							datetimestring[cpos] = key_pressed;
 							count++;
 						}
