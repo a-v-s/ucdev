@@ -26,7 +26,7 @@ int si70xx_get_temperature_C_float(si70xx_t* si70xx, float * result){
 
 int si70xx_get_temperature_C_accum(si70xx_t* si70xx, accum * result){
 	uint8_t cmd[] = {0xf3};
-	int16_t value;
+	uint16_t value;
 
 	int status;
 	status = bshal_i2cm_send(si70xx->p_i2c, si70xx->addr, &cmd, sizeof(cmd), false);

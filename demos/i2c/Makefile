@@ -26,6 +26,7 @@ C_SOURCES += i2c.c
 C_SOURCES += lm75b.c
 C_SOURCES += sht3x.c
 C_SOURCES += bh1750.c
+C_SOURCES += pcf8563.c
 C_SOURCES += pcf8574.c
 C_SOURCES += si70xx.c
 C_SOURCES += hcd1080.c

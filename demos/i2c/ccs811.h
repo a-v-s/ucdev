@@ -16,12 +16,15 @@ typedef struct {
 } ccs811_t;
 
 #pragma pack(push,1)
-typedef struct {
-	unsigned int : 1;
-	unsigned int int_tresh : 1;
-	unsigned int int_datardy : 1;
-	unsigned int drive_mode :3;
-	unsigned int : 1;
+typedef union {
+	 struct {
+		unsigned int :2;
+		unsigned int int_tresh :1;
+		unsigned int int_datardy :1;
+		unsigned int drive_mode :3;
+		unsigned int :1;
+	};
+	uint8_t as_uint8;
 } ccs811_meas_mode_t;
 
 typedef struct {

@@ -45,6 +45,8 @@
 #include "hcd1080.h"
 #include "si70xx.h"
 #include "ccs811.h"
+#include "pcf8563.h"
+#include "pcf8574.h"
 
 #include "rc52x_transport.h"
 #include "rc52x.h"
@@ -107,12 +109,24 @@ int main() {
 
 	gp_i2c = i2c_init();
 
+	display_init();
+	draw_background();
+	print("   I²C DEMO", 1);
+	framebuffer_apply();
+	bshal_delay_ms(1000);
+
 	lm75b_t lm75b = { 0 };
 	sht3x_t sht3x = { 0 };
 	bh1750_t bh1750 = { 0 };
 	si70xx_t si70xx = { 0 };
 	hcd1080_t hcd1080 = { 0 };
 	ccs811_t ccs811 = { 0 };
+	pcf8563_t pcf8563 = { 0 };
+
+	if (0 == bshal_i2cm_isok(gp_i2c, PCF8563_I2C_ADDR)) {
+		pcf8563.addr = PCF8563_I2C_ADDR;
+		pcf8563.p_i2c = gp_i2c;
+	}
 
 	if (0 == bshal_i2cm_isok(gp_i2c, CCS811_I2C_ADDR1)) {
 		ccs811.addr = CCS811_I2C_ADDR1;
@@ -152,9 +166,6 @@ int main() {
 		}
 	}
 
-	display_init();
-	draw_background();
-
 	char str[32];
 	uint8_t rc52x_version;
 
@@ -170,142 +181,337 @@ int main() {
 
 	}
 
-	print("I²C DEMO", 0);
-	framebuffer_apply();
-
 	int count = 0;
 	char buff[64];
 
+	int state = 0;
+
 	while (1) {
-		draw_plain_background();
-
 		int line = 0;
+		draw_plain_background();
+		char key_pressed = get_key();
 
-		if (lm75b.addr) {
-			//float temperature_f = lm75b_get_temperature_C_float(&lm75b);
-			//sprintf(buff, "Temperature:  %6.2f °C  ", temperature_f);
+		switch (state) {
+		case 0:
 
-			accum temperature_a;
-			lm75b_get_temperature_C_accum(&lm75b, &temperature_a);
-			sprintf(buff, "LM75B:   %3d.%02d°C  ", (int) temperature_a,
-					(int) (100 * temperature_a) % 100);
-			print(buff, line);
-			line++;
-		}
+			if (lm75b.addr) {
+				//float temperature_f = lm75b_get_temperature_C_float(&lm75b);
+				//sprintf(buff, "Temperature:  %6.2f °C  ", temperature_f);
 
-		//?? stoort met rc522
-		if (hcd1080.addr) {
-			accum temperature_a = -99.99;
-			accum huminity_a = -1;
-			hcd1080_get_humidity_accum(&hcd1080, &huminity_a);
-
-			hcd1080_get_temperature_C_accum(&hcd1080, &temperature_a);
-
-			sprintf(buff, "HCD1080: %3d.%02d°C %3d.%02d%%  ",
-					(int) temperature_a, abs((int) (100 * temperature_a)) % 100,
-					(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
-			print(buff, line);
-			line++;
-		}
-		if (si70xx.addr) {
-			accum temperature_a;
-			si70xx_get_temperature_C_accum(&si70xx, &temperature_a);
-			accum huminity_a;
-			si70xx_get_humidity_accum(&si70xx, &huminity_a);
-
-			sprintf(buff, "SI70XX:  %3d.%02d°C %3d.%02d%%  ",
-					(int) temperature_a, abs((int) (100 * temperature_a)) % 100,
-					(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
-			print(buff, line);
-			line++;
-
-		}
-
-		//?? stoort met rc522
-		if (sht3x.addr) {
-			accum temperature_a;
-			accum huminity_a;
-			sht3x_get_humidity_accum(&sht3x, &huminity_a);
-			sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
-
-			sprintf(buff, "SHT3X:   %3d.%02d°C %3d.%02d%%  ",
-					(int) temperature_a, abs((int) (100 * temperature_a)) % 100,
-					(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
-			print(buff, line);
-
-			print(buff, line);
-			line++;
-
-		}
-
-		if (bh1750.addr) {
-			static int lux;
-
-			// Reading it too fast stops it from updating
-			// Therefore only reading it every 10 rounds
-			static int swipswap;
-			if (!(swipswap % 10))
-				bh1750_measure_ambient_light(&bh1750, &lux);
-			swipswap++;
-			sprintf(buff, "BH1750:  %6d lux", lux);
-			print(buff, line);
-			line++;
-		}
-		if (ccs811.addr) {
-//			static uint16_t TVOC = 0;
-//			static uint16_t eCO2 = 0;
-//			css811_measure(&ccs811, &eCO2, &TVOC);
-//			sprintf(buff, "CCS811:  TVOC %4d eCO2 %4d", TVOC, eCO2);
-
-			static uint16_t TVOC = 0;
-			css811_measure(&ccs811, NULL, &TVOC);
-			sprintf(buff, "CCS811:   %4d ppb TVOC", TVOC);
-			print(buff, line);
-			line++;
-		}
-
-		if (rc52x_version) {
-			// When either SHT3x or HCD1080 are being read,
-			// The mfrc522 stops reading cards
-			// This will need more investigation
-			{
-
-				picc_t picc = { 0 };
-
-				rc52x_result_t status = 0;
-				status = PICC_RequestA(&rc52x, &picc);
-
-				if (status) {
-					status = PICC_RequestA(&rc52x, &picc);
-				}
-
-				if (!status) {
-					sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
-					//print(str, 0);
-					status = PICC_Select(&rc52x, &picc, 0);
-				}
-				if (!status) {
-
-					sprintf(str, "UID  ");
-					for (int i = 0; i < picc.size; i++)
-						sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
-					print(str, line);
-					//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
-					//print(str, 1);
-				} else {
-					print("No Card found", line);
-				}
+				accum temperature_a;
+				lm75b_get_temperature_C_accum(&lm75b, &temperature_a);
+				sprintf(buff, "LM75B:   %3d.%02d°C  ", (int) temperature_a,
+						(int) (100 * temperature_a) % 100);
+				print(buff, line);
 				line++;
 			}
+
+			if (hcd1080.addr) {
+				accum temperature_a = -99.99;
+				accum huminity_a = -1;
+				hcd1080_get_humidity_accum(&hcd1080, &huminity_a);
+
+				hcd1080_get_temperature_C_accum(&hcd1080, &temperature_a);
+
+				sprintf(buff, "HCD1080: %3d.%02d°C %3d.%02d%%  ",
+						(int) temperature_a,
+						abs((int) (100 * temperature_a)) % 100,
+						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+				print(buff, line);
+				line++;
+			}
+			if (si70xx.addr) {
+				accum temperature_a;
+				si70xx_get_temperature_C_accum(&si70xx, &temperature_a);
+				accum huminity_a;
+				si70xx_get_humidity_accum(&si70xx, &huminity_a);
+
+				sprintf(buff, "SI70XX:  %3d.%02d°C %3d.%02d%%  ",
+						(int) temperature_a,
+						abs((int) (100 * temperature_a)) % 100,
+						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+				print(buff, line);
+				line++;
+
+			}
+
+			if (sht3x.addr) {
+				accum temperature_a;
+				accum huminity_a;
+				sht3x_get_humidity_accum(&sht3x, &huminity_a);
+				sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
+
+				sprintf(buff, "SHT3X:   %3d.%02d°C %3d.%02d%%  ",
+						(int) temperature_a,
+						abs((int) (100 * temperature_a)) % 100,
+						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+				print(buff, line);
+
+				print(buff, line);
+				line++;
+
+			}
+
+			if (bh1750.addr) {
+				static int lux;
+
+				// Reading it too fast stops it from updating
+				// Therefore only reading it every 10 rounds
+				static int swipswap;
+				if (!(swipswap % 10))
+					bh1750_measure_ambient_light(&bh1750, &lux);
+				swipswap++;
+				sprintf(buff, "BH1750:  %6d lux", lux);
+				print(buff, line);
+				line++;
+			}
+			if (ccs811.addr) {
+				//			static uint16_t TVOC = 0;
+				//			static uint16_t eCO2 = 0;
+				//			css811_measure(&ccs811, &eCO2, &TVOC);
+				//			sprintf(buff, "CCS811:  TVOC %4d eCO2 %4d", TVOC, eCO2);
+
+				static uint16_t TVOC = 0;
+				css811_measure(&ccs811, NULL, &TVOC);
+				sprintf(buff, "CCS811:    %4d ppb TVOC", TVOC);
+				print(buff, line);
+				line++;
+			}
+
+			if (rc52x_version) {
+				// When either SHT3x or HCD1080 are being read,
+				// The mfrc522 stops reading cards
+				// This will need more investigation
+				{
+
+					picc_t picc = { 0 };
+
+					rc52x_result_t status = 0;
+					status = PICC_RequestA(&rc52x, &picc);
+
+					if (status) {
+						status = PICC_RequestA(&rc52x, &picc);
+					}
+
+					if (!status) {
+						sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
+						//print(str, 0);
+						status = PICC_Select(&rc52x, &picc, 0);
+					}
+					if (!status) {
+
+						sprintf(str, "UID  ");
+						for (int i = 0; i < picc.size; i++)
+							sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
+						print(str, line);
+						//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
+						//print(str, 1);
+					} else {
+						print("No Card found", line);
+					}
+					line++;
+				}
+			}
+
+			if (pcf8563.addr) {
+				pcf8563_time_t time = { 0 };
+				pcf8563_get_time(&pcf8563, &time);
+				buff[0] = '2';
+				buff[1] = '0' + time.months.century;
+				buff[2] = '0' + time.years.tens;
+				buff[3] = '0' + time.years.unit;
+				buff[4] = '-';
+				buff[5] = '0' + time.months.tens;
+				buff[6] = '0' + time.months.unit;
+				buff[7] = '-';
+				buff[8] = '0' + time.days.tens;
+				buff[9] = '0' + time.days.unit;
+				buff[10] = ' ';
+				buff[11] = '0' + time.hours.tens;
+				buff[12] = '0' + time.hours.unit;
+				buff[13] = ':';
+				buff[14] = '0' + time.minutes.tens;
+				buff[15] = '0' + time.minutes.unit;
+				buff[16] = ':';
+				buff[17] = '0' + time.seconds.tens;
+				buff[18] = '0' + time.seconds.unit;
+				buff[19] = 0;
+				print(buff, line);
+				line++;
+
+				if (false) {
+					// Try to set the current time, quickly for testing
+					// Need to make input for this
+					memset(&time, 0, sizeof(time));
+
+					time.years.tens = 2;
+					time.years.unit = 1;
+					time.months.tens = 0;
+					time.months.unit = 8;
+					time.days.tens = 2;
+					time.days.unit = 9;
+					time.hours.tens = 1;
+					time.hours.unit = 5;
+					time.minutes.tens = 5;
+					time.minutes.unit = 3;
+					time.seconds.tens = 0;
+					time.seconds.unit = 0;
+
+					//memset (&time,1,sizeof(time));
+					//uint8_t* test = &time;
+					//for (int i = 0 ; i < sizeof(time); i++) test[i]=i;
+
+					pcf8563_set_time(&pcf8563, &time);
+					buff[0] = '2';
+					buff[1] = '0' + time.months.century;
+					buff[2] = '0' + time.years.tens;
+					buff[3] = '0' + time.years.unit;
+					buff[4] = '-';
+					buff[5] = '0' + time.months.tens;
+					buff[6] = '0' + time.months.unit;
+					buff[7] = '-';
+					buff[8] = '0' + time.days.tens;
+					buff[9] = '0' + time.days.unit;
+					buff[10] = ' ';
+					buff[11] = '0' + time.hours.tens;
+					buff[12] = '0' + time.hours.unit;
+					buff[13] = ':';
+					buff[14] = '0' + time.minutes.tens;
+					buff[15] = '0' + time.minutes.unit;
+					buff[16] = ':';
+					buff[17] = '0' + time.seconds.tens;
+					buff[18] = '0' + time.seconds.unit;
+					buff[19] = 0;
+					print(buff, line);
+					line++;
+				}
+			}
+			break;
+		case '*':
+			print("MENU", line++);
+			print("1: SET TIME", line++);
+			print("2: SCAN BUS", line++);
+
+			switch (key_pressed) {
+			case '1':
+				count = 0;
+				state = 1;
+				break;
+			case '2':
+				state = 2;
+				break;
+			}
+			break;
+			case 1:
+				print("1: SET TIME", line++);
+				static char datetimestring[20];
+				int cpos;
+				cpos = count + 2;
+				if (count > 1) cpos++;
+				if (count > 3) cpos++;
+				if (count > 5) cpos++;
+				if (count > 7) cpos++;
+				if (count > 9) cpos++;
+
+				for (int i = 0 ; i < 20 ; i++)
+					buff[i] = cpos == i ? '^' : ' ';
+				buff[20] = 0;
+
+				if (!count) strcpy(datetimestring, "20yy-mm-dd HH:MM:SS");
+				if (key_pressed) {
+
+					// We've got the millenium bug here.
+					// Don't blaim me, it's a hardware problem.
+					// The DS1307 only supports a 2 digit year
+					// However, the PCF8563 got a century bit.
+					// This needs some investigation what its influence is\
+					// on the leap year. 2000 was a leap year, 2100 will not be.
+					// So... unless the century bit toggles this, for which I
+					// have not (yet) found any clues in the datasheet, we
+					// can only support this century out of the box.
+
+					if (key_pressed == 'D') {
+						count--;
+					}
+
+					switch (count) {
+					case 0:
+						if (key_pressed >= '0' && key_pressed <= '9') {
+							datetimestring[cpos] = key_pressed;
+							count++;
+						}
+						break;
+					case 1:
+						if (key_pressed >= '0' && key_pressed <= '9') {
+							datetimestring[cpos] = key_pressed;
+							count++;
+						}
+						break;
+					case 2:
+						if (key_pressed >= '0' && key_pressed <= '1') {
+							datetimestring[cpos] = key_pressed;
+							count++;
+						}
+						break;
+					case 3:
+						if ((datetimestring[5] == '1' && key_pressed >= '0'
+								&& key_pressed <= '2')
+								|| (datetimestring[5] == '0' && key_pressed >= '1'
+										&& key_pressed <= '9')) {
+							datetimestring[cpos] = key_pressed;
+							count++;
+						}
+						break;
+					case 4:
+						if (((datetimestring[5] == '0' && datetimestring[6] == '2')
+								|| key_pressed != '3')
+								&& (key_pressed >= '0' && key_pressed <= '3')
+
+						) {
+							datetimestring[cpos] = key_pressed;
+							count++;
+						}
+						break;
+					case 5:
+						// TODO got to check the number of days in the month
+
+						if (key_pressed >= '0' && key_pressed <= '9') {
+							{
+								datetimestring[cpos] = key_pressed;
+								count++;
+							}
+							break;
+
+						}
+						break;
+					}
+				}
+				print(datetimestring, 3);
+				print(buff, 4);
+				break;
+			case 2:
+				print("I²C BUS SCAN",0);
+				scan_i2c();
+		}
+		sprintf(buff, "Keypad:  ");
+		buff[8] = key_pressed;
+
+		switch (key_pressed) {
+		case '*':
+			state = '*';
+			break;
+		case '#':
+			state = 0;
+
+			break;
 		}
 
-		sprintf(buff, "Keypad:  ");
-		buff[8] = get_key();
-
-		print(buff, line);
+		print(buff, 8);
 		line++;
-
 		framebuffer_apply();
+		if (key_pressed)
+			while (read_keypad())
+				__NOP();
 
 	}
 

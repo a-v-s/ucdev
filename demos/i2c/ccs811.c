@@ -32,7 +32,7 @@ int ccs811_init(ccs811_t *css811) {
 			1);
 	if (CCS811_VAL_HW_ID == HW_ID) {
 
-		uint8_t error;
+		uint8_t error = 0;
 		if (status.error) {
 			bshal_i2cm_recv_reg(css811->p_i2c, css811->addr,
 			CCS811_REG_ERROR_ID, &error, 1);
@@ -50,12 +50,15 @@ int ccs811_init(ccs811_t *css811) {
 				&status, 1);
 
 		if (status.fw_mode) {
-			ccs811_meas_mode_t meas_mode;
-			meas_mode.drive_mode = 1; // 1 sec per meas
+			ccs811_meas_mode_t meas_mode = 	{.drive_mode = 1, };// 1 sec per meas
 			bshal_i2cm_send_reg(css811->p_i2c, css811->addr,
 			CCS811_REG_MEAS_MODE, &meas_mode, 1);
 			bshal_i2cm_recv_reg(css811->p_i2c, css811->addr, CCS811_REG_STATUS,
 					&status, 1);
+			if (status.error) {
+				bshal_i2cm_recv_reg(css811->p_i2c, css811->addr,
+				CCS811_REG_ERROR_ID, &error, 1);
+			}
 			return 0;
 		} else {
 			// ERROR, not in fw_mode
