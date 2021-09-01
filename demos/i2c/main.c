@@ -47,6 +47,7 @@
 #include "ccs811.h"
 #include "pcf8563.h"
 #include "pcf8574.h"
+#include "bmp280.h"
 
 #include "rc52x_transport.h"
 #include "rc52x.h"
@@ -99,6 +100,8 @@ int main() {
 	printf("Hello world!\n");
 #endif
 
+	bmp280_test();
+
 	SystemClock_Config();
 	SystemCoreClockUpdate();
 
@@ -122,6 +125,14 @@ int main() {
 	hcd1080_t hcd1080 = { 0 };
 	ccs811_t ccs811 = { 0 };
 	pcf8563_t pcf8563 = { 0 };
+	bmp280_t bmp280 = { 0 };
+
+	if (0 == bshal_i2cm_isok(gp_i2c, BMP280_I2C_ADDR)) {
+		bmp280.addr = BMP280_I2C_ADDR;
+		bmp280.p_i2c = gp_i2c;
+
+		bmp280_init(&bmp280);
+	}
 
 	if (0 == bshal_i2cm_isok(gp_i2c, PCF8563_I2C_ADDR)) {
 		pcf8563.addr = PCF8563_I2C_ADDR;
@@ -184,7 +195,7 @@ int main() {
 	int count = 0;
 	char buff[64];
 
-	int state = 0;
+	int state ='*';
 
 	while (1) {
 		int line = 0;
@@ -192,15 +203,40 @@ int main() {
 		char key_pressed = get_key();
 
 		switch (state) {
-		case 0:
+		case 3:
+
+			if (pcf8563.addr) {
+				pcf8563_time_t time = { 0 };
+				pcf8563_get_time(&pcf8563, &time);
+				buff[0] = buff[1] = buff[2] = ' ';
+				buff[3 + 0] = '2';
+				buff[3 + 1] = '0' + time.months.century;
+				buff[3 + 2] = '0' + time.years.tens;
+				buff[3 + 3] = '0' + time.years.unit;
+				buff[3 + 4] = '-';
+				buff[3 + 5] = '0' + time.months.tens;
+				buff[3 + 6] = '0' + time.months.unit;
+				buff[3 + 7] = '-';
+				buff[3 + 8] = '0' + time.days.tens;
+				buff[3 + 9] = '0' + time.days.unit;
+				buff[3 + 10] = ' ';
+				buff[3 + 11] = '0' + time.hours.tens;
+				buff[3 + 12] = '0' + time.hours.unit;
+				buff[3 + 13] = ':';
+				buff[3 + 14] = '0' + time.minutes.tens;
+				buff[3 + 15] = '0' + time.minutes.unit;
+				buff[3 + 16] = ':';
+				buff[3 + 17] = '0' + time.seconds.tens;
+				buff[3 + 18] = '0' + time.seconds.unit;
+				buff[3 + 19] = 0;
+				print(buff, line);
+				line++;
+			}
 
 			if (lm75b.addr) {
-				//float temperature_f = lm75b_get_temperature_C_float(&lm75b);
-				//sprintf(buff, "Temperature:  %6.2f °C  ", temperature_f);
-
 				accum temperature_a;
 				lm75b_get_temperature_C_accum(&lm75b, &temperature_a);
-				sprintf(buff, "LM75B:   %3d.%02d°C  ", (int) temperature_a,
+				sprintf(buff, "LM75B:  %3d.%02d°C  ", (int) temperature_a,
 						(int) (100 * temperature_a) % 100);
 				print(buff, line);
 				line++;
@@ -213,8 +249,8 @@ int main() {
 
 				hcd1080_get_temperature_C_accum(&hcd1080, &temperature_a);
 
-				sprintf(buff, "HCD1080: %3d.%02d°C %3d.%02d%%  ",
-						(int) temperature_a,
+				sprintf(buff, "HCD1080:%3d.%02d°C %3d.%02d%%  ",
+						(int) temperature_a % 999,
 						abs((int) (100 * temperature_a)) % 100,
 						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
 				print(buff, line);
@@ -226,8 +262,8 @@ int main() {
 				accum huminity_a;
 				si70xx_get_humidity_accum(&si70xx, &huminity_a);
 
-				sprintf(buff, "SI70XX:  %3d.%02d°C %3d.%02d%%  ",
-						(int) temperature_a,
+				sprintf(buff, "SI70XX: %3d.%02d°C %3d.%02d%%  ",
+						(int) temperature_a %999,
 						abs((int) (100 * temperature_a)) % 100,
 						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
 				print(buff, line);
@@ -241,15 +277,13 @@ int main() {
 				sht3x_get_humidity_accum(&sht3x, &huminity_a);
 				sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
 
-				sprintf(buff, "SHT3X:   %3d.%02d°C %3d.%02d%%  ",
-						(int) temperature_a,
+				sprintf(buff, "SHT3X:  %3d.%02d°C %3d.%02d%%  ",
+						(int) temperature_a %999,
 						abs((int) (100 * temperature_a)) % 100,
 						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
-				print(buff, line);
 
 				print(buff, line);
 				line++;
-
 			}
 
 			if (bh1750.addr) {
@@ -261,7 +295,7 @@ int main() {
 				if (!(swipswap % 10))
 					bh1750_measure_ambient_light(&bh1750, &lux);
 				swipswap++;
-				sprintf(buff, "BH1750:  %6d lux", lux);
+				sprintf(buff, "BH1750:    %6d lux", lux);
 				print(buff, line);
 				line++;
 			}
@@ -276,6 +310,21 @@ int main() {
 				sprintf(buff, "CCS811:    %4d ppb TVOC", TVOC);
 				print(buff, line);
 				line++;
+			}
+
+			if (bmp280.addr) {
+				accum temperature_a;
+				long accum pressure_la;
+				bmp280_measure_a(&bmp280, &temperature_a, &pressure_la);
+
+
+				sprintf(buff, "BMP280: %3d.%02d°C %d hPa  ",
+						(int) temperature_a % 999,
+						abs((int) (100 * temperature_a)) % 100,
+						(int) pressure_la / 100);
+				print(buff, line);
+				line++;
+
 			}
 
 			if (rc52x_version) {
@@ -313,84 +362,13 @@ int main() {
 				}
 			}
 
-			if (pcf8563.addr) {
-				pcf8563_time_t time = { 0 };
-				pcf8563_get_time(&pcf8563, &time);
-				buff[0] = '2';
-				buff[1] = '0' + time.months.century;
-				buff[2] = '0' + time.years.tens;
-				buff[3] = '0' + time.years.unit;
-				buff[4] = '-';
-				buff[5] = '0' + time.months.tens;
-				buff[6] = '0' + time.months.unit;
-				buff[7] = '-';
-				buff[8] = '0' + time.days.tens;
-				buff[9] = '0' + time.days.unit;
-				buff[10] = ' ';
-				buff[11] = '0' + time.hours.tens;
-				buff[12] = '0' + time.hours.unit;
-				buff[13] = ':';
-				buff[14] = '0' + time.minutes.tens;
-				buff[15] = '0' + time.minutes.unit;
-				buff[16] = ':';
-				buff[17] = '0' + time.seconds.tens;
-				buff[18] = '0' + time.seconds.unit;
-				buff[19] = 0;
-				print(buff, line);
-				line++;
 
-				if (false) {
-					// Try to set the current time, quickly for testing
-					// Need to make input for this
-					memset(&time, 0, sizeof(time));
-
-					time.years.tens = 2;
-					time.years.unit = 1;
-					time.months.tens = 0;
-					time.months.unit = 8;
-					time.days.tens = 2;
-					time.days.unit = 9;
-					time.hours.tens = 1;
-					time.hours.unit = 5;
-					time.minutes.tens = 5;
-					time.minutes.unit = 3;
-					time.seconds.tens = 0;
-					time.seconds.unit = 0;
-
-					//memset (&time,1,sizeof(time));
-					//uint8_t* test = &time;
-					//for (int i = 0 ; i < sizeof(time); i++) test[i]=i;
-
-					pcf8563_set_time(&pcf8563, &time);
-					buff[0] = '2';
-					buff[1] = '0' + time.months.century;
-					buff[2] = '0' + time.years.tens;
-					buff[3] = '0' + time.years.unit;
-					buff[4] = '-';
-					buff[5] = '0' + time.months.tens;
-					buff[6] = '0' + time.months.unit;
-					buff[7] = '-';
-					buff[8] = '0' + time.days.tens;
-					buff[9] = '0' + time.days.unit;
-					buff[10] = ' ';
-					buff[11] = '0' + time.hours.tens;
-					buff[12] = '0' + time.hours.unit;
-					buff[13] = ':';
-					buff[14] = '0' + time.minutes.tens;
-					buff[15] = '0' + time.minutes.unit;
-					buff[16] = ':';
-					buff[17] = '0' + time.seconds.tens;
-					buff[18] = '0' + time.seconds.unit;
-					buff[19] = 0;
-					print(buff, line);
-					line++;
-				}
-			}
 			break;
 		case '*':
 			print("MENU", line++);
 			print("1: SET TIME", line++);
 			print("2: SCAN BUS", line++);
+			print("3: SENSOR DATA", line++);
 
 			switch (key_pressed) {
 			case '1':
@@ -399,6 +377,9 @@ int main() {
 				break;
 			case '2':
 				state = 2;
+				break;
+			case '3':
+				state = 3;
 				break;
 			}
 			break;
@@ -492,6 +473,8 @@ int main() {
 			case 2:
 				print("I²C BUS SCAN",0);
 				scan_i2c();
+				break;
+
 		}
 		sprintf(buff, "Keypad:  ");
 		buff[8] = key_pressed;
@@ -499,10 +482,6 @@ int main() {
 		switch (key_pressed) {
 		case '*':
 			state = '*';
-			break;
-		case '#':
-			state = 0;
-
 			break;
 		}
 

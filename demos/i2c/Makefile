@@ -32,6 +32,8 @@ C_SOURCES += si70xx.c
 C_SOURCES += hcd1080.c
 C_SOURCES += ccs811.c
 
+C_SOURCES += bmp280.c
+
 
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
