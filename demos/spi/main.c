@@ -71,10 +71,8 @@ uint8_t test_adxl_spi_read_id() {
 	adxl_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
 	adxl_spi_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
 
-	adxl_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_10);
-	adxl_spi_config.nrs_pin = -1;
-	adxl_spi_config.ncd_pin = -1;
-	adxl_spi_config.irq_pin = -1;
+	adxl_spi_config.cs_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_10);
+
 
 	bshal_spim_init(&adxl_spi_config);
 
@@ -108,11 +106,9 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 	flash_sdmmc_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
 	flash_sdmmc_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
 
-	//flash_sdmmc_config.nss_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_8);
-	flash_sdmmc_config.nss_pin = -1;
-	flash_sdmmc_config.nrs_pin = -1;
-	flash_sdmmc_config.ncd_pin = -1;
-	flash_sdmmc_config.irq_pin = -1;
+	//flash_sdmmc_config.cs_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_8);
+	flash_sdmmc_config.cs_pin = -1;
+
 
 	bshal_spim_init(&flash_sdmmc_config);
 
@@ -131,7 +127,7 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 
 
 	// set the cs pin back again
-	flash_sdmmc_config.nss_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_8);
+	flash_sdmmc_config.cs_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_8);
 	bshal_spim_init(&flash_sdmmc_config);
 
 
@@ -175,7 +171,7 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 
 
 
-		bshal_gpio_write_pin(flash_sdmmc_config.nss_pin, true);
+		bshal_gpio_write_pin(flash_sdmmc_config.cs_pin, true);
 
 
 		ssdmmc_resq_t vhs = SDMMC_REQ_CMD8_VHS;
@@ -222,7 +218,7 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 			if (!retries)
 				break;
 		}
-		bshal_gpio_write_pin(flash_sdmmc_config.nss_pin, true);
+		bshal_gpio_write_pin(flash_sdmmc_config.cs_pin, true);
 		if (!retries) {
 			// timeout
 			return -1;
@@ -246,7 +242,7 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 
 
 
-			bshal_gpio_write_pin(flash_sdmmc_config.nss_pin, true);
+			bshal_gpio_write_pin(flash_sdmmc_config.cs_pin, true);
 			if (!retries) {
 				// timeout
 				return -1;
@@ -271,7 +267,7 @@ uint32_t test_sdmmc_spi_read_id(char* sdcard_id) {
 				if (!retries)
 					break;
 			}
-			bshal_gpio_write_pin(flash_sdmmc_config.nss_pin, true);
+			bshal_gpio_write_pin(flash_sdmmc_config.cs_pin, true);
 			if (!retries) {
 				// timeout
 				return -1;
@@ -376,10 +372,8 @@ uint32_t test_flash_spi_read_id() {
 	flash_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
 	flash_spi_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
 
-	flash_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_12);
-	flash_spi_config.nrs_pin = -1;
-	flash_spi_config.ncd_pin = -1;
-	flash_spi_config.irq_pin = -1;
+	flash_spi_config.cs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_12);
+
 
 	bshal_spim_init(&flash_spi_config);
 
@@ -478,31 +472,31 @@ uint32_t test_flash_spi_read_id() {
 }
 
 void screen_init() {
-	static bshal_spim_t screen_spi_config;
-	screen_spi_config.frequency = 6666666; // SPI speed for SSD1331 = 6.66 MHz (150 ns clock cycle time)
-	screen_spi_config.bit_order = 0; //MSB
-	screen_spi_config.mode = 0;
-
-	screen_spi_config.hw_nr = 2; // SPI2
-	screen_spi_config.miso_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_14);
-	screen_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
-	screen_spi_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
-
-	screen_spi_config.ncd_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_9);
-	screen_spi_config.nrs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_8);
-	screen_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_7);
-
-	screen_spi_config.irq_pin = -1; //
-
-	bshal_spim_init(&screen_spi_config);
-
-	bshal_gpio_write_pin(screen_spi_config.nrs_pin, 0);
-	bshal_delay_ms(1);
-	bshal_gpio_write_pin(screen_spi_config.nrs_pin, 1);
-
-	display_init(&screen_spi_config);
-
-	// Thinking about we would need some SPI manager
+//	static bshal_spim_t screen_spi_config;
+//	screen_spi_config.frequency = 6666666; // SPI speed for SSD1331 = 6.66 MHz (150 ns clock cycle time)
+//	screen_spi_config.bit_order = 0; //MSB
+//	screen_spi_config.mode = 0;
+//
+//	screen_spi_config.hw_nr = 2; // SPI2
+//	screen_spi_config.miso_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_14);
+//	screen_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
+//	screen_spi_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
+//
+//	screen_spi_config.ncd_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_9);
+//	screen_spi_config.nrs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_8);
+//	screen_spi_config.cs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_7);
+//
+//	screen_spi_config.irq_pin = -1; //
+//
+//	bshal_spim_init(&screen_spi_config);
+//
+//	bshal_gpio_write_pin(screen_spi_config.nrs_pin, 0);
+//	bshal_delay_ms(1);
+//	bshal_gpio_write_pin(screen_spi_config.nrs_pin, 1);
+//
+//	display_init(&screen_spi_config);
+//
+//	// Thinking about we would need some SPI manager
 }
 
 void rfid5_init(rc52x_t *rc52x) {
@@ -516,11 +510,11 @@ void rfid5_init(rc52x_t *rc52x) {
 	rfid_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_15);
 	rfid_spi_config.sck_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_13);
 
-	rfid_spi_config.nss_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_6);
-	rfid_spi_config.nrs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_5);
-	rfid_spi_config.irq_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_3);
+	rfid_spi_config.cs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_6);
+	rfid_spi_config.rs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_5);
+	//rfid_spi_config.irq_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_3);
 
-	rfid_spi_config.ncd_pin = -1;
+
 
 	bshal_spim_init(&rfid_spi_config);
 	rc52x->transport = mfrc_transport_spi;
@@ -539,31 +533,33 @@ int main() {
 
 	bshal_delay_init();
 	bshal_delay_us(10);
-	screen_init();
+//	screen_init();
+//
+//	print("Hello World!", 1);
+//
+//	rfid5_init(&g_rc52x);
+//
+//	char str[32];
+//	uint8_t version = -1;
+//	rc52x_get_chip_version(&g_rc52x, &version);
+//	sprintf(str, "MFRC522 %02X", version);
+//	print(str, 2);
+//
+//	version = test_adxl_spi_read_id();
+//	sprintf(str, "ADXL ID  %03o", version);
+//	print(str, 3);
+//
+//	uint32_t flash_id = test_flash_spi_read_id();
+//	sprintf(str, "FLASH  %08X", flash_id);
+//	print(str, 4);
+//
+//	char sdcard_name[6];
+//	test_sdmmc_spi_read_id(&sdcard_name);
+//	sdcard_name[5]=0;
+//	sprintf(str, "SD: %s", sdcard_name);
+//	print(str, 5);
 
-	print("Hello World!", 1);
-
-	rfid5_init(&g_rc52x);
-
-	char str[32];
-	uint8_t version = -1;
-	rc52x_get_chip_version(&g_rc52x, &version);
-	sprintf(str, "MFRC522 %02X", version);
-	print(str, 2);
-
-	version = test_adxl_spi_read_id();
-	sprintf(str, "ADXL ID  %03o", version);
-	print(str, 3);
-
-	uint32_t flash_id = test_flash_spi_read_id();
-	sprintf(str, "FLASH  %08X", flash_id);
-	print(str, 4);
-
-	char sdcard_name[6];
-	test_sdmmc_spi_read_id(&sdcard_name);
-	sdcard_name[5]=0;
-	sprintf(str, "SD: %s", sdcard_name);
-	print(str, 5);
+	u8g2_test();
 
 	while (1) {
 

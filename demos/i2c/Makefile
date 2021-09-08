@@ -79,6 +79,8 @@ LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/arm_m3  -lu8g2
 LDFLAGS += -u _printf_float
 
 
+CFLAGS  += -gdwarf-5
+LDFLAGS += -gdwarf-5 
 
 MK_DIR=$(UCDEV_ROOT)/build/make
 include $(MK_DIR)/all.mk

@@ -27,10 +27,24 @@ ifneq (,$(findstring FE310,$(MCU)))
 	FAMILY?=FE3
 endif
 
+ifneq (,$(findstring RP,$(MCU)))
+	FAMILY?=RP
+endif
+
 
 ################################################################################
 # MCU Families: Determine the architecture of the family
 ################################################################################
+ifeq ($(FAMILY), RP)
+	ARCH?=ARM
+
+	ifneq (,$(findstring 2040,$(MCU)))
+		SUBARCH?=M0P
+		SERIES=RP20_SERIES
+        C_DEFS += -D$(MCU)
+	endif	
+endif
+
 ifeq ($(FAMILY), NRF5)
 	ARCH?=ARM
 	

@@ -26,7 +26,17 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>csrc</name>
+			<name>libhalglue</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/libhalglue</locationURI>
+		</link>
+		<link>
+			<name>u8g2</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ext/u8g2/csrc</locationURI>
+		</link>
+		<link>
+			<name>ucg</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ext/ucglib/csrc</locationURI>
 		</link>
