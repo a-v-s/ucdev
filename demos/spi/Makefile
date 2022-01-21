@@ -21,8 +21,10 @@ U8G2_DIR = $(UCDEV_ROOT)/ext/u8g2/csrc
 # Sources
 ################################################################################
 C_SOURCES += main.c
-C_SOURCES += dis.c
+#C_SOURCES += dis.c
 
+C_SOURCES += radio/si443x.c
+C_SOURCES += radio/si443x_transport.c
 
 
 
@@ -34,14 +36,14 @@ C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f1.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/bshal_i2cm.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/bshal_spim.c
-C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/extlib/ucg_spi.c
+#C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/extlib/ucg_spi.c
 
 
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x_transport.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x_transport.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/cards/picc.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x_transport.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x_transport.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/cards/picc.c
 
 
 ################################################################################
@@ -55,9 +57,9 @@ C_INCLUDES += $(LIBHALGLUE_ROOT)/bshal/extlib/
 C_INCLUDES += $(LIBHALGLUE_ROOT)/common/
 C_INCLUDES += $(LIBHALGLUE_ROOT)/bshal/
 
-C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/
-C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/drivers/
-C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/cards
+#C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/
+#C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/drivers/
+#C_INCLUDES += $(UCDEV_ROOT)/lib/bsrfid/cards
 
 
 # link script

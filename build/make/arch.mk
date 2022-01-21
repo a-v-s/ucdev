@@ -115,6 +115,7 @@ ifeq ($(COMPILER_TYPE),GCC)
 
 $(info ARCH: Configuring GCC)
 
+#	CC  ?= $(PREFIX)gcc
 	CC  = $(PREFIX)gcc
 	AS  = $(PREFIX)gcc -x assembler-with-cpp
 	CP  = $(PREFIX)objcopy

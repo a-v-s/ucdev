@@ -88,8 +88,8 @@ void scan_i2c(void) {
 
 void rfid5_init(rc52x_t *rc52x) {
 
-	rc52x->transport = mfrc_transport_i2c;
-	rc52x->transport_config = gp_i2c;
+	rc52x->transport_type = bshal_transport_i2c;
+	rc52x->transport_instance.i2cm = gp_i2c;
 	rc52x->delay_ms = bshal_delay_ms;
 	RC52X_Init(rc52x);
 }
@@ -118,14 +118,27 @@ int main() {
 	framebuffer_apply();
 	bshal_delay_ms(1000);
 
-	lm75b_t lm75b = { 0 };
-	sht3x_t sht3x = { 0 };
+	pcf8563_t pcf8563 = { 0 };
 	bh1750_t bh1750 = { 0 };
+	ccs811_t ccs811 = { 0 };
+
+	// For these 3/6/9-dof motion sensors
+	// They support multiple protocols, so we need defintions for that
+	// I have already written such abstraction for RFID readers
+
+	//adxl345
+	//mpu92
+	//lis3dsh
+
+	bmp280_t bmp280 = { 0 };
+	sht3x_t sht3x = { 0 };
+	lm75b_t lm75b = { 0 };
 	si70xx_t si70xx = { 0 };
 	hcd1080_t hcd1080 = { 0 };
-	ccs811_t ccs811 = { 0 };
-	pcf8563_t pcf8563 = { 0 };
-	bmp280_t bmp280 = { 0 };
+	//i2c_eeprom
+
+
+
 
 	if (0 == bshal_i2cm_isok(gp_i2c, BMP280_I2C_ADDR)) {
 		bmp280.addr = BMP280_I2C_ADDR;
