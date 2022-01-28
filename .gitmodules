@@ -94,3 +94,6 @@
 [submodule "lib/bsrfid"]
 	path = lib/bsrfid
 	url = ../bsrfid
+[submodule "ext/minmea"]
+	path = ext/minmea
+	url = https://github.com/kosma/minmea.git

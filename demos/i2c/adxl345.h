@@ -8,6 +8,12 @@
 #ifndef ADXL345_H_
 #define ADXL345_H_
 
+#define ADXL_I2C_ADDR1	(0x1D)
+#define ADXL_I2C_ADDR0	(0x3B)
+
+#define ADXL_SPI_MODE 	(3)
+#define ADXL_SPI_SPEED 	(5000000)
+
 typedef int (*adxl_access_register_f)(void* transport_instance, uint8_t address, uint8_t reg, uint8_t * p_data, uint8_t length);
 
 typedef struct {

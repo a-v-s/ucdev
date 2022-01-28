@@ -208,7 +208,8 @@ int main() {
 	int count = 0;
 	char buff[64];
 
-	int state ='*';
+	//int state ='*';
+	int state =2;
 
 	while (1) {
 		int line = 0;
