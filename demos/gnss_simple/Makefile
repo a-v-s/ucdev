@@ -26,6 +26,7 @@ C_SOURCES += i2c.c
 C_SOURCES  += $(UCDEV_ROOT)/ext/minmea/minmea.c
 C_INCLUDES +=  $(UCDEV_ROOT)/ext/minmea
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/bshal_uart.c
+C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_uart_stm32.c
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/arm_cpuid.c

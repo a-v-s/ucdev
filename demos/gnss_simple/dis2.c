@@ -39,15 +39,10 @@ void display_init(void) {
 }
 
 void print(char* str, int line) {
-//	ucg_SetFont(&m_ucg, ucg_font_5x8_tf);
-//	ucg_SetFontMode(&m_ucg, UCG_FONT_MODE_TRANSPARENT);
-//	ucg_SetFontPosTop(&m_ucg);
-
-
-	//u8g2_SetFont(&m_u8g2, u8g2_font_t0_15b_tf);
 	u8g2_SetFont(&m_u8g2, u8g2_font_5x8_tf);
-	//u8g2_SetFont(&m_u8g2, u8g2_font_5x7_tf);
-	//u8g2_DrawStr(&m_u8g2, 0, (line+1) * 8, str);
+	u8g2_SetDrawColor(&m_u8g2, 0);
+	u8g2_DrawBox(&m_u8g2, 0,  8*line, m_u8g2.width, 8);
+	u8g2_SetDrawColor(&m_u8g2, 1);
 	u8g2_DrawUTF8(&m_u8g2, 0, (line+1) * 8, str);
 
 }
