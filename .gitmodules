@@ -97,3 +97,6 @@
 [submodule "ext/minmea"]
 	path = ext/minmea
 	url = https://github.com/kosma/minmea.git
+[submodule "ext/libgeohash"]
+	path = ext/libgeohash
+	url = https://github.com/simplegeo/libgeohash.git

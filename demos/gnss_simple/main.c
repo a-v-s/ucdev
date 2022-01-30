@@ -44,6 +44,8 @@
 
 #include "minmea.h"
 
+#include "geohash.h"
+
 
 
 bshal_i2cm_instance_t *gp_i2c = NULL;
@@ -60,9 +62,18 @@ void SystemClock_Config(void) {
 	ClockSetup_HSE8_SYS72();
 }
 
+
+// TODO ---
+struct minmea_sentence_rmc rmc;
+struct minmea_sentence_gst gst;
+struct minmea_sentence_gga gga;
+char buff[32];
+
+
 void uart_gnss_cb(char *data, size_t size) {
 
-	struct minmea_sentence_rmc rmc;
+//	struct minmea_sentence_rmc rmc;
+//	struct minmea_sentence_gst gst;
 	enum minmea_sentence_id sentence_id = minmea_sentence_id(data, false);
 	switch (sentence_id  ) {
 
@@ -72,20 +83,20 @@ void uart_gnss_cb(char *data, size_t size) {
 		break;
 	case MINMEA_SENTENCE_RMC:
 
-		static int cnt = 0;
-		cnt++;
-		char buff[32];
-		sprintf(buff,"%d",cnt);
-		print(buff,5);
+//		static int cnt = 0;
+//		cnt++;
+//
+//		sprintf(buff,"%d",cnt);
+//		print(buff,5);
 		bool success = minmea_parse_rmc( &rmc, data);
 
 		if (success) {
-			float latitude= minmea_tocoord(&rmc.latitude);
-			float longitude= minmea_tocoord(&rmc.longitude);
-			sprintf(buff, "latitude:  %10.6f", latitude);
-			print(buff,1);
-			sprintf(buff, "longitude: %10.6f", longitude);
-			print(buff,2);
+//			float latitude= minmea_tocoord(&rmc.latitude);
+//			float longitude= minmea_tocoord(&rmc.longitude);
+//			sprintf(buff, "latitude:  %10.6f", latitude);
+//			print(buff,1);
+//			sprintf(buff, "longitude: %10.6f", longitude);
+//			print(buff,2);
 		} else {
 			print("no fix", 1);
 		}
@@ -93,6 +104,8 @@ void uart_gnss_cb(char *data, size_t size) {
 		break;
 	case MINMEA_SENTENCE_GGA:
 		// Default V.KEL
+		success = minmea_parse_gga( &gga, data);
+
 		//
 		break;
 	case MINMEA_SENTENCE_GSA:
@@ -103,6 +116,10 @@ void uart_gnss_cb(char *data, size_t size) {
 		//
 		break;
 	case MINMEA_SENTENCE_GST:
+		success = minmea_parse_gst( &gst, data);
+//	    float latitude_error_deviation = minmea_tofloat(& gst.latitude_error_deviation);
+//	    float longitude_error_deviation = minmea_tofloat(& gst.longitude_error_deviation);
+//	    float altitude_error_deviation= minmea_tofloat(& gst.altitude_error_deviation);
 		// Contains RMS
 		break;
 	case MINMEA_SENTENCE_GSV:
@@ -161,12 +178,32 @@ void uart_init(void) {
 	bshal_uart_instance.hw_nr = 2;  // UASRT 2
 	bshal_uart_instance.cts_pin = -1; // No flow control
 	bshal_uart_instance.rts_pin = -1; // No flow control
-	bshal_uart_instance.rxd_pin = bshal_gpio_encode_pin(GPIOA, 3); // PA3
-	bshal_uart_instance.txd_pin = bshal_gpio_encode_pin(GPIOA, 2); // PA2
+	bshal_uart_instance.rxd_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_3); // PA3
+	bshal_uart_instance.txd_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_2); // PA2
 
 	bshal_stm32_uart_init(&bshal_uart_instance);
 
 
+}
+
+int geohash_precision(float latitude_error_deviation_m,float longitude_error_deviation_m) {
+	// https://en.wikipedia.org/wiki/Geohash#Digits_and_precision_in_km
+	float km_error = NAN;
+	if (latitude_error_deviation_m < longitude_error_deviation_m ) {
+		km_error = latitude_error_deviation_m / 1000.0f;
+	} else {
+		km_error = longitude_error_deviation_m / 1000.0f;
+	}
+	if (isnan(km_error)) return 1;
+
+	if (km_error < 0.019f) return 8;
+	if (km_error < 0.076f) return 7;
+	if (km_error < 0.61f) return 6;
+	if (km_error < 2.4f) return 5;
+	if (km_error < 20.0f) return 4;
+	if (km_error < 78.0f) return 3;
+	if (km_error < 630.0f) return 2;
+	return 1;
 }
 
 int main() {
@@ -192,10 +229,58 @@ int main() {
 	draw_background();
 	print("GNSS DEMO", 0);
 
+	nemaMsgEnable("GST");
+	bshal_delay_ms(100);
 
 	while (1) {
+
+//		float latitude= minmea_tocoord(&rmc.latitude);
+//		float longitude= minmea_tocoord(&rmc.longitude);
+
+		float latitude= minmea_tocoord(&gga.latitude);
+		float longitude= minmea_tocoord(&gga.longitude);
+		float altitude= minmea_tofloat(&gga.altitude);
+
+
+		float latitude_error_deviation = minmea_tofloat(& gst.latitude_error_deviation);
+		float longitude_error_deviation = minmea_tofloat(& gst.longitude_error_deviation);
+		float altitude_error_deviation= minmea_tofloat(& gst.altitude_error_deviation);
+
+		sprintf(buff, "%04d-%02d-%02d %02d:%02d:%02d (UTC)",
+			rmc.date.year+2000,
+			rmc.date.month,
+			rmc.date.day,
+			rmc.time.hours,
+			rmc.time.minutes,
+			rmc.time.seconds);
+		print(buff,0);
+
+
+		sprintf(buff, "latitude : %10.6f °", latitude);
+		print(buff,1);
+		sprintf(buff, "    error: %6.2f m", latitude_error_deviation);
+		print(buff,2);
+		sprintf(buff, "longitude: %10.6f °", longitude );
+		print(buff,3);
+		sprintf(buff, "    error: %6.2f m", longitude_error_deviation);
+		print(buff,4);
+
+		sprintf(buff, "altitude : %6.2f m", altitude );
+		print(buff,5);
+		sprintf(buff, "    error: %6.2f m", altitude_error_deviation);
+		print(buff,6);
+
+
+		char * geohash = geohash_encode(latitude,longitude, geohash_precision(latitude_error_deviation, longitude_error_deviation) );
+		if (geohash) {
+			sprintf(buff, "geohash  : %s",geohash );
+			free(geohash);
+			print(buff,7);
+		}
+
 		framebuffer_apply();
 		bshal_delay_ms(1000);
+		//test_uart_send(enableGST, sizeof(enableGST));
 	}
 
 }
