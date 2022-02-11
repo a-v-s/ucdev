@@ -31,13 +31,20 @@
 #include <stdbool.h>
 #include <string.h>
 
+
+
 #include "system.h"
+
+// NB. On STM32F0, stdfix conflicts with
+// STM32CubeF0/Drivers/CMSIS/Core/Include/cmsis_gcc.h
+// It should be included after STM32 includes stm32f0xx.h (included by system.h)
+#include <stdfix.h>
+// Might need to verify this also holds for latest CMSIS, and switch to upstream
 
 #include "bshal_spim.h"
 #include "bshal_delay.h"
 #include "bshal_i2cm.h"
 
-#include <stdfix.h>
 
 
 #include "i2c.h"
