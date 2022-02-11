@@ -30,13 +30,15 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include <stdfix.h>
 
 #include "system.h"
 
 #include "bshal_spim.h"
 #include "bshal_delay.h"
 #include "bshal_i2cm.h"
+
+#include <stdfix.h>
+
 
 #include "i2c.h"
 #include "lm75b.h"
@@ -52,10 +54,12 @@
 #include "rc52x_transport.h"
 #include "rc52x.h"
 
+
+
 bshal_i2cm_instance_t *gp_i2c = NULL;
 
 void HardFault_Handler(void) {
-
+	while(1);
 }
 
 void SysTick_Handler(void) {
@@ -63,6 +67,10 @@ void SysTick_Handler(void) {
 }
 
 void SystemClock_Config(void) {
+#ifdef STM32F0
+	ClockSetup_HSE8_SYS48();
+#endif
+
 #ifdef STM32F1
 	ClockSetup_HSE8_SYS72();
 #endif

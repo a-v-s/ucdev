@@ -37,6 +37,12 @@ C_SOURCES += bmp280.c
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32.c
 
+ifneq (,$(findstring STM32F0,$(MCU)))
+	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f0/clocksetup.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f0.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f0.c
+endif
+
 ifneq (,$(findstring STM32F1,$(MCU)))
 	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
 	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
@@ -50,7 +56,10 @@ ifneq (,$(findstring STM32F4,$(MCU)))
 endif
 
 
-C_SOURCES += $(LIBHALGLUE_ROOT)/common/arm_cpuid.c
+# TODO: CPUID does not work on Cortex M0
+# error: 'SCB_Type' has no member named 'PFR'
+#C_SOURCES += $(LIBHALGLUE_ROOT)/common/arm_cpuid.c
+
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/bshal_delay.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_gpio_stm32.c
 
@@ -96,6 +105,10 @@ include $(MK_DIR)/all.mk
   
 
 
+
+ifeq ($(SUBARCH), M0)
+	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/arm_m0  -lu8g2
+endif
 
 ifeq ($(SUBARCH), M3)
 	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/arm_m3  -lu8g2
