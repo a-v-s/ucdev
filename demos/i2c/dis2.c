@@ -9,22 +9,21 @@ extern bshal_i2cm_instance_t *gp_i2c;
 
 void display_init(void) {
 
-#ifdef U8X8_WITH_USER_PTR
+//#ifdef U8X8_WITH_USER_PTR
 	u8g2_SetUserPtr(&m_u8g2,gp_i2c);
-#else
-	bshal_u8x8_i2c_init(&m_u8g2, gp_i2c);
-#endif
+//#else
+//	bshal_u8x8_i2c_init(&m_u8g2, gp_i2c);
+//#endif
 
 	// Screen with either ssd1306 or sh1106 are shipped by AliBay sellers
 	// They are mostly compatible, but the display content will be shifted 2 pixels
 	// if the wrong driver is used.
 
-	//u8g2_Setup_ssd1306_i2c_128x64_noname_f(&m_u8g2, U8G2_R0, u8x8_byte_i2c, u8x8_gpio_and_delay_template);
+	u8g2_Setup_ssd1306_i2c_128x64_noname_f(&m_u8g2, U8G2_R0, bshal_u8x8_byte_i2c, bshal_u8x8_gpio_and_delay);
 
 	// What is the difference between these? (noname, vcomh0, winstar) ?
-	u8g2_Setup_sh1106_i2c_128x64_noname_f(&m_u8g2, U8G2_R0, bshal_u8x8_byte_i2c, bshal_u8x8_gpio_and_delay);
-	// u8g2_Setup_sh1106_i2c_128x64_vcomh0_f(&m_u8g2, U8G2_R0, bshal_u8x8_byte_i2c, bshal_u8x8_gpio_and_delay);
-	// u8g2_Setup_sh1106_i2c_128x64_winstar_f(&m_u8g2, U8G2_R0, bshal_u8x8_byte_i2c, bshal_u8x8_gpio_and_delay);
+	//u8g2_Setup_sh1106_i2c_128x64_noname_f(&m_u8g2, U8G2_R0, bshal_u8x8_byte_i2c, bshal_u8x8_gpio_and_delay);
+
 
 
 	u8g2_InitDisplay(&m_u8g2);

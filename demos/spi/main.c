@@ -532,37 +532,37 @@ void SystemClock_Config(void) {
 
 
 
-void radio_init() {
-	static bshal_spim_t radio_spi_config;
-	radio_spi_config.frequency = 1000000;
-	radio_spi_config.bit_order = 0; //MSB
-	radio_spi_config.mode = 0;
-
-	radio_spi_config.hw_nr = 1; // SPI1
-	radio_spi_config.miso_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_6 );
-	radio_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_7 );
-	radio_spi_config.sck_pin =  bshal_gpio_encode_pin(GPIOA, GPIO_PIN_5 );
-
-
-	radio_spi_config.rs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_10);
-	radio_spi_config.cs_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_4);
-
-
-	bshal_spim_init(&radio_spi_config);
-
-//	bshal_gpio_write_pin(radio_spi_config.rs_pin, 0);
-//	bshal_delay_ms(1);
+//void radio_init() {
+//	static bshal_spim_t radio_spi_config;
+//	radio_spi_config.frequency = 1000000;
+//	radio_spi_config.bit_order = 0; //MSB
+//	radio_spi_config.mode = 0;
+//
+//	radio_spi_config.hw_nr = 1; // SPI1
+//	radio_spi_config.miso_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_6 );
+//	radio_spi_config.mosi_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_7 );
+//	radio_spi_config.sck_pin =  bshal_gpio_encode_pin(GPIOA, GPIO_PIN_5 );
+//
+//
+//	radio_spi_config.rs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_10);
+//	radio_spi_config.cs_pin = bshal_gpio_encode_pin(GPIOA, GPIO_PIN_4);
+//
+//
+//	bshal_spim_init(&radio_spi_config);
+//
+////	bshal_gpio_write_pin(radio_spi_config.rs_pin, 0);
+////	bshal_delay_ms(1);
+////	bshal_gpio_write_pin(radio_spi_config.rs_pin, 1);
+//
 //	bshal_gpio_write_pin(radio_spi_config.rs_pin, 1);
-
-	bshal_gpio_write_pin(radio_spi_config.rs_pin, 1);
-	bshal_delay_ms(1);
-	bshal_gpio_write_pin(radio_spi_config.rs_pin, 0);
-
-	si443x_t  si443x;
-	si433x_init(&radio_spi_config, &si443x);
-
-	// Thinking about we would need some SPI manager
-}
+//	bshal_delay_ms(1);
+//	bshal_gpio_write_pin(radio_spi_config.rs_pin, 0);
+//
+//	si443x_t  si443x;
+//	si433x_init(&radio_spi_config, &si443x);
+//
+//	// Thinking about we would need some SPI manager
+//}
 
 
 int main() {
@@ -577,7 +577,11 @@ int main() {
 	bshal_delay_init();
 	bshal_delay_us(10);
 
-	radio_init();
+	//test();
+
+	u8g2_test();
+
+	//radio_init();
 
 //
 //	screen_init();
@@ -606,7 +610,7 @@ int main() {
 //	sprintf(str, "SD: %s", sdcard_name);
 //	print(str, 5);
 //
-//	while (1) {
-//
-//	}
+	while (1) {
+
+	}
 }

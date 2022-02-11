@@ -30,5 +30,10 @@
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ext/ucglib/csrc</locationURI>
 		</link>
+		<link>
+			<name>libhalglue</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/libhalglue</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

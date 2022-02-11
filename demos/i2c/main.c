@@ -63,7 +63,13 @@ void SysTick_Handler(void) {
 }
 
 void SystemClock_Config(void) {
+#ifdef STM32F1
 	ClockSetup_HSE8_SYS72();
+#endif
+
+#ifdef STM32F4
+	SystemClock_HSE25_SYS84();
+#endif
 }
 
 void scan_i2c(void) {
