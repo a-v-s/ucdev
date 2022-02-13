@@ -82,6 +82,10 @@ void SystemClock_Config(void) {
 	ClockSetup_HSE8_SYS72();
 #endif
 
+#ifdef STM32F3
+	ClockSetup_HSE8_SYS72();
+#endif
+
 #ifdef STM32F4
 	SystemClock_HSE25_SYS84();
 #endif

@@ -3,6 +3,19 @@
 ################################################################################
 MCU ?= STM32F103xB
 
+#	Working so far
+#	STM32F072xB		Blue Pill Variant
+#	STM32F103xB		Blue Pill
+#   STM32F401xC		Black Pill
+#   STM32F411xE		Black Pill
+
+# 	TODO
+#	STM32F303xC		Blue Pill with swapped chip
+#	STM32L051xx		Blue Pill Variant
+#	STM32L151xC		Blue Pill with swapped chip 
+#	STM32F030x8		Blue Pill Variant
+#	STM32F030x6		Rabbit Pill
+
 ################################################################################
 # Set Output Filename 
 ################################################################################
@@ -39,20 +52,39 @@ C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32.c
 
 ifneq (,$(findstring STM32F0,$(MCU)))
 	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f0/clocksetup.c
-	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f0.c
+#	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f0.c
 	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f0.c
 endif
 
 ifneq (,$(findstring STM32F1,$(MCU)))
 	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
-	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
+#	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
 	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f1.c
 endif
 
+ifneq (,$(findstring STM32F3,$(MCU)))
+	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f3/clocksetup.c
+#	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f4.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f3.c
+endif
+
+
 ifneq (,$(findstring STM32F4,$(MCU)))
 	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f4/clocksetup.c
-	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f4.c
+#	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f4.c
 	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f4.c
+endif
+
+ifneq (,$(findstring STM32L0,$(MCU)))
+	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32l0/clocksetup.c
+#	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f0.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32l0.c
+endif
+
+ifneq (,$(findstring STM32L1,$(MCU)))
+	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32l1/clocksetup.c
+#	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32l1.c
 endif
 
 
