@@ -142,6 +142,24 @@ ifeq ($(FAMILY), STM32)
 		#C_INCLUDES +=$(LIBHALGLUE_INC)/stm32f4
 	endif
 
+
+	ifneq (,$(findstring L0,$(MCU)))
+		SUBARCH?=M0P
+		SERIES?=STM32L0
+		C_INCLUDES +=$(CUBEL0_HAL_INC_ROOT)
+		C_INCLUDES +=$(CUBEL0_CMSIS_INC_DEV)
+		C_INCLUDES +=$(CUBEL0_CMSIS_INC_CORE)
+	endif
+
+	ifneq (,$(findstring L1,$(MCU)))
+		SUBARCH?=M3
+		SERIES?=STM32L1
+		C_INCLUDES +=$(CUBEL1_HAL_INC_ROOT)
+		C_INCLUDES +=$(CUBEL1_CMSIS_INC_DEV)
+		C_INCLUDES +=$(CUBEL1_CMSIS_INC_CORE)
+	endif
+
+
 	ifneq (,$(findstring L4,$(MCU)))
 		SUBARCH?=M4F
 		SERIES?=STM32L4

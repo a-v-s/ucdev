@@ -8,10 +8,10 @@ MCU ?= STM32F103xB
 #	STM32F103xB		Blue Pill
 #   STM32F401xC		Black Pill
 #   STM32F411xE		Black Pill
+#	STM32F303xC		Blue Pill with swapped chip
 
 # 	TODO
-#	STM32F303xC		Blue Pill with swapped chip
-#	STM32L051xx		Blue Pill Variant
+#	STM32L051xx		Green Pill (Blue Pill pinout)
 #	STM32L151xC		Blue Pill with swapped chip 
 #	STM32F030x8		Blue Pill Variant
 #	STM32F030x6		Rabbit Pill

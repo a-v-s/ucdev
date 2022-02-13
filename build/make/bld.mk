@@ -1,6 +1,11 @@
 ifeq ($(BUILD_LIBRARY),1)
+ifndef MCU
 OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)/$(shell echo $(ARCH) | tr A-Z a-z)_$(shell echo $(SUBARCH) | tr A-Z a-z)
 BUILD_DIR 	= 	$(OUT_DIR)/build
+else 
+OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)/$(shell echo $(MCU) | tr A-Z a-z)
+BUILD_DIR   =   $(OUT_DIR)/build
+endif
 else
 OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)/$(shell echo $(MCU) | tr A-Z a-z)
 BUILD_DIR   =   $(OUT_DIR)/build
@@ -20,6 +25,10 @@ CC_1 = $(ACTUAL_CC)
 CC = $(CC_$(V))
 
 
+ACTUAL_AS := $(AS)
+AS_0 = @echo "Assembling $<..."; $(ACTUAL_CC)
+AS_1 = $(ACTUAL_CC)
+AS = $(AS_$(V))
 
 
 #######################################
@@ -54,7 +63,7 @@ vpath %.S $(sort $(dir $(ASM_SOURCES)))
 
 
 ifeq ($(BUILD_LIBRARY),1)
-all: $(SLIB) $(OUT_DIR)/lib$(TARGET).a
+all: $(OUT_DIR)/lib$(TARGET).a
 else
 all: $(SLIB) $(OUT_DIR)/$(TARGET).elf $(OUT_DIR)/$(TARGET).hex $(OUT_DIR)/$(TARGET).bin
 endif
@@ -111,8 +120,12 @@ $(OUT_DIR):
 ################################################################################
 # Build the HAL as a static library
 ################################################################################
+
+
+
 $(SLIB):
-	make -C $(SLIB_BLD) TARGET=$(MCU) 
+#	make -C $(SLIB_BLD) TARGET=$(MCU) 
+	make -C $(SLIB_BLD)
 
 ################################################################################
 # Dependencies
