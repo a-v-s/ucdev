@@ -34,6 +34,8 @@ endif
 ifeq ($(FAMILY), NRF5)
 	ARCH?=ARM
 	
+    C_INCLUDES += $(LIBHALGLUE_INC)    
+	C_INCLUDES += $(LIBHALGLUE_INC)/nrfx
 	
 	ifneq (,$(findstring 51,$(MCU)))
 		SUBARCH?=M0
@@ -244,7 +246,7 @@ C_DEFS += -D$(MCU) -D$(SERIES) -I$(SLIB_BLD)
 
 
 
-$(info MCU: C_INCLUDES 	   $(C_INCLUDES))
+#$(info MCU: C_INCLUDES 	   $(C_INCLUDES))
 
 
 

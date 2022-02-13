@@ -26,9 +26,14 @@ CC = $(CC_$(V))
 
 
 ACTUAL_AS := $(AS)
-AS_0 = @echo "Assembling $<..."; $(ACTUAL_CC)
-AS_1 = $(ACTUAL_CC)
+AS_0 = @echo "Assembling $<..."; $(ACTUAL_AS)
+AS_1 = $(ACTUAL_AS)
 AS = $(AS_$(V))
+
+ACTUAL_AR := $(AR)
+AR_0 = @echo "Archiving $@..."; $(ACTUAL_AR)
+AR_1 = $(ACTUAL_AR)
+AR = $(AR_$(V))
 
 
 #######################################

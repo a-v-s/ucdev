@@ -57,5 +57,5 @@ endif
 
 
 
-$(info DEBUG: BUILD_MODE IN OPT 	   $(BUILD_MODE))
-$(info DEBUG: OPT IN OPT 	   		   $(OPT))
+$(info BUILD_MODE    $(BUILD_MODE))
+#$(info DEBUG: OPT IN OPT 	   		   $(OPT))

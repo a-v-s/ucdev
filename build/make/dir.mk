@@ -65,9 +65,13 @@ CUBEL4_CMSIS_ROOT =       $(CUBEL4_ROOT)/Drivers/CMSIS
 CUBEL4_CMSIS_INC_DEV =    $(CUBEL4_CMSIS_ROOT)/Device/ST/STM32L4xx/Include/
 CUBEL4_CMSIS_INC_CORE =   $(CUBEL4_CMSIS_ROOT)/Core/Include/
 
-
-
-NRFX_ROOT =               $(UCDEV_ROOT)/ext/nrfx
+NRFX_ROOT =               	$(UCDEV_ROOT)/ext/nrfx
+NRFX_HAL_ROOT = 			$(NRFX_ROOT)/hal
+NRFX_MDK_ROOT = 			$(NRFX_ROOT)/mdk
+NRFX_SOC_ROOT = 			$(NRFX_ROOT)/soc
+NRFX_DRV_ROOT = 			$(NRFX_ROOT)/drivers
+NRFX_DRV_SRC = 				$(NRFX_DRV_ROOT)/src
+NRFX_DRV_INC = 				$(NRFX_DRV_ROOT)/include
 
 GD32F1_ROOT =               $(UCDEV_ROOT)/ext/GD32F10x_Firmware_Library
 GD32F1_FWLIB_ROOT =       $(GD32F1_ROOT)/Firmware

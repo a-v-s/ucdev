@@ -8,7 +8,7 @@ BUILD_LIBRARY = 1
 #######################################
 
 C_SOURCES 	+= $(CUBEL1_ROOT)/Drivers/CMSIS/Device/ST/STM32L1xx/Source/Templates/system_stm32l1xx.c
-ASM_SOURCES += $(CUBEL1_ROOT)/Drivers/CMSIS/Device/ST/STM32L1xx/Source/Templates/gcc/startup_$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).s
+ASM_SOURCES += $(CUBEL1_ROOT)/Drivers/CMSIS/Device/ST/STM32L1xx/Source/Templates/gcc/startup_$(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]').s
 
 
 C_SOURCES += $(CUBEL1_HAL_SRC_ROOT)/stm32l1xx_hal_adc.c
