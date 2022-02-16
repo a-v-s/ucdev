@@ -89,6 +89,14 @@ void SystemClock_Config(void) {
 #ifdef STM32F4
 	SystemClock_HSE25_SYS84();
 #endif
+
+#ifdef STM32L0
+	SystemClock_HSE8_SYS32();
+#endif
+
+#ifdef STM32L1
+	SystemClock_HSE8_SYS48();
+#endif
 }
 
 void scan_i2c(void) {

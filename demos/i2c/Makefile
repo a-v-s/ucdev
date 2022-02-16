@@ -11,11 +11,11 @@ MCU ?= STM32F103xB
 #	STM32F303xC		Blue Pill with swapped chip
 
 # 	TODO
-#	STM32L051xx		Green Pill (Blue Pill pinout)
-#	STM32L151xC		Blue Pill with swapped chip 
+#	STM32L152xC		Blue Pill with swapped chip 
 #	STM32F030x8		Blue Pill Variant
 #	STM32F030x6		Rabbit Pill
-
+#
+##	STM32L051xx		Green Pill (NOT PIN COMPATIBLE 3V3/GND)
 ################################################################################
 # Set Output Filename 
 ################################################################################
@@ -140,6 +140,10 @@ include $(MK_DIR)/all.mk
 
 ifeq ($(SUBARCH), M0)
 	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/arm_m0  -lu8g2
+endif
+
+ifeq ($(SUBARCH), M0P)
+	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/arm_m0p  -lu8g2
 endif
 
 ifeq ($(SUBARCH), M3)
