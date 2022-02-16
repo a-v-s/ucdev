@@ -84,7 +84,10 @@ clean:
 $(BUILD_DIR)/%.c.o: %.c Makefile | $(BUILD_DIR) 
 	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
-$(BUILD_DIR)/%.s.o $(BUILD_DIR)/%.S.o: %.s Makefile | $(BUILD_DIR)
+$(BUILD_DIR)/%.s.o: %.s Makefile | $(BUILD_DIR)
+	$(AS) -c $(CFLAGS) $< -o $@
+
+$(BUILD_DIR)/%.S.o: %.S Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 
 ifeq ($(COMPILER_TYPE),GCC)
