@@ -1,15 +1,18 @@
+
 ifeq ($(BUILD_LIBRARY),1)
-ifndef MCU
 OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)/$(shell echo $(ARCH) | tr A-Z a-z)_$(shell echo $(SUBARCH) | tr A-Z a-z)
 BUILD_DIR 	= 	$(OUT_DIR)/build
 else 
-OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)/$(shell echo $(MCU) | tr A-Z a-z)
-BUILD_DIR   =   $(OUT_DIR)/build
-endif
+ifeq ($(BUILD_SYSTEM_LIBRARY),1)
+OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)
+BUILD_DIR   =   $(OUT_DIR)/$(shell echo $(MCU) | tr A-Z a-z)/build
+BUILD_LIBRARY=1
 else
 OUT_DIR     =   $(shell echo $(BUILD_MODE) | tr A-Z a-z)/$(shell echo $(MCU) | tr A-Z a-z)
 BUILD_DIR   =   $(OUT_DIR)/build
 endif
+endif
+
 
 
 
@@ -65,6 +68,7 @@ OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(OBJ_ASM_TMP2)  ))
 
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
 vpath %.S $(sort $(dir $(ASM_SOURCES)))
+
 
 
 ifeq ($(BUILD_LIBRARY),1)

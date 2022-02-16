@@ -3,9 +3,9 @@
 ######################################
 
 MCU ?= STM32F401xC
-TARGET =  $(MCU)
+TARGET = $(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]')
 UCDEV_ROOT = ../../../
-BUILD_LIBRARY = 1
+BUILD_SYSTEM_LIBRARY = 1
 
 #######################################
 # source of the library

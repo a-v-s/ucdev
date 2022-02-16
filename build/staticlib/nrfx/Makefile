@@ -1,7 +1,7 @@
-MCU ?= NRF52840
+MCU ?= NRF52832
 TARGET =  $(shell tr '[:upper:]' '[:lower:]' <<< $(MCU))
 UCDEV_ROOT = ../../../
-BUILD_LIBRARY = 1
+BUILD_SYSTEM_LIBRARY = 1
 
 #######################################
 # source of the library

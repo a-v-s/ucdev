@@ -1,7 +1,7 @@
 MCU?=STM32L151xB
-TARGET =  $(MCU)
+TARGET = $(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]')
 UCDEV_ROOT = ../../../
-BUILD_LIBRARY = 1
+BUILD_SYSTEM_LIBRARY = 1
 
 #######################################
 # source of the library
