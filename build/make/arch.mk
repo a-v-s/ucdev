@@ -73,16 +73,16 @@ endif
 
 ifeq ($(ARCH), RISCV)
 	COMPILER_TYPE?=GCC
-	
+	SPECS+= --specs=nosys.specs
 	# Older toolchains use riscv64-unknown-elf-  	(built from AUR)
 	# Newer toolchains use riscv64-elf-				(community repo)
 	#PREFIX?=riscv64-unknown-elf-
 	PREFIX?=riscv64-elf-
 
 	ifeq ($(SUBARCH), RV32IMAC)
-		CPU?=	-march=rv32imac
+		CPU?=	-march=rv32imac 
 		FPU?=	
-		ABI?=	-mabi=ilp32
+		ABI?=	-mabi=ilp32 -mcmodel=medlow
 	endif
 
 endif
