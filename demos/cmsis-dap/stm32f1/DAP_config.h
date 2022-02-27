@@ -108,8 +108,8 @@
  \return String length.
  */
 __STATIC_INLINE uint8_t DAP_GetVendorString(char *str) {
-	(void) str;
-	return (0U);
+	strcpy(str,"BlaatSchaap");
+	return strlen("BlaatSchaap") + 1;
 
 }
 
@@ -463,6 +463,16 @@ __STATIC_INLINE uint8_t RESET_TARGET(void) {
 }
 
 ///@}
+
+// New features, need to update config 
+#define DAP_UART 0
+#define DAP_UART_USB_COM_PORT 0
+__STATIC_INLINE uint8_t DAP_GetTargetBoardNameString(char * info){return 0;}
+__STATIC_INLINE uint8_t DAP_GetTargetBoardVendorString(char * info){return 0;}
+__STATIC_INLINE uint8_t DAP_GetProductFirmwareVersionString(char * info){return 0;}
+__STATIC_INLINE uint8_t DAP_GetTargetDeviceNameString(char * info){return 0;}
+__STATIC_INLINE uint8_t DAP_GetTargetDeviceVendorString(char * info){return 0;}
+
 
 #endif /* __DAP_CONFIG_H__ */
 

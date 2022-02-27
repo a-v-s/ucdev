@@ -12,12 +12,12 @@ uint8_t temp_recv_buffer[64];
 uint8_t temp_send_buffer[64];
 
 
-void transfer_in_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
+void transfer_in_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data,
 		size_t size) {
 
 }
 
-void transfer_out_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
+void transfer_out_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data,
 		size_t size) {
 
 	// Execute DAP command (process request and prepare response)
@@ -27,11 +27,11 @@ void transfer_out_complete(usbd_handle_t *handle, uint8_t epnum, void *data,
 	//             number of bytes in request (upper 16 bits)
 
 	int result = DAP_ExecuteCommand(data,temp_send_buffer);
-	usbd_transmit(handle,0x80|epnum,temp_send_buffer, result&0xFFFF);
+	bscp_usbd_transmit(handle,0x80|epnum, temp_send_buffer, result&0xFFFF);
 }
 
 
-void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
+void bscp_usbd_demo_setup_descriptors(bscp_usbd_handle_t *handle) {
 	handle->descriptor_device = add_descriptor(handle,
 			sizeof(usb_descriptor_device_t));
 	handle->descriptor_device->bDescriptorType = USB_DT_DEVICE;
@@ -63,7 +63,7 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 	handle->descriptor_configuration[0]->wTotalLength += iface->bLength;
 	iface->bDescriptorType = USB_DT_INTERFACE;
 	iface->bInterfaceClass = 0xff;
-	iface->bNumEndpoints = 3;
+	iface->bNumEndpoints = 2;
 	iface->bInterfaceNumber = 0;
 	iface->bAlternateSetting = 0;
 	iface->iInterface = 2;
@@ -71,13 +71,15 @@ void usbd_demo_setup_descriptors(usbd_handle_t *handle) {
 	// Looking at CMSIS_5/CMSIS/DAP/Firmware/Examples/LPC-Link-II/V2/RTE/USB/USBD_Config_CustomClass_0.h
  	// We need two IN endpoints and one OUT endpoint
 
-	usbd_add_endpoint_in(handle, 1, 0x81, USB_EP_ATTR_TYPE_BULK, 64, 1,
-			(usbd_transfer_cb_f) &transfer_in_complete);
-	usbd_add_endpoint_in(handle, 1, 0x82, USB_EP_ATTR_TYPE_BULK, 64, 1,
-			(usbd_transfer_cb_f) &transfer_in_complete);
+	bscp_usbd_add_endpoint_out(handle, 1, 0x01, USB_EP_ATTR_TYPE_BULK, 64, 1,
+			temp_recv_buffer, 64, (bscp_usbd_transfer_cb_f) &transfer_out_complete);
 
-	usbd_add_endpoint_out(handle, 1, 0x01, USB_EP_ATTR_TYPE_BULK, 64, 1,
-			temp_recv_buffer, 64, (usbd_transfer_cb_f) &transfer_out_complete);
+	bscp_usbd_add_endpoint_in(handle, 1, 0x81, USB_EP_ATTR_TYPE_BULK, 64, 1,
+			(bscp_usbd_transfer_cb_f) &transfer_in_complete);
+	//bscp_usbd_add_endpoint_in(handle, 1, 0x82, USB_EP_ATTR_TYPE_BULK, 64, 1,
+	//		(bscp_usbd_transfer_cb_f) &transfer_in_complete);
+
+
 
 	// Is there a size limit to USB Strings? They appear to get truncated at 32 characters
 	// I swear I've seen longer strings, or am I imagining things?
