@@ -112,8 +112,8 @@ void usbd_reenumerate() {
 }
 
 void ClockSetup(void) {
-	//ClockSetup_HSE8_SYS72();
-	ClockSetup_HSE8_SYS48();
+	ClockSetup_HSE8_SYS72();
+	//ClockSetup_HSE8_SYS48();
 	//ClockSetup_HSI_SYS48();
 }
 
@@ -126,24 +126,46 @@ void parse_romtable() {
 	romtable_pid_t romtable_pid = extract_romtable_pid(rid);
 
 	char *prob = "Unknown";
-	if (romtable_pid.identity_code == 32
-			&& romtable_pid.continuation_code == 0) {
-		prob = "STM32";
-	}
-	if (romtable_pid.identity_code == 81
-			&& romtable_pid.continuation_code == 7) {
-		prob = "GD32";
-	}
-	if (romtable_pid.identity_code == 59
-			&& romtable_pid.continuation_code == 4) {
-		// APM or CS
-		cortex_m_romtable_t *rom = (romtable_id_t*) (ROMTABLE);
-		if (rom->etm & 1) {
-			prob = "CS32";
-		} else {
-			prob = "APM32";
+
+	if (romtable_pid.jep106_used) {
+		if (romtable_pid.identity_code == 32
+				&& romtable_pid.continuation_code == 0) {
+			prob = "STM32";
 		}
+		if (romtable_pid.identity_code == 81
+				&& romtable_pid.continuation_code == 7) {
+			prob = "GD32";
+		}
+		if (romtable_pid.identity_code == 59
+				&& romtable_pid.continuation_code == 4) {
+			// APM or CS
+			cortex_m_romtable_t *rom = (cortex_m_romtable_t*) (ROMTABLE);
+			if (rom->etm & 1) {
+				prob = "CS32";
+			} else {
+				prob = "APM32";
+			}
+		}
+	} else {
+		// JEP106 not used. Legacy ASCII values are used. This should not be used
+		// on new products. And this note was written in the ADI v5 specs.
+		// The Only value I've been able to find is 0x41 for ARM.
+
+		// The identity/contiuation code are not filled acoording the JEP106
+		// According to speds, this is the legacy idenitification where
+		// the Identity Code contains an ASCII value. On the HK32 we read
+		// JEP106 = false / Identity = 0x55 / Continuation = 5
+		// 0x55 corresponds with 'U'. This looks like this could be an ASCII Identifier.
+		// However, if ASCII IDs are used, the expected Continuation would be 0, as
+		// this field is "reserved, read as zero" when legacy ASCII IDs are used.
+
+		// Even though these values are violating the specs, we can use
+		// JEP106 = false, ID = 0x55, Cont = 5 to detect HK32.
+
+		if (romtable_pid.identity_code == 0x55
+				&& romtable_pid.continuation_code == 5) prob = "HK32";
 	}
+
 
 	sprintf(rt, "%s %s  V:%1d CONT:%3d ID:%3d PART: %3X REV:%3d ", prob,
 			cpuid(), romtable_pid.jep106_used, romtable_pid.continuation_code,
