@@ -57,4 +57,4 @@ void draw_background(){
 void draw_plain_background(){
 	u8g2_ClearBuffer(&m_u8g2);
 }
-void set_565(){}
+//void set_565(){}

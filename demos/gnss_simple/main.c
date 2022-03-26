@@ -50,16 +50,59 @@
 
 bshal_i2cm_instance_t *gp_i2c = NULL;
 
-void HardFault_Handler(void) {
 
+#ifdef ST7735
+// UCGLIB Uses ISO 8859-1 encoding
+#define DEGREE "\xB0"
+#else
+// U8G2LIB Uses UTF-8 encoding
+#define DEGREE "°"
+#endif
+
+void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress )
+{
+/* These are volatile to try and prevent the compiler/linker optimising them
+away as the variables never actually get used.  If the debugger won't show the
+values of the variables, make them global my moving their declaration outside
+of this function. */
+volatile uint32_t r0;
+volatile uint32_t r1;
+volatile uint32_t r2;
+volatile uint32_t r3;
+volatile uint32_t r12;
+volatile uint32_t lr; /* Link register. */
+volatile uint32_t pc; /* Program counter. */
+volatile uint32_t psr;/* Program status register. */
+
+    r0 = pulFaultStackAddress[ 0 ];
+    r1 = pulFaultStackAddress[ 1 ];
+    r2 = pulFaultStackAddress[ 2 ];
+    r3 = pulFaultStackAddress[ 3 ];
+
+    r12 = pulFaultStackAddress[ 4 ];
+    lr = pulFaultStackAddress[ 5 ];
+    pc = pulFaultStackAddress[ 6 ];
+    psr = pulFaultStackAddress[ 7 ];
+
+    /* When the following line is hit, the variables contain the register values. */
+    for( ;; );
 }
+
+
 
 void SysTick_Handler(void) {
 	HAL_IncTick();
 }
 
 void SystemClock_Config(void) {
+
+#ifdef STM32F1
 	ClockSetup_HSE8_SYS72();
+#endif
+
+#ifdef STM32F4
+	SystemClock_HSE25_SYS84();
+#endif
 }
 
 
@@ -221,13 +264,17 @@ int main() {
 	bshal_delay_init();
 	bshal_delay_us(10);
 
+	display_init();
+//	draw_background();
+
+
+
+
 	gp_i2c = i2c_init();
 
 	uart_init();
 
-	display_init();
-	draw_background();
-	print("GNSS DEMO", 0);
+
 
 	nemaMsgEnable("GST");
 	bshal_delay_ms(100);
@@ -256,11 +303,11 @@ int main() {
 		print(buff,0);
 
 
-		sprintf(buff, "latitude : %10.6f °", latitude);
+		sprintf(buff, "latitude : %10.6f " DEGREE, latitude);
 		print(buff,1);
 		sprintf(buff, "    error: %6.2f m", latitude_error_deviation);
 		print(buff,2);
-		sprintf(buff, "longitude: %10.6f °", longitude );
+		sprintf(buff, "longitude: %10.6f " DEGREE , longitude );
 		print(buff,3);
 		sprintf(buff, "    error: %6.2f m", longitude_error_deviation);
 		print(buff,4);
@@ -280,6 +327,7 @@ int main() {
 
 		framebuffer_apply();
 		bshal_delay_ms(1000);
+		draw_plain_background();
 		//test_uart_send(enableGST, sizeof(enableGST));
 	}
 
