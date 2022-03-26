@@ -124,10 +124,10 @@ endif
 
 	
 $(BUILD_DIR):
-	mkdir -p $@	
+	$(MKDIR_P) $@	
 
 $(OUT_DIR):
-	mkdir -p $@		
+	$(MKDIR_P) $@		
 	
 ################################################################################
 # Build the HAL as a static library
