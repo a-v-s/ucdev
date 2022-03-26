@@ -119,7 +119,7 @@ void scan_i2c(void) {
 	print(line, row);
 }
 
-void rfid5_init(rc52x_t *rc52x) {
+void rfid5_spi_init(rc52x_t *rc52x) {
 
 	rc52x->transport_type = bshal_transport_i2c;
 	rc52x->transport_instance.i2cm = gp_i2c;
@@ -228,7 +228,7 @@ int main() {
 
 	///
 	rc52x_t rc52x;
-	rfid5_init(&rc52x);
+	rfid5_spi_init(&rc52x);
 	rc52x_version = 0;
 	rc52x_get_chip_version(&rc52x, &rc52x_version);
 
