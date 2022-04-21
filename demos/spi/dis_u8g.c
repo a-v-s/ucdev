@@ -31,8 +31,12 @@ void blokje(u8g2_t * dis) {
 		u8g2_DrawUTF8(dis, 8, 56, "7" );
 		u8g2_DrawUTF8(dis, 8, 64, "8" );
 
+
 		u8g2_UpdateDisplay(dis);
-		//u8g2_UpdateDisplay(dis);
+
+
+
+
 
 		//bshal_delay_ms(10);
 		if (x<=0) dx=1;
@@ -109,6 +113,13 @@ void u8g2_test() {
 	m_bshal_ssd1306.spim.ncd_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_9);
 	m_bshal_ssd1306.spim.instance.cs_pin = bshal_gpio_encode_pin(GPIOB, GPIO_PIN_8);
 
+	u8g2_SetUserPtr(&m_u8g2_st7920, &m_bshal_st7920);
+	u8g2_Setup_st7920_s_128x64_f(&m_u8g2_st7920, U8G2_R2, bshal_u8x8_byte_spi, bshal_u8x8_gpio_and_delay);
+	static uint8_t st7920_buf[1024];
+	m_u8g2_st7920.tile_buf_ptr=st7920_buf;
+	u8g2_InitDisplay(&m_u8g2_st7920);
+	u8g2_SetPowerSave(&m_u8g2_st7920, 0);
+
 	u8g2_SetUserPtr(&m_u8g2_ssd1306, &m_bshal_ssd1306);
 	u8g2_Setup_ssd1306_128x64_noname_f(&m_u8g2_ssd1306, U8G2_R2, bshal_u8x8_byte_spi, bshal_u8x8_gpio_and_delay);
 	static uint8_t ssd1306_buf[1024];
@@ -116,12 +127,7 @@ void u8g2_test() {
 	u8g2_InitDisplay(&m_u8g2_ssd1306);
 	u8g2_SetPowerSave(&m_u8g2_ssd1306, 0);
 
-	u8g2_SetUserPtr(&m_u8g2_st7920, &m_bshal_st7920);
-	u8g2_Setup_st7920_s_128x64_f(&m_u8g2_st7920, U8G2_R2, bshal_u8x8_byte_spi, bshal_u8x8_gpio_and_delay);
-	static uint8_t st7920_buf[1024];
-	m_u8g2_st7920.tile_buf_ptr=st7920_buf;
-	u8g2_InitDisplay(&m_u8g2_st7920);
-	u8g2_SetPowerSave(&m_u8g2_st7920, 0);
+
 
 
 
@@ -143,6 +149,8 @@ void u8g2_test() {
 
 		blokje(&m_u8g2_st7920);
 		blokje(&m_u8g2_ssd1306);
+
+
 	}
 
 }
