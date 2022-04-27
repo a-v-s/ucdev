@@ -78,9 +78,11 @@ ifeq ($(DIS),ST7735)
 	C_SOURCES += dis_st7735.c
 	# New hal ain't working yet
 	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/extlib/ucg_spi.c
-	CFLAGS += -DUSE_OLD_HAL
-	C_SOURCES += old_hal/ucglib_hal.c
-	C_INCLUDES += old_hal
+	
+	#CFLAGS += -DUSE_OLD_HAL
+	#C_SOURCES += old_hal/ucglib_hal.c
+	#C_INCLUDES += old_hal
+
 	C_INCLUDES += $(UCG_DIR)
 	CFLAGS += -DWITH_USER_PTR
 	LDFLAGS +=  -lucg
