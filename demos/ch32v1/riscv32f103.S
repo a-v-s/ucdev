@@ -57,7 +57,7 @@ Reset_Handler:
 	la gp, __global_pointer$
 .option	pop
 1:
-	la sp, _eusrstack
+	la sp, _estack
 2:
 	/* Load data section from flash to RAM */
 	la a0, _data_lma
@@ -81,8 +81,6 @@ Reset_Handler:
 	bltu a0, a1, 1b
 2:
 	/* Call global constructors */
-	#la a0, __libc_fini_array
-	#call atexit
 	call __libc_init_array
 
 identify_chip:
