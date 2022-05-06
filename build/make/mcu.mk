@@ -22,6 +22,11 @@ ifneq (,$(findstring GD32,$(MCU)))
 	endif
 endif
 
+ifneq (,$(findstring CH32V,$(MCU)))
+	FAMILY?=CH32V
+endif
+
+
 ifneq (,$(findstring FE310,$(MCU)))
 	# SiFive HiFive 1 -- we should import their SDK some time
 	FAMILY?=FE3
@@ -226,6 +231,14 @@ ifeq ($(FAMILY), GD32V)
 		SLIB=$(SLIB_DIR)/lib$(shell echo $(MCU) | tr A-Z a-z).a
 	endif
 endif
+
+ifeq ($(FAMILY), CH32V)
+	ARCH?=RISCV
+	SUBARCH?=RV32IMAC
+	SERIES?=CH32V # TODO
+	SLIB_BLD?=.   # TODO
+endif 
+
 
 ifeq ($(FAMILY), FE3)
 	ARCH?=RISCV
