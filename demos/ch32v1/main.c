@@ -2,6 +2,19 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+
+volatile int blaat[] = {1,2,3,4};
+/*
+int main(){
+	static int i = 34;
+	static int a[34];
+
+
+
+	while(1);//dfd
+}
+*/
+
 #include <ch32v10x_gpio.h>
 #include <ch32v10x_rcc.h>
 #include <debug.h>
@@ -26,6 +39,7 @@ int main(void) {
     int marchid = read_csr(marchid);
     int mvendorid = read_csr(mvendorid);
 
+    //int grom = blaat[0];
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
@@ -45,3 +59,4 @@ int main(void) {
 
 	}
 }
+
