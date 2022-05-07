@@ -86,7 +86,8 @@ ifeq ($(FAMILY), NRF5)
 
 	LIBS += -lc -lm -lnosys -L$(NRFX_ROOT)/mdk/
 
-	C_INCLUDES +=$(CMSIS_ROOT)/CMSIS/Core/Include
+	#C_INCLUDES +=$(CMSIS_ROOT)/CMSIS/Core/Include
+	C_INCLUDES +=$(CMSIS_INC_CORE)
 
     C_INCLUDES += $(NRFX_ROOT) 
     C_INCLUDES += $(NRFX_ROOT)/mdk 

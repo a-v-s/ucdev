@@ -8,6 +8,10 @@ LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
 CMSIS_ROOT =                $(UCDEV_ROOT)/ext/CMSIS_5/
 CMSIS_INC_CORE =            $(CMSIS_ROOT)/CMSIS/Core/Include/
 
+NMSIS_ROOT =                $(UCDEV_ROOT)/ext/NMSIS
+NMSIS_INC_CORE =            $(NMSIS_ROOT)/NMSIS/Core/Include/
+
+
 CUBEF0_ROOT =             $(UCDEV_ROOT)/ext/STM32CubeF0
 CUBEF0_HAL_SRC_ROOT =     $(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Src
 CUBEF0_HAL_INC_ROOT =     $(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Inc

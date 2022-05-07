@@ -2,61 +2,51 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "int.h"
 
 volatile int blaat[] = {1,2,3,4};
-/*
-int main(){
-	static int i = 34;
-	static int a[34];
 
 
+#include "stm32f1xx_hal_gpio.h"
+#include "stm32f1xx_hal_rcc.h"
 
-	while(1);//dfd
+
+void EXTI9_5_IRQHandler(void) {
+	__HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_All);
 }
-*/
 
-#include <ch32v10x_gpio.h>
-#include <ch32v10x_rcc.h>
-#include <debug.h>
+void EXTI15_10_IRQHandler(void) {
+	__HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_All);
+}
 
+int btn_init(void) {
 
+	// Enable GPIO Port A Clock
+	__HAL_RCC_GPIOA_CLK_ENABLE();
 
-#define read_csr(reg) ({ unsigned long __tmp; \
-  asm volatile ("csrr %0, " #reg : "=r"(__tmp)); \
-  __tmp; })
+	// Enable GPIO Port B Clock
+	__HAL_RCC_GPIOB_CLK_ENABLE();
 
+	GPIO_InitTypeDef GPIO_InitStruct;
+	// Common configuration for all channels
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 
-int unidelay(uint32_t delay) {
-	int blaat = read_csr(mcycle);
-	blaat += delay * (SystemCoreClock / 1000);
-	while (read_csr(mcycle) < blaat);
-	return read_csr(mcycle);
+	GPIO_InitStruct.Pin = GPIO_PIN_10;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	GPIO_InitStruct.Pin = GPIO_PIN_8;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+	NVIC_EnableIRQ(EXTI15_10_IRQn);
+	NVIC_EnableIRQ(EXTI9_5_IRQn);
+	return 0;
 }
 
 int main(void) {
-	Delay_Init();
+	btn_init();
 
-    int marchid = read_csr(marchid);
-    int mvendorid = read_csr(mvendorid);
-
-    //int grom = blaat[0];
-
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-	GPIO_InitTypeDef init_pin = { .GPIO_Pin = GPIO_Pin_0, .GPIO_Speed =
-			GPIO_Speed_2MHz, .GPIO_Mode = GPIO_Mode_Out_PP, };
-
-	GPIO_Init(GPIOA, &init_pin);
-
-	int i = 0;
-	while (1) {
-		i++;
-		GPIO_WriteBit(GPIOA, GPIO_Pin_0, i%2);
-		if (0x31e== mvendorid)
-			unidelay(333);
-		else
-			Delay_Ms(333);
-
-	}
+	while(1);
 }
 

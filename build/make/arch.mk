@@ -83,6 +83,13 @@ ifeq ($(ARCH), RISCV)
 		CPU?=	-march=rv32imac 
 		FPU?=	
 		ABI?=	-mabi=ilp32 -mcmodel=medlow
+
+		# This wouldn't be the correct place to include this but
+		# As the GD32VF/CH32V in one is still a work in progress
+		# For now, do it here
+		C_INCLUDES +=$(NMSIS_INC_CORE)
+		
+		
 	endif
 
 endif
