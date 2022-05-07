@@ -88,9 +88,9 @@ ch32_vector_base:
 ###############################################################################
 
 .section	.text,"ax",@progbits
-.global init_ch32
+.global _init_ch32
 .extern main
-init_ch32:
+_init_ch32:
 
   li t0, 0x88
   csrs mstatus, t0

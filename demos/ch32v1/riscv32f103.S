@@ -4,8 +4,8 @@
 .equ CH32_MARCHID,    0x00000000		# Identifiers for CH32V103
 .equ CH32_MVENDORID,  0x01020304		# Identifiers for CH32V103
 
-.extern init_gd32
-.extern init_ch32
+.extern _init_gd32
+.extern _init_ch32
 
 .section	.text,"ax",@progbits
 #.globl _start
@@ -92,14 +92,14 @@ try_gd32:							# Check if we are runnng on a GD32VF103
 	bne     a0, a2, try_ch32		# We go check if it is a CH32V103
 	li		a2, GD32_MVENDORID
 	bne     a1, a2, chip_not_supported
-	j	init_gd32					# GD32VF103 identified,
+	j	_init_gd32					# GD32VF103 identified,
 
 try_ch32:							# Check if we are runnng on a CH32V103
 	li      a2, CH32_MARCHID
 	bne     a0, a2, chip_not_supported
 	li		a2, CH32_MVENDORID
 	bne     a1, a2, chip_not_supported
-	j	init_ch32					# CH32VF103 identified,
+	j	_init_ch32					# CH32VF103 identified,
 
 
 chip_not_supported:

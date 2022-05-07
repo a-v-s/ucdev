@@ -11,6 +11,33 @@
 #define __ECLIC_BASEADDR 	0xd2000000
 
 #include "core_feature_eclic.h"
+#include "riscv_encoding.h"
+
+
+#define read_csr(reg) ({ unsigned long __tmp; \
+  asm volatile ("csrr %0, " #reg : "=r"(__tmp)); \
+  __tmp; })
+
+#define write_csr(reg, val) ({ \
+  if (__builtin_constant_p(val) && (unsigned long)(val) < 32) \
+    asm volatile ("csrw " #reg ", %0" :: "i"(val)); \
+  else \
+    asm volatile ("csrw " #reg ", %0" :: "r"(val)); })
+
+#define set_csr(reg, bit) ({ unsigned long __tmp; \
+  if (__builtin_constant_p(bit) && (unsigned long)(bit) < 32) \
+    asm volatile ("csrrs %0, " #reg ", %1" : "=r"(__tmp) : "i"(bit)); \
+  else \
+    asm volatile ("csrrs %0, " #reg ", %1" : "=r"(__tmp) : "r"(bit)); \
+  __tmp; })
+
+#define clear_csr(reg, bit) ({ unsigned long __tmp; \
+  if (__builtin_constant_p(bit) && (unsigned long)(bit) < 32) \
+    asm volatile ("csrrc %0, " #reg ", %1" : "=r"(__tmp) : "i"(bit)); \
+  else \
+    asm volatile ("csrrc %0, " #reg ", %1" : "=r"(__tmp) : "r"(bit)); \
+  __tmp; })
+
 
 
 // I'm not getting this working yer
@@ -25,15 +52,30 @@ void init_gd32(void) {
 	// Look up what is does
 	ECLIC_SetMth(0);
 	// GD32CF code sets it to 0
-	ECLIC_SetCfgNlbits(0);
+	//ECLIC_SetCfgNlbits(0);
 	// From the NMSIS template... what are these bits,
 	// and are there none in this chip?
     //ECLIC_SetCfgNlbits(__ECLIC_INTCTLBITS);
+	ECLIC_SetCfgNlbits(8);
+
+
+
+
 
 
 	// Set the vector table address
 	// Hard coded now, should get changed to automatically set from the linker script
-    __set_exc_entry(0x100);
+    //__set_exc_entry(0x100); // well... what do we do here
+    // as the mode bits are set to 0b11, it enabled ECLIC, then what does the
+    // address in there do as it should go to mtvt instead (or too)?
+
+
+	// Set ECLIC vector table
+	write_csr(mtvt, 0x100);
+	// Set ECLIC mode
+	set_csr(mtvec, 0x03);
+	// enable interrupts
+	set_csr(mstatus, MSTATUS_MIE);
 
     main();
 }
