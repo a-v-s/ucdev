@@ -33,7 +33,9 @@ ASM_SOURCES += gd32.S
 C_SOURCES += ch32.c
 C_SOURCES += gd32.c
 ASM_SOURCES += irq.S
-
+ASM_SOURCES += gd32/intexc_gd32.S
+C_SOURCES += gd32/intexc_gd32.c
+C_SOURCES += ch32/core_ch32.c
 
 # link script
 #LDSCRIPT = $(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).ld 

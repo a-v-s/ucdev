@@ -27,12 +27,12 @@ SECTIONS
 
 	.vtor : 
 	{
-    . = ALIGN(4);
-    	KEEP(*(.isr_vector)) 
+    . = ALIGN(0x200);
+		KEEP(*(.gd32_vector))
     . = ALIGN(4);
 		KEEP(*(.ch32_vector))
-        . = ALIGN(0x100);
-		KEEP(*(.gd32_vector))
+    . = ALIGN(4);
+    	KEEP(*(.isr_vector)) 
         . = ALIGN(0x200);
 		KEEP(*(.firmware_info))
 	} > FLASH

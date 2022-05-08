@@ -11,11 +11,11 @@ volatile int blaat[] = {1,2,3,4};
 #include "stm32f1xx_hal_rcc.h"
 
 
-void EXTI9_5_IRQHandler(void) {
+void  __attribute__ ((interrupt ("machine"))) EXTI9_5_IRQHandler(void) {
 	__HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_All);
 }
 
-void EXTI15_10_IRQHandler(void) {
+void  __attribute__ ((interrupt ("machine"))) EXTI15_10_IRQHandler(void) {
 	__HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_All);
 }
 

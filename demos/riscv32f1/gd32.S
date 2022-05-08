@@ -92,6 +92,8 @@ gd32_vector_base:
 .section	.text,"ax",@progbits
 .extern init_gd32
 .global _init_gd32
+.extern gd32_exc_entry
+.extern gd32_irq_entry
 _init_gd32:
 	/* when running init_gd32 it seems to be running in non-vectored mode */
 	/* the interrupt fires through, but not processed correctly */
@@ -99,9 +101,9 @@ _init_gd32:
 	/* looking how to initialise the interrupt handler */
 	/* with the copy-pasted code below, nothing happens */
 
-	j init_gd32
+	//j init_gd32
 /* TODO: IMPLEMENT ME! */
-
+	csrc CSR_MSTATUS, MSTATUS_MIE
     /* Set the the NMI base to share with mtvec by setting CSR_MMISC_CTL */
     li t0, 0x200
     csrs CSR_MMISC_CTL, t0
@@ -111,24 +113,12 @@ _init_gd32:
     csrw CSR_MTVT, t0
 
 	/* Intial the mtvt2 and enable it*/
-    la t0, irq_entry
+    la t0, gd32_irq_entry
     csrw CSR_MTVT2, t0
     csrs CSR_MTVT2, 0x1
 
     /* Intial the CSR MTVEC for the Trap ane NMI base addr*/
-    la t0, trap_entry
+    la t0, gd32_exc_entry
     csrw CSR_MTVEC, t0
 
-
 	j init_gd32
-
-
-
-## NOT SURE WHAT THEY ARE FOR
-.weak trap_entry
-trap_entry:
-ret
-## NOT SURE WHAT THEY ARE FOR
-.weak irq_entry
-irq_entry:
-ret

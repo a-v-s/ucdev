@@ -16,9 +16,9 @@ SECTIONS
 */   
 	.vtor : 
 	{
-		KEEP(*(.ch32_vector))
-        . = ALIGN(0x100);
 		KEEP(*(.gd32_vector))
+		. = ALIGN(0x100);
+		KEEP(*(.ch32_vector))
         . = ALIGN(0x200);
 		KEEP(*(.firmware_info))
 	}

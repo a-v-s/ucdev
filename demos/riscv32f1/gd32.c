@@ -47,7 +47,15 @@ extern uint32_t gd32_vector_base[];
 
 int main(void);
 
+void test(void) {
+	while(1);
+}
+
 void init_gd32(void) {
+
+	clear_csr(mstatus, MSTATUS_MIE);
+
+
 	// Both GD32VF and NMSIS template do this
 	// Look up what is does
 	ECLIC_SetMth(0);
@@ -56,11 +64,8 @@ void init_gd32(void) {
 	// From the NMSIS template... what are these bits,
 	// and are there none in this chip?
     //ECLIC_SetCfgNlbits(__ECLIC_INTCTLBITS);
-	ECLIC_SetCfgNlbits(8);
-
-
-
-
+	//ECLIC_SetCfgNlbits(8);
+	ECLIC->CFG = 0;
 
 
 	// Set the vector table address
@@ -70,11 +75,19 @@ void init_gd32(void) {
     // address in there do as it should go to mtvt instead (or too)?
 
 
-	// Set ECLIC vector table
-	write_csr(mtvt, 0x100);
-	// Set ECLIC mode
-	set_csr(mtvec, 0x03);
+//	// Set ECLIC vector table
+//	write_csr(mtvt, 0x000);
+//	// Set ECLIC mode
+
+	uint32_t mtvec_val = read_csr(mtvec);
+	mtvec_val |= 3;
+	set_csr(mtvec, mtvec_val);
 	// enable interrupts
+
+	for (int i  = 0; i < 100 ; i++ ) {
+		ECLIC_SetShvIRQ(i, 1);
+	}
+
 	set_csr(mstatus, MSTATUS_MIE);
 
     main();

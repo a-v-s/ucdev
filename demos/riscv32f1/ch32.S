@@ -90,6 +90,7 @@ ch32_vector_base:
 .section	.text,"ax",@progbits
 .global _init_ch32
 .extern main
+.extern SystemInit_CH32
 _init_ch32:
 
   li t0, 0x88
@@ -97,4 +98,5 @@ _init_ch32:
 	la t0, ch32_vector_base
   ori t0, t0, 1
 	csrw mtvec, t0
+	call SystemInit_CH32
 	j main
