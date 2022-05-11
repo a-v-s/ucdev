@@ -8,19 +8,16 @@ LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
 CMSIS_ROOT =                $(UCDEV_ROOT)/ext/CMSIS_5/
 CMSIS_INC_CORE =            $(CMSIS_ROOT)/CMSIS/Core/Include/
 
-CUBEF0_ROOT =             $(UCDEV_ROOT)/ext/STM32CubeF0
-CUBEF0_HAL_SRC_ROOT =     $(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Src
-CUBEF0_HAL_INC_ROOT =     $(CUBEF0_ROOT)/Drivers/STM32F0xx_HAL_Driver/Inc
-CUBEF0_CMSIS_ROOT =       $(CUBEF0_ROOT)/Drivers/CMSIS
-CUBEF0_CMSIS_INC_DEV =    $(CUBEF0_CMSIS_ROOT)/Device/ST/STM32F0xx/Include/
-CUBEF0_CMSIS_INC_CORE =   $(CUBEF0_CMSIS_ROOT)/Core/Include/
 
-CUBEF1_ROOT =             $(UCDEV_ROOT)/ext/STM32CubeF1
-CUBEF1_HAL_SRC_ROOT =     $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Src
-CUBEF1_HAL_INC_ROOT =     $(CUBEF1_ROOT)/Drivers/STM32F1xx_HAL_Driver/Inc
-CUBEF1_CMSIS_ROOT =       $(CUBEF1_ROOT)/Drivers/CMSIS
-CUBEF1_CMSIS_INC_DEV =    $(CUBEF1_CMSIS_ROOT)/Device/ST/STM32F1xx/Include/
-CUBEF1_CMSIS_INC_CORE =   $(CUBEF1_CMSIS_ROOT)/Core/Include/
+CUBEF0_HAL_SRC_ROOT =     $(UCDEV_ROOT)/ext/stm32/stm32f0xx_hal_driver/Src
+CUBEF0_HAL_INC_ROOT =     $(UCDEV_ROOT)/ext/stm32/stm32f0xx_hal_driver/Inc
+CUBEF0_CMSIS_INC_DEV =    $(UCDEV_ROOT)/ext/stm32/cmsis_device_f0/Include/
+CUBEF0_CMSIS_INC_CORE =   $(CMSIS_INC_CORE)
+
+CUBEF1_HAL_SRC_ROOT =     $(UCDEV_ROOT)/ext/stm32/stm32f1xx_hal_driver/Src
+CUBEF1_HAL_INC_ROOT =     $(UCDEV_ROOT)/ext/stm32/stm32f1xx_hal_driver/Inc
+CUBEF1_CMSIS_INC_DEV =    $(UCDEV_ROOT)/ext/stm32/cmsis_device_f1/Include/
+CUBEF1_CMSIS_INC_CORE =   $(CMSIS_INC_CORE)
 
 CUBEF2_ROOT =             $(UCDEV_ROOT)/ext/STM32CubeF2
 CUBEF2_HAL_SRC_ROOT =     $(CUBEF2_ROOT)/Drivers/STM32F2xx_HAL_Driver/Src
