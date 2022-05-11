@@ -65,9 +65,8 @@
 [submodule "ext/libgeohash"]
 	path = ext/libgeohash
 	url = https://github.com/simplegeo/libgeohash.git
-[submodule "ext/stm32/stm32f0xx_hal_driver"]
-	path = ext/stm32/stm32f0xx_hal_driver
-	url = https://github.com/STMicroelectronics/stm32f0xx_hal_driver
+
+
 [submodule "ext/stm32/stm32f1xx_hal_driver"]
 	path = ext/stm32/stm32f1xx_hal_driver
 	url = https://github.com/STMicroelectronics/stm32f1xx_hal_driver
@@ -161,3 +160,12 @@
 [submodule "ext/stm32/cmsis_device_wl"]
 	path = ext/stm32/cmsis_device_wl
 	url = https://github.com/STMicroelectronics/cmsis_device_wl
+[submodule "ext/stm32/stm32h7xx_hal_driver"]
+	path = ext/stm32/stm32h7xx_hal_driver
+	url = https://github.com/STMicroelectronics/stm32h7xx_hal_driver
+[submodule "ext/stm32/stm32u5xx_hal_driver"]
+	path = ext/stm32/stm32u5xx_hal_driver
+	url = https://github.com/STMicroelectronics/stm32u5xx_hal_driver
+[submodule "ext/stm32/stm32f0xx_hal_driver"]
+	path = ext/stm32/stm32f0xx_hal_driver
+	url = https://github.com/STMicroelectronics/stm32f0xx_hal_driver
