@@ -4,19 +4,17 @@
 
 #include "int.h"
 
-volatile int blaat[] = {1,2,3,4};
-
+volatile int blaat[] = { 1, 2, 3, 4 };
 
 #include "stm32f1xx_hal_gpio.h"
 #include "stm32f1xx_hal_rcc.h"
 
-
-void  __attribute__ ((interrupt )) EXTI9_5_IRQHandler(void) {
+void __attribute__ ((interrupt)) EXTI9_5_IRQHandler(void) {
 
 	__HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_All);
 }
 
-void  __attribute__ ((interrupt )) EXTI15_10_IRQHandler(void) {
+void __attribute__ ((interrupt)) EXTI15_10_IRQHandler(void) {
 
 	__HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_All);
 }
@@ -49,6 +47,7 @@ int btn_init(void) {
 int main(void) {
 	btn_init();
 
-	while(1);
+	while (1)
+		;
 }
 

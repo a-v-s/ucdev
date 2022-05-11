@@ -98,5 +98,5 @@ _init_ch32:
 	la t0, ch32_vector_base
   ori t0, t0, 1
 	csrw mtvec, t0
-	call SystemInit_CH32
+	//call SystemInit_CH32
 	j main
