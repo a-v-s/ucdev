@@ -95,30 +95,16 @@ gd32_vector_base:
 .extern gd32_exc_entry
 .extern gd32_irq_entry
 _init_gd32:
-	/* when running init_gd32 it seems to be running in non-vectored mode */
-	/* the interrupt fires through, but not processed correctly */
 
-	/* looking how to initialise the interrupt handler */
-	/* with the copy-pasted code below, nothing happens */
+	la t0, gd32_vector_base // Load address for
+	csrw CSR_MTVT, t0       // the vector table
 
-	//j init_gd32
-/* TODO: IMPLEMENT ME! */
-	csrc CSR_MSTATUS, MSTATUS_MIE
-    /* Set the the NMI base to share with mtvec by setting CSR_MMISC_CTL */
-    li t0, 0x200
-    csrs CSR_MMISC_CTL, t0
+	la t0, gd32_irq_entry // Load address for
+	csrw CSR_MTVT2, t0    // Unvectored interrutps
+	csrs CSR_MTVT2, 0x1   // and enable them
 
-	/* Intial the mtvt*/
-    la t0, gd32_vector_base
-    csrw CSR_MTVT, t0
-
-	/* Intial the mtvt2 and enable it*/
-    la t0, gd32_irq_entry
-    csrw CSR_MTVT2, t0
-    csrs CSR_MTVT2, 0x1
-
-    /* Intial the CSR MTVEC for the Trap ane NMI base addr*/
-    la t0, gd32_exc_entry
-    csrw CSR_MTVEC, t0
+	la t0, gd32_exc_entry // Load address for
+	csrw CSR_MTVEC, t0    // exceptions
+	csrs CSR_MTVEC, 0x03  // enable   CLIC mode
 
 	j init_gd32

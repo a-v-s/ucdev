@@ -98,7 +98,8 @@ SECTIONS
   /* Data section (variables) */ 
     .data :
     {
-        PROVIDE( _sdata = . );
+		PROVIDE( __global_pointer$ = . + 0x800 );
+		PROVIDE( _sdata = . );
 		PROVIDE( __data_start__ = . );
         *(.data*);
         PROVIDE( _edata = . );
@@ -157,7 +158,7 @@ SECTIONS
 
 
 	_data_size = _edata - _sdata;
-	PROVIDE ( __global_pointer$ =  _sdata + ( _data_size / 2 ) );
+
 }
 
 
