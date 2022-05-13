@@ -5,14 +5,29 @@ MCU ?= CH32V103
 
 # Use the xPack compiler rather then the arch compiler
 # The arch compiler appears to have issues with passing parameters to functions
+# Update: problem still exists for gcc 12 in the arch repo
 PREFIX=riscv-none-embed-
-#PREFIX=riscv32-unknown-elf-
+
+# Updating to gcc 12:
+# The function parameter problem still exists, however,
+# By default we get messages like
+#
+# int.h: Assembler messages:
+# int.h:108: Error: unrecognized opcode `csrr a5,marchid'
+#
+# This is solved by specifying the ISA spec to version 2.2
+# CFLAGS += -misa-spec=2.2
+
+
 ################################################################################
 # Set Output Filename 
 ################################################################################
 TARGET = ch32v103_demo
 
 CFLAGS += -DSTM32F103xB
+
+
+
 ################################################################################
 # Set the root directory of the ucdev enviorement 
 ################################################################################

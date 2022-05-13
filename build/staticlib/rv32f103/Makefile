@@ -1,9 +1,15 @@
-MCU = STM32F103xB
-TARGET = riscv32f103
-ARCH=RISCV
-SUBARCH=RV32IMAC
+MCU=RV32F103
+
+# Outdated stuff for when we were hacking support in before the build system
+# supported it
+#MCU = STM32F103xB
+#TARGET = rv32f103
+#ARCH=RISCV
+#SUBARCH=RV32IMAC
+#CUBEF1_CMSIS_INC_CORE=$(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103
+#PREFIX=riscv-none-embed-
+
 UCDEV_ROOT = ../../../
-CUBEF1_CMSIS_INC_CORE=.
 BUILD_SYSTEM_LIBRARY = 1
 
 
@@ -12,17 +18,17 @@ BUILD_SYSTEM_LIBRARY = 1
 #######################################
 
 
-#C_SOURCES += $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
-#ASM_SOURCES +=  $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_$(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]').s
+ASM_SOURCES += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/ch32.S
+ASM_SOURCES += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/gd32.S
+ASM_SOURCES += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/rv32f103.S
+C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/ch32.c
+C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/gd32.c
+
 
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_i2c.c
-
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal.c
-#C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_cortex.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_rcc.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_rcc_ex.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_gpio.c
-
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_adc.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_adc_ex.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_can.c
@@ -37,7 +43,7 @@ C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_flash.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_flash_ex.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_gpio_ex.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_hcd.c
-# !! C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_i2c.c
+C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_i2c.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_i2s.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_irda.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_iwdg.c
@@ -47,7 +53,6 @@ C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_nor.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_pccard.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_pcd.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_pcd_ex.c
-# !! C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_pwr.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_rtc.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_rtc_ex.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_sd.c
@@ -74,9 +79,13 @@ C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_sdmmc.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_spi.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_tim.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_usart.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_usb.c
-C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_utils.c
 
+#C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_usb.c			# Different peripherals
+
+#C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_ll_utils.c		# Cortex-M specific
+#C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal.c
+#C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_cortex.c
+#C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_pwr.c 
 
 
 include $(UCDEV_ROOT)/build/make/all.mk

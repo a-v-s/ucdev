@@ -37,6 +37,17 @@ C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/bshal_uart.c
 C_SOURCES  += $(UCDEV_ROOT)/ext/libgeohash/geohash.c
 C_INCLUDES +=  $(UCDEV_ROOT)/ext/libgeohash
 
+ifneq (,$(findstring RV32,$(MCU)))
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_uart_stm32.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_gpio_stm32.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c		
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f1.c
+	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/rv32imac
+	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/ucg/debug/rv32imac
+
+endif 
 
 ifneq (,$(findstring STM32,$(MCU)))
 

@@ -136,6 +136,7 @@ $(OUT_DIR):
 
 
 $(SLIB):
+	echo Bulding $(SLIB)
 #	make -C $(SLIB_BLD) TARGET=$(MCU) 
 	make -C $(SLIB_BLD) MCU=$(MCU)
 
