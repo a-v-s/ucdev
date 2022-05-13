@@ -30,7 +30,7 @@ int hcd1080_get_temperature_C_float(hcd1080_t *hcd1080, float *result) {
 	*result = -40.0f + 165.0f * (float) (be16toh(value)) / (float) (UINT16_MAX);
 	return status;
 }
-
+#ifdef __ACCUM_FBIT__
 int hcd1080_get_temperature_C_accum(hcd1080_t *hcd1080, accum *result) {
 	uint8_t cmd = HCD1080_REG_TEMPERATURE;
 	uint16_t value;
@@ -54,7 +54,7 @@ int hcd1080_get_temperature_C_accum(hcd1080_t *hcd1080, accum *result) {
 
 	return status;
 }
-
+#endif
 int hcd1080_get_humidity_float(hcd1080_t *hcd1080, float *result) {
 	uint8_t cmd = HCD1080_REG_HUMIDITY;
 	int16_t value;
@@ -77,7 +77,7 @@ int hcd1080_get_humidity_float(hcd1080_t *hcd1080, float *result) {
 	*result = (100.0f * (float) (be16toh(value)) / (float) (UINT16_MAX));
 	return status;
 }
-
+#ifdef __ACCUM_FBIT__
 int hcd1080_get_humidity_accum(hcd1080_t *hcd1080, accum *result) {
 	uint8_t cmd = HCD1080_REG_HUMIDITY;
 	uint16_t value;
@@ -101,7 +101,7 @@ int hcd1080_get_humidity_accum(hcd1080_t *hcd1080, accum *result) {
 
 	return status;
 }
-
+#endif
 int hcd1080_identify(hcd1080_t *hcd1080, bool *is_hcd1080) {
 	uint8_t cmd = HCD1080_REG_MANUFACTURER_ID;
 	uint16_t manuf, device;

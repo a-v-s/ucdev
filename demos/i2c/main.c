@@ -69,9 +69,9 @@ void HardFault_Handler(void) {
 	while(1);
 }
 
-void SysTick_Handler(void) {
-	HAL_IncTick();
-}
+//void SysTick_Handler(void) {
+//	HAL_IncTick();
+//}
 
 void SystemClock_Config(void) {
 #ifdef STM32F0
@@ -281,53 +281,91 @@ int main() {
 			}
 
 			if (lm75b.addr) {
-				accum temperature_a;
-				lm75b_get_temperature_C_accum(&lm75b, &temperature_a);
-				sprintf(buff, "LM75B:  %3d.%02d°C  ", (int) temperature_a,
-						(int) (100 * temperature_a) % 100);
+//				accum temperature_a;
+//				lm75b_get_temperature_C_accum(&lm75b, &temperature_a);
+//				sprintf(buff, "LM75B:  %3d.%02d°C  ", (int) temperature_a,
+//						(int) (100 * temperature_a) % 100);
+				float temperature_f;
+				lm75b_get_temperature_C_float(&lm75b, &temperature_f);
+				sprintf(buff, "LM75B:  %3d.%02d°C  ", (int) temperature_f,
+						(int) (100 * temperature_f) % 100);				print(buff, line);
 				print(buff, line);
 				line++;
 			}
 
 			if (hcd1080.addr) {
-				accum temperature_a = -99.99;
-				accum huminity_a = -1;
-				hcd1080_get_humidity_accum(&hcd1080, &huminity_a);
+//				accum temperature_a = -99.99;
+//				accum huminity_a = -1;
+//				hcd1080_get_humidity_accum(&hcd1080, &huminity_a);
+//
+//				hcd1080_get_temperature_C_accum(&hcd1080, &temperature_a);
+//
+//				sprintf(buff, "HCD1080:%3d.%02d°C %3d.%02d%%  ",
+//						(int) temperature_a % 999,
+//						abs((int) (100 * temperature_a)) % 100,
+//						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
 
-				hcd1080_get_temperature_C_accum(&hcd1080, &temperature_a);
+				float temperature_f = -99.99;
+				float huminity_f = -1;
+				hcd1080_get_humidity_float(&hcd1080, &huminity_f);
+
+				hcd1080_get_temperature_C_float(&hcd1080, &temperature_f);
 
 				sprintf(buff, "HCD1080:%3d.%02d°C %3d.%02d%%  ",
-						(int) temperature_a % 999,
-						abs((int) (100 * temperature_a)) % 100,
-						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+						(int) temperature_f % 999,
+						abs((int) (100 * temperature_f)) % 100,
+						(int) huminity_f, abs((int) (100 * huminity_f)) % 100);
+
 				print(buff, line);
 				line++;
 			}
 			if (si70xx.addr) {
-				accum temperature_a;
-				si70xx_get_temperature_C_accum(&si70xx, &temperature_a);
-				accum huminity_a;
-				si70xx_get_humidity_accum(&si70xx, &huminity_a);
+//				accum temperature_a;
+//				si70xx_get_temperature_C_accum(&si70xx, &temperature_a);
+//				accum huminity_a;
+//				si70xx_get_humidity_accum(&si70xx, &huminity_a);
+//
+//				sprintf(buff, "SI70XX: %3d.%02d°C %3d.%02d%%  ",
+//						(int) temperature_a %999,
+//						abs((int) (100 * temperature_a)) % 100,
+//						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+
+
+				float temperature_f;
+				si70xx_get_temperature_C_float(&si70xx, &temperature_f);
+				float huminity_f;
+				si70xx_get_humidity_float(&si70xx, &huminity_f);
 
 				sprintf(buff, "SI70XX: %3d.%02d°C %3d.%02d%%  ",
-						(int) temperature_a %999,
-						abs((int) (100 * temperature_a)) % 100,
-						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+						(int) temperature_f %999,
+						abs((int) (100 * temperature_f)) % 100,
+						(int) huminity_f, abs((int) (100 * huminity_f)) % 100);
+
 				print(buff, line);
 				line++;
 
 			}
 
 			if (sht3x.addr) {
-				accum temperature_a;
-				accum huminity_a;
-				sht3x_get_humidity_accum(&sht3x, &huminity_a);
-				sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
+//				accum temperature_a;
+//				accum huminity_a;
+//				sht3x_get_humidity_accum(&sht3x, &huminity_a);
+//				sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
+//
+//				sprintf(buff, "SHT3X:  %3d.%02d°C %3d.%02d%%  ",
+//						(int) temperature_a %999,
+//						abs((int) (100 * temperature_a)) % 100,
+//						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+
+				float temperature_f;
+				float huminity_f;
+				sht3x_get_humidity_float(&sht3x, &huminity_f);
+				sht3x_get_temperature_C_float(&sht3x, &temperature_f);
 
 				sprintf(buff, "SHT3X:  %3d.%02d°C %3d.%02d%%  ",
-						(int) temperature_a %999,
-						abs((int) (100 * temperature_a)) % 100,
-						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+						(int) temperature_f %999,
+						abs((int) (100 * temperature_f)) % 100,
+						(int) huminity_f, abs((int) (100 * huminity_f)) % 100);
 
 				print(buff, line);
 				line++;
@@ -360,15 +398,26 @@ int main() {
 			}
 
 			if (bmp280.addr) {
-				accum temperature_a;
-				long accum pressure_la;
-				bmp280_measure_a(&bmp280, &temperature_a, &pressure_la);
+//				accum temperature_a;
+//				long accum pressure_la;
+//				bmp280_measure_a(&bmp280, &temperature_a, &pressure_la);
+//
+//
+//				sprintf(buff, "BMP280: %3d.%02d°C %d hPa  ",
+//						(int) temperature_a % 999,
+//						abs((int) (100 * temperature_a)) % 100,
+//						(int) pressure_la / 100);
+
+				float temperature_f;
+				float pressure_f;
+				bmp280_measure_f(&bmp280, &temperature_f, &pressure_f);
 
 
 				sprintf(buff, "BMP280: %3d.%02d°C %d hPa  ",
-						(int) temperature_a % 999,
-						abs((int) (100 * temperature_a)) % 100,
-						(int) pressure_la / 100);
+						(int) temperature_f % 999,
+						abs((int) (100 * temperature_f)) % 100,
+						(int) pressure_f / 100);
+
 				print(buff, line);
 				line++;
 

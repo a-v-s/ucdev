@@ -23,7 +23,7 @@ int sht3x_get_temperature_C_float(sht3x_t* sht3x, float * result){
 	return status;
 }
 
-
+#ifdef __ACCUM_FBIT__
 int sht3x_get_temperature_C_accum(sht3x_t* sht3x, accum * result){
 	uint8_t cmd[2] = {0x2c, 0x10};
 	sht3x_value_t value;
@@ -38,6 +38,7 @@ int sht3x_get_temperature_C_accum(sht3x_t* sht3x, accum * result){
 
 	return status;
 }
+#endif
 
 int sht3x_get_humidity_float(sht3x_t* sht3x, float * result){
 	uint8_t cmd[2] = {0x2c, 0x10};
@@ -53,6 +54,7 @@ int sht3x_get_humidity_float(sht3x_t* sht3x, float * result){
 	return status;
 }
 
+#ifdef __ACCUM_FBIT__
 int sht3x_get_humidity_accum(sht3x_t* sht3x, accum * result){
 	uint8_t cmd[2] = {0x2c, 0x10};
 	sht3x_value_t value;
@@ -67,4 +69,4 @@ int sht3x_get_humidity_accum(sht3x_t* sht3x, accum * result){
 
 	return status;
 }
-
+#endif

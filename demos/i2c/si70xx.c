@@ -23,7 +23,7 @@ int si70xx_get_temperature_C_float(si70xx_t* si70xx, float * result){
 	return status;
 }
 
-
+#ifdef __ACCUM_FBIT__
 int si70xx_get_temperature_C_accum(si70xx_t* si70xx, accum * result){
 	uint8_t cmd[] = {0xf3};
 	uint16_t value;
@@ -38,6 +38,7 @@ int si70xx_get_temperature_C_accum(si70xx_t* si70xx, accum * result){
 
 	return status;
 }
+#endif
 
 int si70xx_get_humidity_float(si70xx_t* si70xx, float * result){
 	uint8_t cmd[] = {0xe5};
@@ -53,6 +54,7 @@ int si70xx_get_humidity_float(si70xx_t* si70xx, float * result){
 	return status;
 }
 
+#ifdef __ACCUM_FBIT__
 int si70xx_get_humidity_accum(si70xx_t* si70xx, accum * result){
 	uint8_t cmd[] = {0xe5};
 	int16_t value;
@@ -67,6 +69,7 @@ int si70xx_get_humidity_accum(si70xx_t* si70xx, accum * result){
 
 	return status;
 }
+#endif
 
 int si70xx_identify(si70xx_t *hcd1080, bool *is_si70xx) {
 	uint8_t cmd[] = { 0xFC, 0xc9 };

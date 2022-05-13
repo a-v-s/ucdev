@@ -50,6 +50,14 @@ C_SOURCES += bmp280.c
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32.c
 
+
+ifneq (,$(findstring RV32F1,$(MCU)))
+	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
+#	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f1.c
+endif
+
+
 ifneq (,$(findstring STM32F0,$(MCU)))
 	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f0/clocksetup.c
 #	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f0.c
@@ -153,3 +161,8 @@ endif
 ifeq ($(SUBARCH), M4F)
 	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/arm_m4f  -lu8g2
 endif
+
+ifeq ($(SUBARCH), RV32IMAC)
+	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/riscv_rv32imac  -lu8g2
+endif
+

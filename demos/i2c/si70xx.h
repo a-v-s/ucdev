@@ -26,9 +26,12 @@ typedef struct {
 #define SI7021_DEV_ID 0x15
 
 int si70xx_get_temperature_C_float(si70xx_t* si70xx, float * result);
-int si70xx_get_temperature_C_accum(si70xx_t* si70xx, accum * result);
-
 int si70xx_get_humidity_float(si70xx_t* si70xx, float * result);
+
+#ifdef __ACCUM_FBIT__
+int si70xx_get_temperature_C_accum(si70xx_t* si70xx, accum * result);
 int si70xx_get_humidity_accum(si70xx_t* si70xx, accum * result);
+#endif
+
 
 #endif /* si70xx_H_ */

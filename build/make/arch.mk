@@ -79,7 +79,7 @@ ifeq ($(ARCH), RISCV)
 	#PREFIX?=riscv64-unknown-elf-
 	#PREFIX?=riscv64-elf-
 	PREFIX ?= riscv-none-embed-
-
+    LDFLAGS += -nostartfiles
 	ifeq ($(SUBARCH), RV32IMAC)
 		CPU?=	-march=rv32imac 
 		FPU?=	

@@ -1,4 +1,5 @@
 MCU=RV32F103
+TARGET = $(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]')
 
 # Outdated stuff for when we were hacking support in before the build system
 # supported it
@@ -21,8 +22,12 @@ BUILD_SYSTEM_LIBRARY = 1
 ASM_SOURCES += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/ch32.S
 ASM_SOURCES += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/gd32.S
 ASM_SOURCES += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/rv32f103.S
+ASM_SOURCES += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/irq.S
+ASM_SOURCES += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/gd32_intexc.S
+C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/gd32_intexc.c
 C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/ch32.c
 C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/gd32.c
+C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/common.c
 
 
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_i2c.c
