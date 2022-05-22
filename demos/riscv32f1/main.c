@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "int.h"
+//#include "int.h"
 
 volatile int blaat[] = { 1, 2, 3, 4 };
+#include "stm32f1xx_hal.h"
 
 #include "stm32f1xx_hal_gpio.h"
 #include "stm32f1xx_hal_rcc.h"
