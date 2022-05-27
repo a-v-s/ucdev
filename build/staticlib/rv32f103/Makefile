@@ -29,6 +29,10 @@ C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/ch32.c
 C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/gd32.c
 C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/common.c
 
+C_SOURCES   += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103/rv32f1xx_hal.c
+
+
+
 
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_i2c.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_rcc.c

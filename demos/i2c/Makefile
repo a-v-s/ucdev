@@ -110,11 +110,11 @@ C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/extlib/u8x8_gpio_delay.c
 
 
 
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x_transport.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x_transport.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/cards/picc.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x_transport.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x_transport.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/cards/picc.c
 
 
 ################################################################################
@@ -136,7 +136,7 @@ LDSCRIPT = $(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).ld
 # u8g2 library
 CFLAGS += -DU8X8_WITH_USER_PTR
 
-LDFLAGS += -u _printf_float
+#LDFLAGS += -u _printf_float
 
 
 

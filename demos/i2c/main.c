@@ -74,6 +74,13 @@ void HardFault_Handler(void) {
 //}
 
 void SystemClock_Config(void) {
+	HAL_InitTick(0);
+	//ClockSetup_HSE8_SYS72();
+	ClockSetup_HSI_SYS48();
+
+
+
+
 #ifdef STM32F0
 	ClockSetup_HSE8_SYS48();
 #endif
@@ -133,12 +140,13 @@ int main() {
 	printf("Hello world!\n");
 #endif
 
-	bmp280_test();
+//	bmp280_test();
 
 	SystemClock_Config();
 	SystemCoreClockUpdate();
 
 	HAL_Init();
+	HAL_Delay(1);
 
 	bshal_delay_init();
 	bshal_delay_us(10);
@@ -149,7 +157,11 @@ int main() {
 	draw_background();
 	print("   I²C DEMO", 1);
 	framebuffer_apply();
+
+	int test_start = HAL_GetTick();
 	bshal_delay_ms(1000);
+	int test_stop = HAL_GetTick();
+	int test = test_stop - test_start;
 
 	pcf8563_t pcf8563 = { 0 };
 	bh1750_t bh1750 = { 0 };
@@ -225,13 +237,13 @@ int main() {
 
 	char str[32];
 	uint8_t rc52x_version;
-
+/*
 	///
 	rc52x_t rc52x;
 	rfid5_spi_init(&rc52x);
 	rc52x_version = 0;
 	rc52x_get_chip_version(&rc52x, &rc52x_version);
-
+*/
 	if (ccs811.addr) {
 
 		ccs811_init(&ccs811);
@@ -422,7 +434,7 @@ int main() {
 				line++;
 
 			}
-
+/*
 			if (rc52x_version) {
 				// When either SHT3x or HCD1080 are being read,
 				// The mfrc522 stops reading cards
@@ -457,7 +469,7 @@ int main() {
 					line++;
 				}
 			}
-
+*/
 
 			break;
 		case '*':

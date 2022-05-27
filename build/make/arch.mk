@@ -73,12 +73,18 @@ endif
 
 ifeq ($(ARCH), RISCV)
 	COMPILER_TYPE?=GCC
-	SPECS+= --specs=nosys.specs
+	#SPECS+= --specs=nosys.specs
+	SPECS ?=  --specs=nosys.specs --specs=nano.specs
 	# Older toolchains use riscv64-unknown-elf-  	(built from AUR)
 	# Newer toolchains use riscv64-elf-				(community repo)
 	#PREFIX?=riscv64-unknown-elf-
-	#PREFIX?=riscv64-elf-
+
+#	PREFIX?=riscv64-elf-
+#	CFLAGS += -misa-spec=2.2	
+
 	PREFIX ?= riscv-none-embed-
+
+	
     LDFLAGS += -nostartfiles
 	ifeq ($(SUBARCH), RV32IMAC)
 		CPU?=	-march=rv32imac 
