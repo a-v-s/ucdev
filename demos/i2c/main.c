@@ -30,13 +30,22 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include <stdfix.h>
+
+
 
 #include "system.h"
+
+// NB. On STM32F0, stdfix conflicts with
+// STM32CubeF0/Drivers/CMSIS/Core/Include/cmsis_gcc.h
+// It should be included after STM32 includes stm32f0xx.h (included by system.h)
+#include <stdfix.h>
+// Might need to verify this also holds for latest CMSIS, and switch to upstream
 
 #include "bshal_spim.h"
 #include "bshal_delay.h"
 #include "bshal_i2cm.h"
+
+
 
 #include "i2c.h"
 #include "lm75b.h"
@@ -52,10 +61,12 @@
 #include "rc52x_transport.h"
 #include "rc52x.h"
 
+
+
 bshal_i2cm_instance_t *gp_i2c = NULL;
 
 void HardFault_Handler(void) {
-
+	while(1);
 }
 
 void SysTick_Handler(void) {
@@ -63,7 +74,29 @@ void SysTick_Handler(void) {
 }
 
 void SystemClock_Config(void) {
+#ifdef STM32F0
+	ClockSetup_HSE8_SYS48();
+#endif
+
+#ifdef STM32F1
 	ClockSetup_HSE8_SYS72();
+#endif
+
+#ifdef STM32F3
+	ClockSetup_HSE8_SYS72();
+#endif
+
+#ifdef STM32F4
+	SystemClock_HSE25_SYS84();
+#endif
+
+#ifdef STM32L0
+	SystemClock_HSE8_SYS32();
+#endif
+
+#ifdef STM32L1
+	SystemClock_HSE8_SYS48();
+#endif
 }
 
 void scan_i2c(void) {
@@ -88,8 +121,8 @@ void scan_i2c(void) {
 
 void rfid5_init(rc52x_t *rc52x) {
 
-	rc52x->transport = mfrc_transport_i2c;
-	rc52x->transport_config = gp_i2c;
+	rc52x->transport_type = bshal_transport_i2c;
+	rc52x->transport_instance.i2cm = gp_i2c;
 	rc52x->delay_ms = bshal_delay_ms;
 	RC52X_Init(rc52x);
 }
@@ -118,14 +151,27 @@ int main() {
 	framebuffer_apply();
 	bshal_delay_ms(1000);
 
-	lm75b_t lm75b = { 0 };
-	sht3x_t sht3x = { 0 };
+	pcf8563_t pcf8563 = { 0 };
 	bh1750_t bh1750 = { 0 };
+	ccs811_t ccs811 = { 0 };
+
+	// For these 3/6/9-dof motion sensors
+	// They support multiple protocols, so we need defintions for that
+	// I have already written such abstraction for RFID readers
+
+	//adxl345
+	//mpu92
+	//lis3dsh
+
+	bmp280_t bmp280 = { 0 };
+	sht3x_t sht3x = { 0 };
+	lm75b_t lm75b = { 0 };
 	si70xx_t si70xx = { 0 };
 	hcd1080_t hcd1080 = { 0 };
-	ccs811_t ccs811 = { 0 };
-	pcf8563_t pcf8563 = { 0 };
-	bmp280_t bmp280 = { 0 };
+	//i2c_eeprom
+
+
+
 
 	if (0 == bshal_i2cm_isok(gp_i2c, BMP280_I2C_ADDR)) {
 		bmp280.addr = BMP280_I2C_ADDR;
@@ -195,7 +241,8 @@ int main() {
 	int count = 0;
 	char buff[64];
 
-	int state ='*';
+	//int state ='*';
+	int state =2;
 
 	while (1) {
 		int line = 0;

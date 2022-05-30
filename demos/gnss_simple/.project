@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>spi</name>
+	<name>board1</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -26,24 +26,44 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>STM32CubeF1</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ext/STM32CubeF1</locationURI>
+		</link>
+		<link>
+			<name>bsprot</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/bsprot</locationURI>
+		</link>
+		<link>
+			<name>bsrfid</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/bsrfid</locationURI>
+		</link>
+		<link>
 			<name>libhalglue</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/lib/libhalglue</locationURI>
+		</link>
+		<link>
+			<name>libhlusbd</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/libhlusbd</locationURI>
+		</link>
+		<link>
+			<name>libws2812dma</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/libws2812dma</locationURI>
+		</link>
+		<link>
+			<name>minmea</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ext/minmea</locationURI>
 		</link>
 		<link>
 			<name>u8g2</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/ext/u8g2/csrc</locationURI>
-		</link>
-		<link>
-			<name>ucg</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/ext/ucglib/csrc</locationURI>
-		</link>
-		<link>
-			<name>libhalglue</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/lib/libhalglue</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/ext/u8g2</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

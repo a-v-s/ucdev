@@ -26,9 +26,29 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>bsprot</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/bsprot</locationURI>
+		</link>
+		<link>
 			<name>bsrfid</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/lib/bsrfid</locationURI>
+		</link>
+		<link>
+			<name>libhalglue</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/libhalglue</locationURI>
+		</link>
+		<link>
+			<name>libhlusbd</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/libhlusbd</locationURI>
+		</link>
+		<link>
+			<name>libws2812dma</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/lib/libws2812dma</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -1,28 +1,28 @@
-TARGET ?= GD32VF103xB
-MCU = $(TARGET)
-USB ?= OTG
-
-UCDEV_ROOT = ../../..
-
-include ../../make/dir.mk
-include ../../make/mcu.mk
-include ../../make/opt.mk
-
-CFLAGS += -D$(TARGET)
+MCU ?= GD32VF103
+TARGET = $(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]')
+UCDEV_ROOT = ../../../
+BUILD_SYSTEM_LIBRARY = 1
 
 #######################################
-# paths
+# source of the library
 #######################################
-# Build path
-BUILD_DIR = BUILD_$(TARGET)_$(BUILD_MODE)
 
-OUT_DIR = $(shell tr '[:upper:]' '[:lower:]' <<< $(BUILD_MODE))
+C_SOURCES += $(GD32VF1_STDPH_ROOT)/system_gd32vf103.c
+C_SOURCES += $(GD32VF1_ECLIPSE)/init.c
+C_SOURCES += $(GD32VF1_ECLIPSE)/handlers.c
+C_SOURCES += $(GD32VF1_RISCV_DRV)/n200_func.c
+ASM_SOURCES  += $(GD32VF1_ECLIPSE)/entry.S
+#ASM_SOURCES  += $(GD32VF1_ECLIPSE)/start.S
 
-
-######################################
-# source
-######################################
-# C sources
+C_SOURCES += $(GD32VF1_RISCV_STUB)/close.c
+C_SOURCES += $(GD32VF1_RISCV_STUB)/_exit.c
+C_SOURCES += $(GD32VF1_RISCV_STUB)/fstat.c
+C_SOURCES += $(GD32VF1_RISCV_STUB)/isatty.c
+C_SOURCES += $(GD32VF1_RISCV_STUB)/lseek.c
+C_SOURCES += $(GD32VF1_RISCV_STUB)/read.c
+C_SOURCES += $(GD32VF1_RISCV_STUB)/sbrk.c
+C_SOURCES += $(GD32VF1_RISCV_STUB)/write.c
+C_SOURCES += $(GD32VF1_RISCV_STUB)/write_hex.c
 
 
 C_SOURCES += $(GD32VF1_STDPH_SRC)/gd32vf103_adc.c
@@ -47,71 +47,5 @@ C_SOURCES += $(GD32VF1_STDPH_SRC)/gd32vf103_timer.c
 C_SOURCES += $(GD32VF1_STDPH_SRC)/gd32vf103_usart.c
 C_SOURCES += $(GD32VF1_STDPH_SRC)/gd32vf103_wwdgt.c
 
-C_SOURCES += $(GD32VF1_RISCV_DRV)/n200_func.c
-C_SOURCES += $(GD32VF1_STDPH_ROOT)/system_gd32vf103.c
 
-C_SOURCES += $(GD32VF1_ECLIPSE)/handlers.c
-C_SOURCES += $(GD32VF1_ECLIPSE)/init.c
-
-ASM_SOURCES += $(GD32VF1_ECLIPSE)/entry.S
-ASM_SOURCES += $(GD32VF1_ECLIPSE)/start.S
-
-
-ifeq ($(USB),OTG)
-	USB_SRC = $(GD32VF1_USBOTG_SRC)
-	USB_INC = $(GD32VF1_USBOTG_SRC)
-endif
-
-C_SOURCES += $(USB_SRC)/usbd_core.c
-#C_SOURCES += $(USB_SRC)/usbd_int.c
-#C_SOURCES += $(USB_SRC)/usbd_pwr.c
-# It seems from usbd_std.c we have GigaDevice's High Level part, we'll need to
-# replace with out own
-#C_SOURCES += $(USB_SRC)/usbd_std.c
-
-
-
-all: $(OUT_DIR) $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
-
-
-#######################################
-# build the library
-#######################################
-# list of objects
-OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
-vpath %.c $(sort $(dir $(C_SOURCES)))
-# list of ASM program objects
-OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.S=.o)))
-vpath %.S $(sort $(dir $(ASM_SOURCES)))
-
-
-$(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
-	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
-
-$(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
-	$(AS) -c $(CFLAGS) $< -o $@
-	
-$(BUILD_DIR):
-	mkdir $@		
-
-$(OUT_DIR):
-	mkdir $@		
-
-$(OUT_DIR)/%.a: $(OBJECTS) Makefile
-	$(AR) rcs $@ $(OBJECTS)
-
-
-
-#######################################
-# clean up
-#######################################
-clean:
-	rm -fR $(BUILD_DIR)
-	rm $(OUT_DIR)/lib$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).a
-  
-#######################################
-# dependencies
-#######################################
--include $(wildcard $(BUILD_DIR)/*.d)
-
-# *** EOF ***
+include $(UCDEV_ROOT)/build/make/all.mk

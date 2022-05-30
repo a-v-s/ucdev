@@ -73,16 +73,16 @@ endif
 
 ifeq ($(ARCH), RISCV)
 	COMPILER_TYPE?=GCC
-	
+	SPECS+= --specs=nosys.specs
 	# Older toolchains use riscv64-unknown-elf-  	(built from AUR)
 	# Newer toolchains use riscv64-elf-				(community repo)
 	#PREFIX?=riscv64-unknown-elf-
 	PREFIX?=riscv64-elf-
 
 	ifeq ($(SUBARCH), RV32IMAC)
-		CPU?=	-march=rv32imac
+		CPU?=	-march=rv32imac 
 		FPU?=	
-		ABI?=	-mabi=ilp32
+		ABI?=	-mabi=ilp32 -mcmodel=medlow
 	endif
 
 endif
@@ -107,14 +107,15 @@ endif
 # Compiler types: Configure the executables for the compiler
 ################################################################################
 
-$(info ARCH: Configuring Compiler)
-$(info ARCH: Compile type $(COMPILER_TYPE))
+#$(info ARCH: Configuring Compiler)
+#$(info ARCH: Compile type $(COMPILER_TYPE))
 
 ifeq ($(COMPILER_TYPE),GCC)
 
 
-$(info ARCH: Configuring GCC)
+#$(info ARCH: Configuring GCC)
 
+#	CC  ?= $(PREFIX)gcc
 	CC  = $(PREFIX)gcc
 	AS  = $(PREFIX)gcc -x assembler-with-cpp
 	CP  = $(PREFIX)objcopy
@@ -126,7 +127,7 @@ $(info ARCH: Configuring GCC)
 	LIBDIR = -L$(SLIB_DIR) -L$(LD_DIR)
 
 
-$(info ARCH: OPT IN MCU 	   $(OPT))
+#$(info ARCH: OPT IN MCU 	   $(OPT))
 
 
 
@@ -152,7 +153,7 @@ endif
 # For now there is no support for SDCC MCUs. These are untested placeholders.
 ifeq ($(COMPILER_TYPE), SDCC)
 
-$(info ARCH: Configuring SDCC)
+#$(info ARCH: Configuring SDCC)
 
 	AR=sdar
 	CC=sdcc
@@ -174,16 +175,16 @@ $(info ARCH: Configuring SDCC)
 endif
 
 
-$(info ARCH: MCU          $(MCU))
-$(info ARCH: Family       $(FAMILY))
+$(info MCU           $(MCU))
+$(info Family        $(FAMILY))
 
-$(info ARCH: Architecture $(ARCH))
-$(info ARCH: Compile type $(COMPILER_TYPE))
+$(info Architecture  $(ARCH))
+$(info Compile type  $(COMPILER_TYPE))
 
-$(info ARCH: CC           $(CC))
-
-$(info ARCH: LIBDIR 	   $(LIBDIR))
-$(info ARCH: ASFLAGS  	   $(ASFLAGS))
-$(info ARCH: CFLAGS 	   $(CFLAGS))
-$(info ARCH: LDFLAGS  	   $(LDFLAGS))
-$(info ------------------------------------------------------------------------)
+#$(info ARCH: CC           $(CC))
+#
+#$(info ARCH: LIBDIR 	   $(LIBDIR))
+#$(info ARCH: ASFLAGS  	   $(ASFLAGS))
+#$(info ARCH: CFLAGS 	   $(CFLAGS))
+#$(info ARCH: LDFLAGS  	   $(LDFLAGS))
+#$(info ------------------------------------------------------------------------)
