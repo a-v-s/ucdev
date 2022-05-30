@@ -69,9 +69,9 @@ void HardFault_Handler(void) {
 	while(1);
 }
 
-//void SysTick_Handler(void) {
-//	HAL_IncTick();
-//}
+void SysTick_Handler(void) {
+	HAL_IncTick();
+}
 
 void SystemClock_Config(void) {
 	HAL_InitTick(0);
@@ -603,3 +603,4 @@ int main() {
 	}
 
 }
+
