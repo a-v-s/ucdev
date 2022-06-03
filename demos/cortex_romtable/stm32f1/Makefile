@@ -20,6 +20,7 @@ C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/arm_cpuid.c
 
 C_SOURCES += main.c
+C_SOURCES += cpuid.c
 C_SOURCES += ../demo.c
 C_SOURCES += $(LIBHALGLUE_ROOT)/common/serialnumber.c
 C_SOURCES += $(LIBHLUSBD_ROOT)/drivers/usbd_stm.c

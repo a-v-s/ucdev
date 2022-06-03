@@ -69,9 +69,11 @@ void HardFault_Handler(void) {
 	while(1);
 }
 
+#if defined __ARM_EABI__
 void SysTick_Handler(void) {
 	HAL_IncTick();
 }
+#endif
 
 void SystemClock_Config(void) {
 	HAL_InitTick(0);
@@ -139,7 +141,7 @@ int main() {
 	initialise_monitor_handles();
 	printf("Hello world!\n");
 #endif
-
+	char str[32];
 //	bmp280_test();
 
 	SystemClock_Config();
@@ -156,6 +158,15 @@ int main() {
 	display_init();
 	draw_background();
 	print("   I²C DEMO", 1);
+
+//	sprintf(str,"REVID %04X",HAL_GetREVID());
+//	print(str, 3);
+//	sprintf(str,"DEVID %04X",HAL_GetDEVID());
+//	print(str, 4);
+	print(mcuid(), 6);
+	print(cpuid(), 5);
+
+
 	framebuffer_apply();
 
 	int test_start = HAL_GetTick();
@@ -235,7 +246,7 @@ int main() {
 		}
 	}
 
-	char str[32];
+
 	uint8_t rc52x_version;
 /*
 	///

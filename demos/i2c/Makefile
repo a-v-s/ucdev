@@ -33,6 +33,8 @@ U8G2_DIR = $(UCDEV_ROOT)/ext/u8g2/csrc
 # Sources
 ################################################################################
 C_SOURCES += main.c
+C_SOURCES += identify.c
+
 C_SOURCES += dis2.c
 C_SOURCES += i2c.c
 
@@ -68,6 +70,8 @@ ifneq (,$(findstring STM32F1,$(MCU)))
 	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
 #	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
 	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f1.c
+	
+	C_SOURCES += $(LIBHALGLUE_ROOT)/common/arm_cpuid.c
 endif
 
 ifneq (,$(findstring STM32F3,$(MCU)))
