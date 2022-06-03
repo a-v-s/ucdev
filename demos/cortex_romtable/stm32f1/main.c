@@ -119,6 +119,52 @@ void ClockSetup(void) {
 
 char rt[128];
 
+
+void parse_bootrom(){
+	// System ROM starts at 0x1FFFF000
+	// This contains some uart bootloader
+	// at 0x1FFFF7E0 sits the flash size
+	// at 0x1FFFF7E8 sits the UUID
+	// Will calculate the CRC up to 0x1FFFF400
+	// It seems some clones have copied ST's bootloader
+	// That is nasty
+
+	char *prob = "Unknown";
+	 __HAL_RCC_CRC_CLK_ENABLE();
+	CRC_HandleTypeDef crc_handle;
+	crc_handle.Instance = CRC;
+	HAL_CRC_Init(&crc_handle);
+	// HAL_CRC_Accumulate length is in 32-bit words rather then 8-bit bytes
+	uint32_t crc32 = HAL_CRC_Accumulate(&crc_handle, 0x1FFFF000, 0x100);
+	switch (crc32) {
+	case 0xda6104d0:
+		prob = "STM32F103x6";
+		break;
+	case 0x27377129:
+		prob = "STM32F103xB";
+		// STM32, CS32, APM32
+		if ( 0x0CF300FF==(*(int32_t*)(0x1FFFF7d0))) {
+			// Seeing 0xFF 0xFF 0xFF 0xFF on STM
+			// Seeing 0xFF 0x00 0xF3 0x0C on APM
+			prob = "APM32";
+		}
+		break;
+	case 0x1527d032:
+		// GD32F101C6
+		// GD32F103CB
+		prob = "GD32F10x";
+		break;
+	case 0x52d42adb:
+		prob = "HK32";
+		break;
+	case 0xdcbd2235:
+		prob = "CH32";
+		break;
+	}
+
+}
+
+
 void parse_romtable() {
 
 	intptr_t ROMTABLE = (intptr_t) (0xE00FF000);
@@ -126,6 +172,24 @@ void parse_romtable() {
 	romtable_pid_t romtable_pid = extract_romtable_pid(rid);
 
 	char *prob = "Unknown";
+//
+//
+//	uint32_t AHBENR_INIT = RCC->AHBENR;
+//	uint32_t APB2ENR_INIT = RCC->APB2ENR;
+//	uint32_t APB1ENR_INIT = RCC->APB1ENR;
+//
+//	RCC->AHBENR = -1;
+//	RCC->APB2ENR = -1;
+//	RCC->APB1ENR = -1;
+//
+//	uint32_t AHBENR_ALL = RCC->AHBENR;
+//	uint32_t APB2ENR_ALL = RCC->APB2ENR;
+//	uint32_t APB1ENR_ALL = RCC->APB1ENR;
+//
+//	RCC->AHBENR = AHBENR_INIT;
+//	RCC->APB2ENR = APB2ENR_INIT;
+//	RCC->APB1ENR = APB1ENR_INIT;
+
 
 	if (romtable_pid.jep106_used) {
 		if (romtable_pid.identity_code == 32
@@ -138,13 +202,84 @@ void parse_romtable() {
 		}
 		if (romtable_pid.identity_code == 59
 				&& romtable_pid.continuation_code == 4) {
-			// APM or CS
-			cortex_m_romtable_t *rom = (cortex_m_romtable_t*) (ROMTABLE);
-			if (rom->etm & 1) {
-				prob = "CS32";
-			} else {
+
+			switch((*(uint32_t*)(0x1FFFF7d0))) {
+			case 0x0CF300FF:
 				prob = "APM32";
+				break;
+			case 0xFFFFFFFF:
+				switch((*(uint32_t*)(0x1FFFF000))) {
+				case 0x200001fc:
+					prob = "CS32";
+					break;
+				case 0x20000910:
+					prob = "CH32";
+					break;
+				}
+				break;
 			}
+
+
+
+			// This is the code for ARM
+			// This encodes ARM Cortex-M3,
+			// Thus... we don't know what we are running on
+
+			// Now we have CH32 too, this ain't enough
+//			// APM or CS
+//			cortex_m_romtable_t *rom = (cortex_m_romtable_t*) (ROMTABLE);
+//			if (rom->etm & 1) {
+//				prob = "CS32";
+//			} else {
+//				prob = "APM32";
+//			}
+
+			// Thinking of detecting the presence of extra peripherals
+			// We might try accessing them to see if they are present
+			// We should activate their clocks before they are active
+			// Setting reserved clock bits remain low, and such, trying
+			// to enable them can be used to detect, if they are all unique.
+			// I suppose, after enabling we should attempt to access the
+			// enabled peripheral, as there might be more variants with
+			// extra peripherals, or have reserved bits that do stick.
+			// APM32 got an FPU peripheral
+			// (RCC->AHBENR) BIT 3			0x40024000
+			// CH32  got an extra USB controller "USBHD"
+			// (RCC->AHBENR) BIT 12			0x40023800
+			// How to identify CS32 ?? There is only some chinese datasheet
+			// It seems to have no extra peripherals
+			// at least, enabling all clocks gives the same results as an STM32
+			// AHBENR_ALL	uint32_t	0x55 (Hex)
+			// APB2ENR_ALL	uint32_t	0x5e7d (Hex)
+			// APB1ENR_ALL	uint32_t	0x1ae64807 (Hex)
+
+			// Also, more chips are coming up, we have to analyse them
+			// when they arrive
+
+//			uint32_t initial_val = RCC->AHBENR;
+//			RCC->AHBENR = -1;
+//			uint32_t all_on = RCC->AHBENR;
+//			RCC->AHBENR = initial_val;
+//
+//
+//			RCC->AHBENR |= (1<<3);
+//			if ((1<<3)&RCC->AHBENR) {
+//				// The bit sticks
+//				prob = "APM32";
+//			}
+//			RCC->AHBENR=initial_val;
+//
+//
+//			RCC->AHBENR |= (1<<12);
+//			if ((1<<12)&RCC->AHBENR) {
+//				// The bit sticks
+//				prob = "CH32";
+//			}
+//			RCC->AHBENR=initial_val;
+
+
+
+
 		}
 	} else {
 		// JEP106 not used. Legacy ASCII values are used. This should not be used
@@ -174,14 +309,18 @@ void parse_romtable() {
 
 }
 
+typedef void(*func)(void);
+
+
 int main() {
 	parse_romtable();
+	parse_bootrom();
 
 	HAL_Init();
 	ClockSetup();
 
-	usbd_reenumerate();
-	usbd_init();
+	//usbd_reenumerate();
+	//usbd_init();
 
 	while (1)
 		;;
