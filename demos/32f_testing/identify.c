@@ -6,6 +6,8 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <system.h>
 
 #if defined __riscv
 
@@ -140,6 +142,11 @@ char * cpuid(){
 }
 
 
+bool is_fpu_present(){
+	misa_t misa = {.as_uint32 = read_csr(misa)};
+	return (misa.Extension.F);
+}
+
 #define  GD32_MARCHID     0x80000022		// Identifiers for GD32VF103
 #define  GD32_MVENDORID   0x0000031E		// Identifiers for GD32VF103
 
@@ -215,6 +222,15 @@ char * mcuid() {
 	return "Unkown";
 
 }
+
+bool is_fpu_present(){
+	uint32_t initial_val = SCB->CPACR;
+	uint32_t enable_fpu =(0b1111 << 20);
+	SCB->CPACR |= enable_fpu;
+	bool fpu_present = (SCB->CPACR & enable_fpu);
+	SCB->CPACR = initial_val;
+}
+
 
 #else
 #error "unsupported architecture"

@@ -8,7 +8,8 @@
 #ifndef I2C_H_
 #define I2C_H_
 
-#define ADXL345_ADDR		0x1D	// Accelerometer
+//#define ADXL345_ADDR		0x1D	// Accelerometer
+#define ADXL345_ADDR		0x53	// Accelerometer
 #define	PCF8574T_ADDR		0x20	// I/O Expander
 #define BH1750_ADDR			0x23	// Light Sensor
 #define MFRC522_ADDR 		0x28	// RFID

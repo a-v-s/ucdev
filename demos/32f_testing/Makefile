@@ -4,6 +4,9 @@
 MCU ?= STM32F103xB
 
 
+CFLAGS += -DSEMI
+LDFLAGS += --specs=rdimon.specs
+
 #	STM32F103xB		Blue Pill
 #	RV32F103		GD32VF103 or CH32V103
 
