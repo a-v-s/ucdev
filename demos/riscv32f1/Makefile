@@ -30,8 +30,19 @@ UCDEV_ROOT=../..
 
 C_SOURCES += main.c
 
+SPECS =  --specs=nano.specs
+
 # link script
 LDSCRIPT = $(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).ld 
+
+
+
+#C_SOURCES += $(UCDEV_ROOT)/ext/GD32VF103_Firmware_Library/Firmware/RISCV/stubs/sbrk.c
+C_SOURCES += $(UCDEV_ROOT)/ext/GD32VF103_Firmware_Library/Firmware/RISCV/stubs/close.c
+C_SOURCES += $(UCDEV_ROOT)/ext/GD32VF103_Firmware_Library/Firmware/RISCV/stubs/lseek.c
+C_SOURCES += $(UCDEV_ROOT)/ext/GD32VF103_Firmware_Library/Firmware/RISCV/stubs/fstat.c
+C_SOURCES += $(UCDEV_ROOT)/ext/GD32VF103_Firmware_Library/Firmware/RISCV/stubs/isatty.c
+
 
 MK_DIR=$(UCDEV_ROOT)/build/make
 include $(MK_DIR)/all.mk

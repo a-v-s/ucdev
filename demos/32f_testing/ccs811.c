@@ -71,7 +71,7 @@ int ccs811_init(ccs811_t *css811) {
 
 int css811_measure(ccs811_t *css811, uint16_t *eCO2, uint16_t *TVOC ) {
 
-	ccs811_status_t status;
+	ccs811_status_t status = {0};
 	bshal_i2cm_recv_reg(css811->p_i2c, css811->addr, CCS811_REG_STATUS, &status,
 			1);
 

@@ -45,14 +45,87 @@
 #include "ccs811.h"
 #include "sht3x.h"
 
-#include "uart.h" 
+
+#ifdef UART
+
+// I guess we need nosys, but with it, riscv won't call _write
+// without it, we need to implement a bunch of stuff, including _sbrk
+// to make malloc work... but still no call to _write
+
+
+#include "uart.h"
+#include "stm32f1xx_hal_uart.h"
+#include <stdio.h>
+#include <stdlib.h>
+UART_HandleTypeDef huart1;
+void initialise_uart(){
+    __HAL_RCC_USART1_CLK_ENABLE();
+
+
+    /**
+     * USART1 GPIO Configuration
+     * PB6     ------> USART1_TX
+     * PB7     ------> USART1_RX
+     */
+    /* Peripheral clock enable */
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
+    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitStruct.Pin =  GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+
+	GPIO_InitStruct.Pin =  GPIO_PIN_10;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    huart1.Instance = USART1;
+    huart1.Init.BaudRate = 115200;
+    huart1.Init.WordLength = UART_WORDLENGTH_8B;
+    huart1.Init.StopBits = UART_STOPBITS_1;
+    huart1.Init.Parity = UART_PARITY_NONE;
+    huart1.Init.Mode = UART_MODE_TX_RX;
+    huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+    HAL_UART_Init(&huart1);
+}
+
+__attribute__((used)) int _write  (int fd, char * ptr, int len) {
+  HAL_UART_Transmit(&huart1, (uint8_t *) ptr, len, HAL_MAX_DELAY);
+  return len;
+}
+
+
+int _read(int fd, char* ptr, int len) {
+    HAL_StatusTypeDef hstatus;
+
+	hstatus = HAL_UART_Receive(&huart1, (uint8_t *) ptr, 1, HAL_MAX_DELAY);
+	if (hstatus == HAL_OK)
+		return 1;
+	else
+		//return EIO;
+		return 0;
+
+}
+
+
+
+#endif
+
+
 
 bshal_i2cm_instance_t *gp_i2c = NULL;
 
 void HardFault_Handler(void) {
-	while (1)
-		;
+	while (1);
 }
+
+
 
 #if defined __ARM_EABI__
 void SysTick_Handler(void) {
@@ -97,57 +170,29 @@ char* getserialstring(void) {
 	return serialstring;
 }
 
-void test_and_recover(void) {
+void test_and_recover(uint32_t speed ) {
 	if (0 == bshal_i2cm_isok(gp_i2c, SSD1306_ADDR)) {
 		printf("I²C BUS OK\n");
 	} else {
 		printf("I²C BUS Failed, re-initialisng...\n");
-		gp_i2c = i2c_init();
+		gp_i2c = i2c_init(speed);
 		if (0 == bshal_i2cm_isok(gp_i2c, SSD1306_ADDR)) {
-			printf("I²C BUS OK\n");
+			printf("I²C Bus recovery OK\n");
 		} else {
-			printf("I²C BUS Failed\n");
-			printf("Bus recovery failed, aboring tests...\n");
+			printf("I²C Bus recovery failed, aboring tests...\n");
 			while (1)
 				;
 		}
 	}
 }
 
-int main() {
-#ifdef SEMI
-	initialise_monitor_handles();
-#endif
+void i2c_test(uint32_t speed) {
 
-#ifdef UART
-	initialise_uart();
-#endif
-	SystemClock_Config();
-	SystemCoreClockUpdate();
+	printf("Running the I2C tests at %d kHz\n", speed/1000);
 
-	HAL_Init();
-	bshal_delay_init();
 
-	printf("----------------------------------------\n");
-	printf(" BlaatSchaap 32F103 I2C Testing         \n");
-	printf("----------------------------------------\n");
-	printf(" Core         : %s\n", cpuid());
-	printf(" Guessed chip : %s\n", mcuid());
-	printf(" Serial number: %s\n", getserialstring());
-	printf("----------------------------------------\n");
+	gp_i2c = i2c_init(speed);
 
-	gp_i2c = i2c_init();
-
-	// Inventarise the I2c deives to check
-	// ccs811 and hcd1080 are known issues on HK32 and GD32
-
-	// First do the standard PIO variant.
-	// Then we might add some IRQ and DMA variants
-
-	printf("\n\nPlease note the test assumed the microcontroller under test\n");
-	printf("is assumed to be placed into a BlaatSchaap PMOD Baseboard\n");
-	printf("and connected to a BlaatSchaap I²C Modules board with all\n");
-	printf("modules in place\n\n");
 
 
 	// TODO: we need to run these tests at 100 and 400 KHz
@@ -169,7 +214,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 	printf("Testing PCF8574T...    ");
@@ -177,7 +222,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 	printf("Testing BH1750...      ");
@@ -185,7 +230,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 //	printf("Testing ...");
@@ -200,7 +245,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 	printf("Testing LM75B...       ");
@@ -208,7 +253,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 	printf("Testing EEPROM...      ");
@@ -216,7 +261,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 	printf("Testing LIS3DH...      ");
@@ -224,7 +269,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 //	printf("Testing PN532_ADDR...");
@@ -239,7 +284,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 	printf("Testing SI7021...      ");
@@ -247,7 +292,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 	printf("Testing CCS811...      ");
@@ -255,7 +300,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 	printf("Testing PCF8523...     ");
@@ -263,7 +308,7 @@ int main() {
 		printf("OK\n");
 	} else {
 		printf("Failed\n");
-		test_and_recover();
+		test_and_recover(speed);
 	}
 
 	printf("Running I²C communication tests...\n");
@@ -281,11 +326,15 @@ int main() {
 		bh1750.p_i2c = gp_i2c;
 		static int lux;
 		if (0 == bh1750_measure_ambient_light(&bh1750, &lux)) {
+			// meassure twice?
+			bh1750_measure_ambient_light(&bh1750, &lux);
 			printf("OK:    %6d lux\n", lux);
 		} else {
 			printf("Failed\n");
-			test_and_recover();
+			test_and_recover(speed);
 		}
+	}  else {
+		printf("Skipped\n");
 	}
 
 	printf("Testing SHT3X...       ");
@@ -298,13 +347,15 @@ int main() {
 		if (0 == sht3x_get_humidity_float(&sht3x, &huminity_f)
 				&& 0 == sht3x_get_temperature_C_float(&sht3x, &temperature_f)) {
 
-			printf("OK:  %3d.%02d°C %3d.%02d%%  ", (int) temperature_f % 999,
+			printf("OK:  %3d.%02d°C %3d.%02d%%  \n", (int) temperature_f % 999,
 					abs((int) (100 * temperature_f)) % 100, (int) huminity_f,
 					abs((int) (100 * huminity_f)) % 100);
 		} else {
 			printf("Failed\n");
-			test_and_recover();
+			test_and_recover(speed);
 		}
+	} else {
+		printf("Skipped\n");
 	}
 
 	printf("Testing LM75B...       ");
@@ -319,29 +370,101 @@ int main() {
 	printf("TODO\n");
 	printf("Testing CCS811...      ");
 
-	if (0 == bshal_i2cm_isok(gp_i2c, CCS811_I2C_ADDR1)) {
+   	if (0 == bshal_i2cm_isok(gp_i2c, CCS811_I2C_ADDR1)) {
 		ccs811_t ccs811;
 		ccs811.addr = CCS811_I2C_ADDR1;
 		ccs811.p_i2c = gp_i2c;
-		ccs811_init(&ccs811);
+		if (0==ccs811_init(&ccs811)) {
+			bshal_delay_ms(2500); // it is slow
 
-		static uint16_t TVOC = 0;
-		if (0 == css811_measure(&ccs811, NULL, &TVOC)) {
-			printf("OK:    %4d ppb TVOC\n", TVOC);
+			// I Swear this was failing on the HK32 befpre
+
+			static uint16_t TVOC = 0;
+			if (0 == css811_measure(&ccs811, NULL, &TVOC)) {
+				printf("OK:    %4d ppb TVOC\n", TVOC);
+			} else {
+				printf("Failed (meaure)\n");
+				test_and_recover(speed);
+			}
 		} else {
-			printf("Failed\n");
-			test_and_recover();
+			printf("Failed (init)\n");
+			test_and_recover(speed);
 		}
-
+	} else {
+		printf("Skipped\n");
 	}
 
 	printf("Testing PCF8523...     ");
 	printf("TODO\n");
+}
 
+
+int main() {
+
+
+	mcuid();
+
+	SystemClock_Config();
+	SystemCoreClockUpdate();
+
+
+
+
+
+#ifdef SEMI
+	initialise_monitor_handles();
+#endif
+
+#ifdef UART
+	initialise_uart();
+#endif
+
+
+	HAL_Init();
+	bshal_delay_init();
+
+	printf("----------------------------------------\n");
+	printf(" BlaatSchaap 32F103 I2C Testing         \n");
+	printf("----------------------------------------\n");
+	printf(" Core         : %s\n", cpuid());
+	printf(" Guessed chip : %s\n", mcuid());
+	printf(" Serial number: %s\n", getserialstring());
+	printf("----------------------------------------\n");
+
+
+	while (1); } int main2(void){
+
+		display_init();
+		print("test",1);
+	// ccs811 and hcd1080 are known issues on HK32 and GD32
+
+	// First do the standard PIO variant.
+	// Then we might add some IRQ and DMA variants
+
+	printf("\n\nPlease note the test assumed the microcontroller under test\n");
+	printf("is assumed to be placed into a BlaatSchaap PMOD Baseboard\n");
+	printf("and connected to a BlaatSchaap I²C Modules board with all\n");
+	printf("modules in place\n\n");
+
+	printf("----------------------------------------\n");
+	printf(" 100 kHz \n");
+	printf("----------------------------------------\n");
+	i2c_test(100000);
+	printf("----------------------------------------\n");
+	printf(" 400 kHz \n");
+	printf("----------------------------------------\n");
+	i2c_test(400000);
+
+	printf("----------------------------------------\n");
+	printf(" DONE \n");
+	printf("----------------------------------------\n");
 	int c;
+	int t;
 	while (1) {
-		c = getchar();
-		(void) c;
+//		c = getchar();
+//		(void) c;
 	}
 }
+
+
 

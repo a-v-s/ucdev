@@ -20,6 +20,16 @@ void __attribute__ ((interrupt)) EXTI15_10_IRQHandler(void) {
 	__HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_All);
 }
 
+void __attribute__ ((weak)) _exit(int i){
+	while(1);
+}
+
+
+void NMI_Handler(void){}
+void HardFault_Handler(void){}
+void SysTick_Handler(void){}
+void SW_handler(){}
+
 int btn_init(void) {
 
 	// Enable GPIO Port A Clock
@@ -84,11 +94,86 @@ int btn_init(void) {
 
 
 
+#define UART
+#ifdef UART
+
+// I guess we need nosys, but with it, riscv won't call _write
+// without it, we need to implement a bunch of stuff, including _sbrk
+// to make malloc work... but still no call to _write
+
+
+//#include "uart.h"
+#include "stm32f1xx_hal_uart.h"
+#include <stdio.h>
+#include <stdlib.h>
+UART_HandleTypeDef huart1;
+void initialise_uart(){
+    __HAL_RCC_USART1_CLK_ENABLE();
+
+
+    /**
+     * USART1 GPIO Configuration
+     * PB6     ------> USART1_TX
+     * PB7     ------> USART1_RX
+     */
+    /* Peripheral clock enable */
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
+    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitStruct.Pin =  GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+
+	GPIO_InitStruct.Pin =  GPIO_PIN_10;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    huart1.Instance = USART1;
+    huart1.Init.BaudRate = 115200;
+    huart1.Init.WordLength = UART_WORDLENGTH_8B;
+    huart1.Init.StopBits = UART_STOPBITS_1;
+    huart1.Init.Parity = UART_PARITY_NONE;
+    huart1.Init.Mode = UART_MODE_TX_RX;
+    huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+    HAL_UART_Init(&huart1);
+}
+
+__attribute__((used)) int _write  (int fd, char * ptr, int len) {
+  HAL_UART_Transmit(&huart1, (uint8_t *) ptr, len, HAL_MAX_DELAY);
+  return len;
+}
+
+
+int _read(int fd, char* ptr, int len) {
+    HAL_StatusTypeDef hstatus;
+
+	hstatus = HAL_UART_Receive(&huart1, (uint8_t *) ptr, 1, HAL_MAX_DELAY);
+	if (hstatus == HAL_OK)
+		return 1;
+	else
+		//return EIO;
+		return 0;
+
+}
+
+
+
+#endif
+
+
 int main(void) {
-	btn_init();
+	initialise_uart();
 	int t = rdtime();
 	while (1) {
-
+		printf("Blaat blaat blaat!");
 	}
 }
+
+int _sbrk(){return 0;}
 
