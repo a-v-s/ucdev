@@ -8,8 +8,8 @@ BUILD_SYSTEM_LIBRARY = 1
 #######################################
 
 
-C_SOURCES += $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
-ASM_SOURCES +=  $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_$(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]').s
+C_SOURCES +=    $(UCDEV_ROOT)/ext/stm32/cmsis_device_f1/Source/Templates/system_stm32f1xx.c
+ASM_SOURCES +=  $(UCDEV_ROOT)/ext/stm32/cmsis_device_f1/Source/Templates/gcc/startup_$(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]').s
 
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal.c
 C_SOURCES += $(CUBEF1_HAL_SRC_ROOT)/stm32f1xx_hal_cortex.c
