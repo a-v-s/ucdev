@@ -59,14 +59,14 @@ int si443x_set_frequency(uint32_t kHz) {
 	uint8_t reg = 0x75 | 0x80;
 	bshal_gpio_write_pin(radio_spi_config.cs_pin, 0);
 	bshal_spim_transmit(&radio_spi_config, &reg, 1, true);
-	bshal_spim_receive(&radio_spi_config, &r75, 1, true);
+	bshal_spim_transmit(&radio_spi_config, &r75, 1, true);
 	bshal_gpio_write_pin(radio_spi_config.cs_pin, 1);
 
 	uint16_t r76 = htobe16(fc);
 	reg = 0x76 | 0x80;
 	bshal_gpio_write_pin(radio_spi_config.cs_pin, 0);
 	bshal_spim_transmit(&radio_spi_config, &reg, 1, true);
-	bshal_spim_receive(&radio_spi_config, &r76, 2, true);
+	bshal_spim_transmit(&radio_spi_config, &r76, 2, true);
 	bshal_gpio_write_pin(radio_spi_config.cs_pin, 1);
 
 	return 0;
@@ -203,7 +203,7 @@ void test_send() {
 		//bshal_delay_ms(1);
 
 		// start transmission
-		reg = 0x07 | 0x80 ;
+		reg = 4 | 0x80 ;
 		val = 0x08 ;
 		bshal_gpio_write_pin(radio_spi_config.cs_pin, 0);
 		bshal_spim_transmit(&radio_spi_config, &reg, 1, true);
@@ -221,7 +221,8 @@ void test_send() {
 			bshal_gpio_write_pin(radio_spi_config.cs_pin, 1);
 		}
 
-		bshal_delay_ms(1000);
+		static int delay = 1000;
+		bshal_delay_ms(delay);
 	}
 }
 void test_radio() {
@@ -258,14 +259,15 @@ void test_radio() {
 	bshal_gpio_write_pin(radio_spi_config.cs_pin, 1);
 	//bshal_delay_ms(1);
 
-	reg = 0x32 | 0x80;
-	val = 0b0;
-	// write
-	bshal_gpio_write_pin(radio_spi_config.cs_pin, 0);
-	bshal_spim_transmit(&radio_spi_config, &reg, 1, true);
-	bshal_spim_transmit(&radio_spi_config, &val, 1, true);
-	bshal_gpio_write_pin(radio_spi_config.cs_pin, 1);
-	//bshal_delay_ms(1);
+// Default value is not defined in the datasheet???
+//	reg = 0x32 | 0x80;
+//	val = 0b0;
+//	// write
+//	bshal_gpio_write_pin(radio_spi_config.cs_pin, 0);
+//	bshal_spim_transmit(&radio_spi_config, &reg, 1, true);
+//	bshal_spim_transmit(&radio_spi_config, &val, 1, true);
+//	bshal_gpio_write_pin(radio_spi_config.cs_pin, 1);
+//	//bshal_delay_ms(1);
 
 
 
@@ -279,8 +281,8 @@ void test_radio() {
 	bshal_gpio_write_pin(radio_spi_config.cs_pin, 1);
 
 
-	si443x_set_frequency(868000);
-	//si443x_set_frequency(434000);
+	//si443x_set_frequency(868000);
+	si443x_set_frequency(434000);
 
 
 }

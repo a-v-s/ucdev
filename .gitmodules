@@ -169,3 +169,6 @@
 [submodule "ext/stm32/stm32f0xx_hal_driver"]
 	path = ext/stm32/stm32f0xx_hal_driver
 	url = https://github.com/STMicroelectronics/stm32f0xx_hal_driver
+[submodule "demos/radio/S2LP_Driver"]
+	path = demos/radio/S2LP_Driver
+	url = https://github.com/SteelPh0enix/S2LP_Driver
