@@ -46,13 +46,51 @@ void transfer_out_complete(bscp_usbd_handle_t *handle, uint8_t epnum,
 
 }
 
-
 bscp_usbd_handler_result_t bscp_usbd_handle_user_request(
 		bscp_usbd_handle_t *handle, usb_setuprequest_t *req, void **buf,
 		size_t *len) {
 
-	if (req->bRequest == REQUESTVALUE_MICROSOFT) {
 
+	if ((req->wValue >> 8) == USB_DT_BOS) {
+#pragma pack(push,1)
+		static struct {
+			usbd_descriptor_bos_t bos;
+			usbd_bos_capability_microsoft_descriptor_t bos_winusb;
+		} bos_respose;
+#pragma pack(pop)
+
+		bos_respose.bos.bDescriptorType = USB_DT_BOS;
+		bos_respose.bos.bLength = sizeof(usbd_descriptor_bos_t);
+		bos_respose.bos.bNumDeviceCaps = 1;
+		bos_respose.bos.wTotalLength = sizeof(usbd_descriptor_bos_t)
+				+ sizeof(usbd_bos_capability_microsoft_descriptor_t);
+
+		usbd_bos_capability_microsoft_descriptor_t *bos_winusb = add_descriptor(
+				handle, sizeof(usbd_bos_capability_microsoft_descriptor_t));
+
+		bos_respose.bos_winusb.bLength =
+				sizeof(usbd_bos_capability_microsoft_descriptor_t);
+
+		bos_respose.bos_winusb.bDescriptorType = 0x10;
+		bos_respose.bos_winusb.bDevCapabilityType = 0x05;
+		bos_respose.bos_winusb.bReserved = 0x00;
+		bos_respose.bos_winusb.guid = USBD_BOS_CAP_MICROSOFT_UUID;
+		bos_respose.bos_winusb.dwWindowsVersion = NTDDI_WINBLUE;
+
+		bos_respose.bos_winusb.wMSOSDescriptorSetTotalLength =
+				sizeof(usbd_msos20_set_header_descriptor_t)
+						+ sizeof(usbd_msos20_compatible_id_descriptor_t)
+						+ sizeof(usbd_msos20_registry_property_descriptor_t);
+
+		bos_respose.bos_winusb.bMS_VendorCode = REQUESTVALUE_MICROSOFT;
+		bos_respose.bos_winusb.bAltEnumCode = 0x00;
+
+		*buf = &bos_respose;
+		*len = sizeof(bos_respose);
+		return RESULT_HANDLED;
+	}
+
+	if (req->bRequest == REQUESTVALUE_MICROSOFT) {
 
 #pragma pack(push,1)
 
@@ -67,34 +105,36 @@ bscp_usbd_handler_result_t bscp_usbd_handle_user_request(
 		} winusb_response;
 #pragma pack(pop)
 
-
-		winusb_response.set_header.wLength= sizeof (usbd_msos20_set_header_descriptor_t) ;
-		winusb_response.set_header.wDescriptorType = MS_OS_20_SET_HEADER_DESCRIPTOR;
+		winusb_response.set_header.wLength =
+				sizeof(usbd_msos20_set_header_descriptor_t);
+		winusb_response.set_header.wDescriptorType =
+				MS_OS_20_SET_HEADER_DESCRIPTOR;
 		winusb_response.set_header.dwWindowsVersion = NTDDI_WINBLUE;
 		winusb_response.set_header.wTotalLength = sizeof(winusb_response);
 
-		winusb_response.compatible_id.wLength = sizeof(usbd_msos20_compatible_id_descriptor_t);
-		winusb_response.compatible_id.wDescriptorType =MS_OS_20_FEATURE_COMPATIBLE_ID;
+		winusb_response.compatible_id.wLength =
+				sizeof(usbd_msos20_compatible_id_descriptor_t);
+		winusb_response.compatible_id.wDescriptorType =
+				MS_OS_20_FEATURE_COMPATIBLE_ID;
 		winusb_response.compatible_id.CompatibleID = USBD_MSOS_DRIVER_WINUSB;
 
-        winusb_response.registery_property.wLength = sizeof(usbd_msos20_registry_property_descriptor_t);
-        winusb_response.registery_property.wDescriptorType = 0x04; // MS_OS_20_FEATURE_REG_PROPERTY
-        winusb_response.registery_property.wPropertyDataType = 0x07; // REG_MULTI_SZ
-        winusb_response.registery_property.wPropertyNameLength = 0x2a;
-        winusb_response.registery_property.wPropertyDataLength = 0x50;
+		winusb_response.registery_property.wLength =
+				sizeof(usbd_msos20_registry_property_descriptor_t);
+		winusb_response.registery_property.wDescriptorType = 0x04; // MS_OS_20_FEATURE_REG_PROPERTY
+		winusb_response.registery_property.wPropertyDataType = 0x07; // REG_MULTI_SZ
+		winusb_response.registery_property.wPropertyNameLength = 0x2a;
+		winusb_response.registery_property.wPropertyDataLength = 0x50;
 
-        uint8_t PropertyName[] = "DeviceInterfaceGUIDs";
-        ConvertUTF8toUTF16(PropertyName, PropertyName + sizeof(PropertyName),
-                winusb_response.registery_property.PropertyName,
-                &winusb_response.registery_property.PropertyName[20], NULL);
+		uint8_t PropertyName[] = "DeviceInterfaceGUIDs";
+		ConvertUTF8toUTF16(PropertyName, PropertyName + sizeof(PropertyName),
+				winusb_response.registery_property.PropertyName,
+				&winusb_response.registery_property.PropertyName[20], NULL);
 
-
-        // NOTE: Generate a new GUID for a new project.
-        uint8_t PropertyData[39] = "{3e295e33-b22f-466e-80d9-3a5e6574cfe8}";
-        ConvertUTF8toUTF16(PropertyData, PropertyData + sizeof(PropertyData),
-                winusb_response.registery_property.PropertyData,
-                &winusb_response.registery_property.PropertyData[40], NULL);
-
+		// NOTE: Generate a new GUID for a new project.
+		uint8_t PropertyData[39] = "{3e295e33-b22f-466e-80d9-3a5e6574cfe8}";
+		ConvertUTF8toUTF16(PropertyData, PropertyData + sizeof(PropertyData),
+				winusb_response.registery_property.PropertyData,
+				&winusb_response.registery_property.PropertyData[40], NULL);
 
 		*buf = &winusb_response;
 		*len = sizeof(winusb_response);
@@ -156,34 +196,6 @@ void bscp_usbd_demo_setup_descriptors(bscp_usbd_handle_t *handle) {
 	GetSerialStringUTF16(serial_number, 8);
 	handle->descriptor_string[3] = add_string_descriptor_utf16(handle,
 			serial_number);
-
-	usbd_descriptor_bos_t *bos = add_descriptor(handle,
-			sizeof(usbd_descriptor_bos_t));
-	bos->bDescriptorType = USB_DT_BOS;
-	bos->bLength = sizeof(usbd_descriptor_bos_t);
-	bos->bNumDeviceCaps = 1;
-	bos->wTotalLength = sizeof(usbd_descriptor_bos_t)
-			+ sizeof(usbd_bos_capability_microsoft_descriptor_t);
-
-	usbd_bos_capability_microsoft_descriptor_t *bos_winusb = add_descriptor(
-			handle, sizeof(usbd_bos_capability_microsoft_descriptor_t));
-
-	bos_winusb->bLength = sizeof(usbd_bos_capability_microsoft_descriptor_t);
-
-	bos_winusb->bDescriptorType = 0x10;
-	bos_winusb->bDevCapabilityType = 0x05;
-	bos_winusb->bReserved = 0x00;
-	bos_winusb->guid = USBD_BOS_CAP_MICROSOFT_UUID;
-	bos_winusb->dwWindowsVersion = NTDDI_WINBLUE;
-
-	// TODO
-	bos_winusb->wMSOSDescriptorSetTotalLength =
-			sizeof(usbd_msos20_set_header_descriptor_t)
-					+ sizeof(usbd_msos20_compatible_id_descriptor_t)
-					+ sizeof(usbd_msos20_registry_property_descriptor_t);
-
-	bos_winusb->bMS_VendorCode = REQUESTVALUE_MICROSOFT;
-	bos_winusb->bAltEnumCode = 0x00;
 
 	bscp_usbd_request_handler_add(bscp_usbd_handle_user_request);
 
