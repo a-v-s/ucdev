@@ -51,7 +51,8 @@ bscp_usbd_handler_result_t bscp_usbd_handle_user_request(
 		size_t *len) {
 
 
-	if ((req->wValue >> 8) == USB_DT_BOS) {
+	if (req ->bRequest == USB_REQ_GET_DESCRIPTOR &&
+			(req->wValue >> 8) == USB_DT_BOS) {
 #pragma pack(push,1)
 		static struct {
 			usbd_descriptor_bos_t bos;
