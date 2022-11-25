@@ -27,22 +27,22 @@ C_SOURCES += $(LIBHLUSBD_ROOT)/ConvertUTF/ConvertUTF.c
 ################################################################################
 # Includes
 ################################################################################
-INC += -I. -I..
-INC += -I $(LIBHLUSBD_ROOT)/drivers/
-INC += -I $(LIBHLUSBD_ROOT)/
-INC += -I $(LIBHLUSBD_ROOT)/ConvertUTF
-INC += -I$(LIBHALGLUE_ROOT)/common/
-INC += -I$(LIBHALGLUE_INC) -I$(LIBHALGLUE_INC)/nrfx
+C_INCLUDES += .
+C_INCLUDES += ...
+C_INCLUDES += $(LIBHLUSBD_ROOT)/drivers/
+C_INCLUDES += $(LIBHLUSBD_ROOT)/
+C_INCLUDES += $(LIBHLUSBD_ROOT)/ConvertUTF
+C_INCLUDES += $(LIBHALGLUE_ROOT)/common/
+C_INCLUDES += $(LIBHALGLUE_INC) 
+C_INCLUDES += $(LIBHALGLUE_INC)/nrfx
 
-INC += -I $(NRFX_ROOT)/
-INC += -I $(NRFX_ROOT)/mdk
-INC += -I $(NRFX_ROOT)/hal
-INC += -I $(NRFX_ROOT)/soc
-INC += -I $(NRFX_ROOT)/drivers/include
-INC += -I $(NRFX_ROOT)/drivers/src
+C_INCLUDES += $(NRFX_ROOT)/
+C_INCLUDES += $(NRFX_ROOT)/mdk
+C_INCLUDES += $(NRFX_ROOT)/hal
+C_INCLUDES += $(NRFX_ROOT)/soc
+C_INCLUDES += $(NRFX_ROOT)/drivers/include
+C_INCLUDES += $(NRFX_ROOT)/drivers/src
 
-# C includes
-C_INCLUDES =  $(INC) -I. 
 
 # link script
 #LDSCRIPT = $(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).ld
