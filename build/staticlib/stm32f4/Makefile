@@ -2,7 +2,7 @@
 # building variables
 ######################################
 
-MCU ?= STM32F401xC
+MCU?=STM32F401xC
 TARGET = $(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]')
 UCDEV_ROOT = ../../../
 BUILD_SYSTEM_LIBRARY = 1
