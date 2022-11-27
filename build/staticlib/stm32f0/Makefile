@@ -7,10 +7,10 @@ BUILD_SYSTEM_LIBRARY = 1
 #######################################
 # source of the library
 #######################################
-C_SOURCES 	+= $(CUBEF0_ROOT)/Drivers/CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.c
+C_SOURCES 	+= $(CUBEF0_CMSIS_DEV)/Source/Templates/system_stm32f0xx.c
 
 # Build fails for STM32F048x6 as the .s file as startup_stm32f048xx.s so this automatic name generation won't work for that target
-ASM_SOURCES += $(CUBEF0_ROOT)/Drivers/CMSIS/Device/ST/STM32F0xx/Source/Templates/gcc/startup_$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).s
+ASM_SOURCES += $(CUBEF0_CMSIS_DEV)/Source/Templates/gcc/startup_$(shell tr '[:upper:]' '[:lower:]' <<< $(TARGET)).s
 
 C_SOURCES += $(CUBEF0_HAL_SRC_ROOT)/stm32f0xx_hal_adc.c
 C_SOURCES += $(CUBEF0_HAL_SRC_ROOT)/stm32f0xx_hal_adc_ex.c

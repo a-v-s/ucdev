@@ -85,10 +85,10 @@ $(BUILD_DIR)/%.c.o: %.c Makefile | $(BUILD_DIR)
 	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 $(BUILD_DIR)/%.s.o: %.s Makefile | $(BUILD_DIR)
-	$(AS) -c $(CFLAGS) $< -o $@
+	$(AS) -c $(ASFLAGS) $< -o $@
 
 $(BUILD_DIR)/%.S.o: %.S Makefile | $(BUILD_DIR)
-	$(AS) -c $(CFLAGS) $< -o $@
+	$(AS) -c $(ASFLAGS) $< -o $@
 
 ifeq ($(COMPILER_TYPE),GCC)
 $(OUT_DIR)/%.hex: $(OUT_DIR)/%.elf | $(OUT_DIR)
@@ -137,7 +137,7 @@ $(OUT_DIR):
 
 $(SLIB):
 #	make -C $(SLIB_BLD) TARGET=$(MCU) 
-	make -C $(SLIB_BLD)
+	make -C $(SLIB_BLD) MCU=$(MCU)
 
 ################################################################################
 # Dependencies

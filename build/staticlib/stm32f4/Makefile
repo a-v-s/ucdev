@@ -2,7 +2,7 @@
 # building variables
 ######################################
 
-MCU ?= STM32F401xC
+MCU?=STM32F401xC
 TARGET = $(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]')
 UCDEV_ROOT = ../../../
 BUILD_SYSTEM_LIBRARY = 1
@@ -12,9 +12,9 @@ BUILD_SYSTEM_LIBRARY = 1
 #######################################
 
 
-C_SOURCES 	+= $(CUBEF4_ROOT)/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
+C_SOURCES 	+= $(CUBEF4_CMSIS_DEV)/Source/Templates/system_stm32f4xx.c
 
-ASM_SOURCES += $(CUBEF4_ROOT)/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_$(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]').s
+ASM_SOURCES += $(CUBEF4_CMSIS_DEV)/Source/Templates/gcc/startup_$(shell echo $(MCU) |  tr '[:upper:]' '[:lower:]').s
 
 C_SOURCES 	+= $(CUBEF4_HAL_SRC_ROOT)/stm32f4xx_hal_adc.c
 C_SOURCES 	+= $(CUBEF4_HAL_SRC_ROOT)/stm32f4xx_hal_adc_ex.c
