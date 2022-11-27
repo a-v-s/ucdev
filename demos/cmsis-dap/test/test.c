@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 void get_vendor_name(libusb_device_handle* device_handle){
+	puts("----------------");
 //	uint8_t send_buffer[] = {0x00, 0x01};
 	uint8_t send_buffer[] = {0x00, 0x01};
 	uint8_t recv_buffer[64] = {0};
@@ -34,7 +35,7 @@ void get_vendor_name(libusb_device_handle* device_handle){
 	
 
 	if (recv_buffer[0] != send_buffer[0]) {
-		puts("Command mismatch");
+		printf("Command mismatch (got %02X, expect %02X)\n", recv_buffer[0] , send_buffer[0] );
 		return;
 	}
 	for (int i = 0; i < recv_buffer[1]; i++) {
