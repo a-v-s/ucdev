@@ -2,7 +2,7 @@
  File:		demo.c
  License: 	MIT
 
- Copyright (c) 2019, 2020 André van Schoubroeck
+Copyright (c) 2018 - 2022 André van Schoubroeck <andre@blaatschaap.be>
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -134,12 +134,6 @@ bscp_usbd_handler_result_t bscp_usbd_handle_user_request(
 		winusb_response.registery_property.wPropertyNameLength = 0x2a;
 		winusb_response.registery_property.wPropertyDataLength = 0x50;
 
-		/*
-		 * ConversionResult ConvertUTF8toUTF16 (
-	const UTF8** sourceStart, const UTF8* sourceEnd,
-	UTF16** targetStart, UTF16* targetEnd, ConversionFlags flags) {
-		 */
-
 		uint8_t PropertyName[] = "DeviceInterfaceGUIDs";
 		uint8_t *pni_begin = PropertyName;
 		uint16_t *pno_begin = winusb_response.registery_property.PropertyName;
@@ -224,6 +218,6 @@ void bscp_usbd_demo_setup_descriptors(bscp_usbd_handle_t *handle) {
 	handle->descriptor_string[3] = add_string_descriptor_utf16(handle,
 			serial_number);
 
-	bscp_usbd_request_handler_add(bscp_usbd_handle_user_request);
+	bscp_usbd_request_handler_add(handle, bscp_usbd_handle_user_request);
 
 }
