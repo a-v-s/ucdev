@@ -116,6 +116,10 @@ ifeq ($(MCU), RV32F103)
 	SLIB_DIR?=$(SLIB_BLD)/$(shell echo $(BUILD_MODE) | tr A-Z a-z)
 	SLIB=$(SLIB_DIR)/lib$(shell echo $(MCU) | tr A-Z a-z).a
 	LIBS += -l$(shell echo $(MCU) | tr A-Z a-z)
+	
+	# Temp fix
+	ASFLAGS += -I $(UCDEV_ROOT)/ext/NMSIS/NMSIS/Core/Include/
+
 
 endif
 
