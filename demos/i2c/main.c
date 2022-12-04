@@ -57,6 +57,7 @@
 #include "pcf8563.h"
 #include "pcf8574.h"
 #include "bmp280.h"
+#include "scd4x.h"
 
 #include "rc52x_transport.h"
 #include "rc52x.h"
@@ -170,7 +171,14 @@ int main() {
 	hcd1080_t hcd1080 = { 0 };
 	//i2c_eeprom
 
+	scd4x_t scd4x = { 0 };
 
+	if (0 == bshal_i2cm_isok(gp_i2c, SCD4X_I2C_ADDR)) {
+		scd4x.addr = SCD4X_I2C_ADDR;
+		scd4x.p_i2c = gp_i2c;
+
+		scd4x_init(&scd4x);
+	}
 
 
 	if (0 == bshal_i2cm_isok(gp_i2c, BMP280_I2C_ADDR)) {
@@ -224,13 +232,8 @@ int main() {
 	}
 
 	char str[32];
-	uint8_t rc52x_version;
 
-	///
-	rc52x_t rc52x;
-	rfid5_init(&rc52x);
-	rc52x_version = 0;
-	rc52x_get_chip_version(&rc52x, &rc52x_version);
+
 
 	if (ccs811.addr) {
 
@@ -242,7 +245,7 @@ int main() {
 	char buff[64];
 
 	//int state ='*';
-	int state =2;
+	int state =3;
 
 	while (1) {
 		int line = 0;
@@ -251,6 +254,21 @@ int main() {
 
 		switch (state) {
 		case 3:
+			static float temp_C=0;
+			static uint16_t  co2_ppm=0,humidity_percent=0;
+			if (scd4x.addr) {
+
+				if (!scd4x_get_result_float(&scd4x, &co2_ppm, &temp_C,&humidity_percent)) {
+
+
+				} else {
+					//sprintf(buff,"CO2: no data");
+				}
+				sprintf(buff, "CO2: %6d ppm", co2_ppm);
+				print(buff, line);
+				line++;
+			}
+
 
 			if (pcf8563.addr) {
 				pcf8563_time_t time = { 0 };
@@ -347,13 +365,9 @@ int main() {
 				line++;
 			}
 			if (ccs811.addr) {
-				//			static uint16_t TVOC = 0;
-				//			static uint16_t eCO2 = 0;
-				//			css811_measure(&ccs811, &eCO2, &TVOC);
-				//			sprintf(buff, "CCS811:  TVOC %4d eCO2 %4d", TVOC, eCO2);
-
 				static uint16_t TVOC = 0;
-				css811_measure(&ccs811, NULL, &TVOC);
+				static uint16_t eCO2 = 0;
+				css811_measure(&ccs811, &eCO2, &TVOC);
 				sprintf(buff, "CCS811:    %4d ppb TVOC", TVOC);
 				print(buff, line);
 				line++;
@@ -374,40 +388,40 @@ int main() {
 
 			}
 
-			if (rc52x_version) {
-				// When either SHT3x or HCD1080 are being read,
-				// The mfrc522 stops reading cards
-				// This will need more investigation
-				{
-
-					picc_t picc = { 0 };
-
-					rc52x_result_t status = 0;
-					status = PICC_RequestA(&rc52x, &picc);
-
-					if (status) {
-						status = PICC_RequestA(&rc52x, &picc);
-					}
-
-					if (!status) {
-						sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
-						//print(str, 0);
-						status = PICC_Select(&rc52x, &picc, 0);
-					}
-					if (!status) {
-
-						sprintf(str, "UID  ");
-						for (int i = 0; i < picc.size; i++)
-							sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
-						print(str, line);
-						//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
-						//print(str, 1);
-					} else {
-						print("No Card found", line);
-					}
-					line++;
-				}
-			}
+//			if (rc52x_version) {
+//				// When either SHT3x or HCD1080 are being read,
+//				// The mfrc522 stops reading cards
+//				// This will need more investigation
+//				{
+//
+//					picc_t picc = { 0 };
+//
+//					rc52x_result_t status = 0;
+//					status = PICC_RequestA(&rc52x, &picc);
+//
+//					if (status) {
+//						status = PICC_RequestA(&rc52x, &picc);
+//					}
+//
+//					if (!status) {
+//						sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
+//						//print(str, 0);
+//						status = PICC_Select(&rc52x, &picc, 0);
+//					}
+//					if (!status) {
+//
+//						sprintf(str, "UID  ");
+//						for (int i = 0; i < picc.size; i++)
+//							sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
+//						print(str, line);
+//						//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
+//						//print(str, 1);
+//					} else {
+//						print("No Card found", line);
+//					}
+//					line++;
+//				}
+//			}
 
 
 			break;
