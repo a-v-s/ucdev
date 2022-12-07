@@ -297,8 +297,13 @@ void parse_romtable() {
 		// Even though these values are violating the specs, we can use
 		// JEP106 = false, ID = 0x55, Cont = 5 to detect HK32.
 
+		// On the AIR103 we see the entire romtable_pid to be zeroed
+
 		if (romtable_pid.identity_code == 0x55
 				&& romtable_pid.continuation_code == 5) prob = "HK32";
+
+		if (romtable_pid.identity_code == 0x00
+				&& romtable_pid.continuation_code == 0) prob = "AIR32";
 	}
 
 
