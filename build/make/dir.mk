@@ -1,13 +1,15 @@
-LD_DIR = $(UCDEV_ROOT)/build/linker
-SLIB_ROOT = $(UCDEV_ROOT)/build/staticlib
+LD_DIR 						?= $(UCDEV_ROOT)/build/linker
+SLIB_ROOT 					?= $(UCDEV_ROOT)/build/staticlib
 
-LIBHLUSBD_ROOT =  $(UCDEV_ROOT)/lib/libhlusbd
-LIBHALGLUE_ROOT = $(UCDEV_ROOT)/lib/libhalglue
-LIBHALGLUE_INC = $(LIBHALGLUE_ROOT)/hal
+LIBHLUSBD_ROOT 				?= $(UCDEV_ROOT)/lib/libhlusbd
+LIBHALGLUE_ROOT 			?= $(UCDEV_ROOT)/lib/libhalglue
+LIBHALGLUE_INC 				?= $(LIBHALGLUE_ROOT)/hal
 
-CMSIS_ROOT =                $(UCDEV_ROOT)/ext/CMSIS_5/
-CMSIS_INC_CORE =            $(CMSIS_ROOT)/CMSIS/Core/Include/
+CMSIS_ROOT 					?= $(UCDEV_ROOT)/ext/CMSIS_5/
+CMSIS_INC_CORE 				?= $(CMSIS_ROOT)/CMSIS/Core/Include/
 
+NMSIS_ROOT 					?= $(UCDEV_ROOT)/ext/NMSIS
+NMSIS_INC_CORE 				?= $(NMSIS_ROOT)/NMSIS/Core/Include/
 
 CUBEF0_HAL_SRC_ROOT   =    $(UCDEV_ROOT)/ext/stm32/stm32f0xx_hal_driver/Src
 CUBEF0_HAL_INC_ROOT   =    $(UCDEV_ROOT)/ext/stm32/stm32f0xx_hal_driver/Inc
@@ -69,35 +71,34 @@ CUBEL5_CMSIS_DEV      =    $(UCDEV_ROOT)/ext/stm32/cmsis_device_l5
 CUBEL5_CMSIS_INC_DEV  =    $(CUBEL5_CMSIS_DEV)/Include/
 CUBEL5_CMSIS_INC_CORE =    $(CMSIS_INC_CORE)
 
+NRFX_ROOT ?=               	$(UCDEV_ROOT)/ext/nrfx
+NRFX_HAL_ROOT ?= 			$(NRFX_ROOT)/hal
+NRFX_MDK_ROOT ?= 			$(NRFX_ROOT)/mdk
+NRFX_SOC_ROOT ?= 			$(NRFX_ROOT)/soc
+NRFX_DRV_ROOT ?= 			$(NRFX_ROOT)/drivers
+NRFX_DRV_SRC ?= 				$(NRFX_DRV_ROOT)/src
+NRFX_DRV_INC ?= 				$(NRFX_DRV_ROOT)/include
 
-NRFX_ROOT =               	$(UCDEV_ROOT)/ext/nrfx
-NRFX_HAL_ROOT = 			$(NRFX_ROOT)/hal
-NRFX_MDK_ROOT = 			$(NRFX_ROOT)/mdk
-NRFX_SOC_ROOT = 			$(NRFX_ROOT)/soc
-NRFX_DRV_ROOT = 			$(NRFX_ROOT)/drivers
-NRFX_DRV_SRC = 				$(NRFX_DRV_ROOT)/src
-NRFX_DRV_INC = 				$(NRFX_DRV_ROOT)/include
+GD32F1_ROOT ?=               $(UCDEV_ROOT)/ext/GD32F10x_Firmware_Library
+GD32F1_FWLIB_ROOT ?=       $(GD32F1_ROOT)/Firmware
+GD32F1_STDPH_INC  ?=       $(GD32F1_FWLIB_ROOT)/GD32F10x_standard_peripheral/Include
+GD32F1_STDPH_SRC  ?=       $(GD32F1_FWLIB_ROOT)/GD32F10x_standard_peripheral/Source
+GD32F1_USBOTG_SRC  ?=       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbfs_driver/Source
+GD32F1_USBOTG_INC  ?=       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbfs_driver/Include
+GD32F1_USBD_SRC   ?=       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbd_driver/Source
+GD32F1_USBD_INC   ?=       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbd_driver/Include
+GD32F1_CMSIS_SRC  ?=       $(GD32F1_FWLIB_ROOT)/CMSIS/GD/GD32F10x/Source
+GD32F1_CMSIS_INC  ?=       $(GD32F1_FWLIB_ROOT)/CMSIS/GD/GD32F10x/Include
 
-GD32F1_ROOT =               $(UCDEV_ROOT)/ext/GD32F10x_Firmware_Library
-GD32F1_FWLIB_ROOT =       $(GD32F1_ROOT)/Firmware
-GD32F1_STDPH_INC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_standard_peripheral/Include
-GD32F1_STDPH_SRC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_standard_peripheral/Source
-GD32F1_USBOTG_SRC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbfs_driver/Source
-GD32F1_USBOTG_INC  =       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbfs_driver/Include
-GD32F1_USBD_SRC   =       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbd_driver/Source
-GD32F1_USBD_INC   =       $(GD32F1_FWLIB_ROOT)/GD32F10x_usbd_driver/Include
-GD32F1_CMSIS_SRC  =       $(GD32F1_FWLIB_ROOT)/CMSIS/GD/GD32F10x/Source
-GD32F1_CMSIS_INC  =       $(GD32F1_FWLIB_ROOT)/CMSIS/GD/GD32F10x/Include
+GD32VF1_FWLIB_ROOT ?=        $(UCDEV_ROOT)/ext/GD32VF103_Firmware_Library/Firmware
+GD32VF1_STDPH_ROOT ?=        $(GD32VF1_FWLIB_ROOT)/GD32VF103_standard_peripheral
+GD32VF1_STDPH_INC  ?=        $(GD32VF1_FWLIB_ROOT)/GD32VF103_standard_peripheral/Include
+GD32VF1_STDPH_SRC  ?=        $(GD32VF1_FWLIB_ROOT)/GD32VF103_standard_peripheral/Source
+GD32VF1_USBOTG_SRC  ?=        $(GD32VF1_FWLIB_ROOT)/GD32VF103_usbfs_driver/Source
+GD32VF1_USBOTG_INC  ?=        $(GD32VF1_FWLIB_ROOT)/GD32VF103_usbfs_driver/Include
+GD32VF1_RISCV_DRV  ?=        $(GD32VF1_FWLIB_ROOT)/RISCV/drivers
+GD32VF1_RISCV_STUB ?=        $(GD32VF1_FWLIB_ROOT)/RISCV/stubs
+GD32VF1_ECLIPSE    ?=        $(GD32VF1_FWLIB_ROOT)/RISCV/env_Eclipse
 
-GD32VF1_FWLIB_ROOT =        $(UCDEV_ROOT)/ext/GD32VF103_Firmware_Library/Firmware
-GD32VF1_STDPH_ROOT =        $(GD32VF1_FWLIB_ROOT)/GD32VF103_standard_peripheral
-GD32VF1_STDPH_INC  =        $(GD32VF1_FWLIB_ROOT)/GD32VF103_standard_peripheral/Include
-GD32VF1_STDPH_SRC  =        $(GD32VF1_FWLIB_ROOT)/GD32VF103_standard_peripheral/Source
-GD32VF1_USBOTG_SRC  =        $(GD32VF1_FWLIB_ROOT)/GD32VF103_usbfs_driver/Source
-GD32VF1_USBOTG_INC  =        $(GD32VF1_FWLIB_ROOT)/GD32VF103_usbfs_driver/Include
-GD32VF1_RISCV_DRV  =        $(GD32VF1_FWLIB_ROOT)/RISCV/drivers
-GD32VF1_RISCV_STUB =        $(GD32VF1_FWLIB_ROOT)/RISCV/stubs
-GD32VF1_ECLIPSE    =        $(GD32VF1_FWLIB_ROOT)/RISCV/env_Eclipse
-
-STM8S_INC           =    $(UCDEV_ROOT)/ext/stm8-header
+STM8S_INC           ?=    $(UCDEV_ROOT)/ext/stm8-header
  

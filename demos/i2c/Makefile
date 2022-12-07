@@ -50,6 +50,14 @@ C_SOURCES += bmp280.c
 
 C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32.c
 
+
+ifneq (,$(findstring RV32F1,$(MCU)))
+	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f1/clocksetup.c
+#	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f1.c
+	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_i2cm_stm32f1.c
+endif
+
+
 ifneq (,$(findstring STM32F0,$(MCU)))
 	C_SOURCES += $(LIBHALGLUE_ROOT)/hal/stm32f0/clocksetup.c
 #	C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/stm32/bshal_spim_stm32f0.c
@@ -102,11 +110,11 @@ C_SOURCES += $(LIBHALGLUE_ROOT)/bshal/extlib/u8x8_gpio_delay.c
 
 
 
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x_transport.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x_transport.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x.c
-C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/cards/picc.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x_transport.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc52x.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x_transport.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/drivers/rc66x.c
+#C_SOURCES += $(UCDEV_ROOT)/lib/bsrfid/cards/picc.c
 
 
 ################################################################################
@@ -128,7 +136,7 @@ LDSCRIPT = $(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).ld
 # u8g2 library
 CFLAGS += -DU8X8_WITH_USER_PTR
 
-LDFLAGS += -u _printf_float
+#LDFLAGS += -u _printf_float
 
 
 
@@ -153,3 +161,8 @@ endif
 ifeq ($(SUBARCH), M4F)
 	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/arm_m4f  -lu8g2
 endif
+
+ifeq ($(SUBARCH), RV32IMAC)
+	LDFLAGS +=  -L$(UCDEV_ROOT)/build/staticlib/u8g2/debug/riscv_rv32imac  -lu8g2
+endif
+

@@ -22,5 +22,7 @@ typedef struct {
 } lm75b_t;
 
 int lm75b_get_temperature_C_float(lm75b_t* lm75b, float*);
+#ifdef __ACCUM_FBIT__
 int lm75b_get_temperature_C_accum(lm75b_t* lm75b, accum*);
+#endif
 #endif /* LM75B_H_ */

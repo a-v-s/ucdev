@@ -7,6 +7,7 @@ uint32_t be24toh(uint32_t in) {
 
 }
 
+#ifdef __ACCUM_FBIT__
 // Based on the BMP280 datasheet Appendix 1.
 // Using the floating point example rather then the fixed point
 // As they use emulated fixed point, where I'll use ISO18037
@@ -56,6 +57,7 @@ void bmp280_compensate_a(bmp280_trimming_t *trimming,
 		*pressure = p;
 	}
 }
+#endif
 
 void bmp280_compensate_f(bmp280_trimming_t *trimming,
 		bmp280_measurement_t *measurement, float *temperature, float *pressure) {
@@ -97,6 +99,7 @@ void bmp280_compensate_f(bmp280_trimming_t *trimming,
 	}
 }
 
+#ifdef __ACCUM_FBIT__
 // Run the example from the datasheet (page 23)
 void bmp280_test() {
 	bmp280_trimming_t trimming;
@@ -137,6 +140,7 @@ void bmp280_test() {
 	(void) p;
 }
 
+
 int bmp280_measure_a(bmp280_t* bmp280, accum *temperature, long accum *pressure) {
 	bmp280_trimming_t trimming;
 	bmp280_measurement_t measurement;
@@ -149,7 +153,7 @@ int bmp280_measure_a(bmp280_t* bmp280, accum *temperature, long accum *pressure)
 
 	bmp280_compensate_a(&trimming, &measurement, temperature, pressure);
 }
-
+#endif
 int bmp280_measure_f(bmp280_t *bmp280, float *temperature, float *pressure) {
 	bmp280_trimming_t trimming;
 	bmp280_measurement_t measurement;

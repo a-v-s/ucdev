@@ -6,14 +6,9 @@ GROUP(-lgcc -lc -lnosys)
 MEMORY
 {
 
-/* 103CB */
-/*FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 128K
-RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 20K*/
 
-/* 103C6 */
-FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 32K
-RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 10K
-
+FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 512K
+RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 128K
 
 }
 

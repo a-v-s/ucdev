@@ -6,7 +6,7 @@ MCU = STM32F103xB
 ################################################################################
 # Set Output Filename 
 ################################################################################
-TARGET = usb_demo
+TARGET = romtable
 
 ################################################################################
 # Set the root directory of the ucdev enviorement 
@@ -30,18 +30,20 @@ C_SOURCES += $(LIBHLUSBD_ROOT)/ConvertUTF/ConvertUTF.c
 ################################################################################
 # Includes
 ################################################################################
-INC += -I. -I..
-INC += -I $(LIBHLUSBD_ROOT)/drivers/
-INC += -I $(LIBHLUSBD_ROOT)/
-INC += -I $(LIBHLUSBD_ROOT)/ConvertUTF
-INC += -I$(LIBHALGLUE_ROOT)/common/
-INC += -I$(LIBHALGLUE_INC) -I$(LIBHALGLUE_INC)/stm32
-INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
-INC += -I$(CUBEF1_ROOT)/Drivers/CMSIS/Include/
-INC += -I$(CUBEF1_HAL_INC_ROOT)
+INC += .
+INC += ..
+INC += $(LIBHLUSBD_ROOT)/drivers/
+INC += $(LIBHLUSBD_ROOT)/
+INC += $(LIBHLUSBD_ROOT)/ConvertUTF
+INC += $(LIBHALGLUE_ROOT)/common/
+INC += $(LIBHALGLUE_INC) 
+INC += $(LIBHALGLUE_INC)/stm32
+INC += $(CUBEF1_ROOT)/Drivers/CMSIS/Device/ST/STM32F1xx/Include/
+INC += $(CUBEF1_ROOT)/Drivers/CMSIS/Include/
+INC += $(CUBEF1_HAL_INC_ROOT)
 
 # C includes
-C_INCLUDES =  $(INC) -I. 
+C_INCLUDES =  $(INC)  
 
 # link script
 LDSCRIPT = $(shell tr '[:upper:]' '[:lower:]' <<< $(MCU)).ld

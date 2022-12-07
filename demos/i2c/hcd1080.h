@@ -34,8 +34,14 @@ typedef struct {
 #define HCD1080_VAL_DEVICE_IO		(0x1050)
 
 int hcd1080_get_temperature_C_float(hcd1080_t* hcd1080, float * result);
-int hcd1080_get_temperature_C_accum(hcd1080_t* hcd1080, accum * result);
-
 int hcd1080_get_humidity_float(hcd1080_t* hcd1080, float * result);
+
+#ifdef __ACCUM_FBIT__
+int hcd1080_get_temperature_C_accum(hcd1080_t* hcd1080, accum * result);
 int hcd1080_get_humidity_accum(hcd1080_t* hcd1080, accum * result);
+#endif
+
+
+
+
 #endif /* HCD1080_H_ */

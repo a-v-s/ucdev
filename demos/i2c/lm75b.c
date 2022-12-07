@@ -33,6 +33,7 @@ int lm75b_get_temperature_C_float(lm75b_t *lm75b, float *result) {
 	return status;
 }
 
+#ifdef __ACCUM_FBIT__
 int lm75b_get_temperature_C_accum(lm75b_t *lm75b, accum *result) {
 	uint8_t reg = LM75B_REG_TEMP;
 	uint16_t value;
@@ -54,4 +55,4 @@ int lm75b_get_temperature_C_accum(lm75b_t *lm75b, accum *result) {
 	*result = 0.125k * (accum) value;
 	return status;
 }
-
+#endif
