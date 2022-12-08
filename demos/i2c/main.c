@@ -77,8 +77,8 @@ void SysTick_Handler(void) {
 
 void SystemClock_Config(void) {
 	HAL_InitTick(0);
-	//ClockSetup_HSE8_SYS72();
-	ClockSetup_HSI_SYS48();
+	ClockSetup_HSE8_SYS72();
+	//ClockSetup_HSI_SYS48();
 
 
 
