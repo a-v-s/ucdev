@@ -57,6 +57,7 @@
 #include "pcf8563.h"
 #include "pcf8574.h"
 #include "bmp280.h"
+#include "scd4x.h"
 
 #include "rc52x_transport.h"
 #include "rc52x.h"
@@ -69,20 +70,11 @@ void HardFault_Handler(void) {
 	while(1);
 }
 
-#if defined __ARM_EABI__
 void SysTick_Handler(void) {
 	HAL_IncTick();
 }
-#endif
 
 void SystemClock_Config(void) {
-	HAL_InitTick(0);
-	ClockSetup_HSE8_SYS72();
-	//ClockSetup_HSI_SYS48();
-
-
-
-
 #ifdef STM32F0
 	ClockSetup_HSE8_SYS48();
 #endif
@@ -128,12 +120,12 @@ void scan_i2c(void) {
 	print(line, row);
 }
 
-void rfid5_spi_init(rc52x_t *rc52x) {
+void rfid5_init(rc52x_t *rc52x) {
 
 	rc52x->transport_type = bshal_transport_i2c;
 	rc52x->transport_instance.i2cm = gp_i2c;
 	rc52x->delay_ms = bshal_delay_ms;
-	rc52x_init(rc52x);
+	RC52X_Init(rc52x);
 }
 
 int main() {
@@ -141,14 +133,13 @@ int main() {
 	initialise_monitor_handles();
 	printf("Hello world!\n");
 #endif
-	char str[32];
-//	bmp280_test();
+
+	bmp280_test();
 
 	SystemClock_Config();
 	SystemCoreClockUpdate();
 
 	HAL_Init();
-	HAL_Delay(1);
 
 	bshal_delay_init();
 	bshal_delay_us(10);
@@ -158,21 +149,8 @@ int main() {
 	display_init();
 	draw_background();
 	print("   I²C DEMO", 1);
-
-//	sprintf(str,"REVID %04X",HAL_GetREVID());
-//	print(str, 3);
-//	sprintf(str,"DEVID %04X",HAL_GetDEVID());
-//	print(str, 4);
-	print(mcuid(), 6);
-	print(cpuid(), 5);
-
-
 	framebuffer_apply();
-
-	int test_start = HAL_GetTick();
 	bshal_delay_ms(1000);
-	int test_stop = HAL_GetTick();
-	int test = test_stop - test_start;
 
 	pcf8563_t pcf8563 = { 0 };
 	bh1750_t bh1750 = { 0 };
@@ -193,7 +171,14 @@ int main() {
 	hcd1080_t hcd1080 = { 0 };
 	//i2c_eeprom
 
+	scd4x_t scd4x = { 0 };
 
+	if (0 == bshal_i2cm_isok(gp_i2c, SCD4X_I2C_ADDR)) {
+		scd4x.addr = SCD4X_I2C_ADDR;
+		scd4x.p_i2c = gp_i2c;
+
+		scd4x_init(&scd4x);
+	}
 
 
 	if (0 == bshal_i2cm_isok(gp_i2c, BMP280_I2C_ADDR)) {
@@ -246,15 +231,10 @@ int main() {
 		}
 	}
 
+	char str[32];
 
-	uint8_t rc52x_version;
-/*
-	///
-	rc52x_t rc52x;
-	rfid5_spi_init(&rc52x);
-	rc52x_version = 0;
-	rc52x_get_chip_version(&rc52x, &rc52x_version);
-*/
+
+
 	if (ccs811.addr) {
 
 		ccs811_init(&ccs811);
@@ -265,7 +245,7 @@ int main() {
 	char buff[64];
 
 	//int state ='*';
-	int state =2;
+	int state =3;
 
 	while (1) {
 		int line = 0;
@@ -274,6 +254,21 @@ int main() {
 
 		switch (state) {
 		case 3:
+			static float temp_C=0;
+			static uint16_t  co2_ppm=0,humidity_percent=0;
+			if (scd4x.addr) {
+
+				if (!scd4x_get_result_float(&scd4x, &co2_ppm, &temp_C,&humidity_percent)) {
+
+
+				} else {
+					//sprintf(buff,"CO2: no data");
+				}
+				sprintf(buff, "CO2: %6d ppm", co2_ppm);
+				print(buff, line);
+				line++;
+			}
+
 
 			if (pcf8563.addr) {
 				pcf8563_time_t time = { 0 };
@@ -304,91 +299,53 @@ int main() {
 			}
 
 			if (lm75b.addr) {
-//				accum temperature_a;
-//				lm75b_get_temperature_C_accum(&lm75b, &temperature_a);
-//				sprintf(buff, "LM75B:  %3d.%02d°C  ", (int) temperature_a,
-//						(int) (100 * temperature_a) % 100);
-				float temperature_f;
-				lm75b_get_temperature_C_float(&lm75b, &temperature_f);
-				sprintf(buff, "LM75B:  %3d.%02d°C  ", (int) temperature_f,
-						(int) (100 * temperature_f) % 100);				print(buff, line);
+				accum temperature_a;
+				lm75b_get_temperature_C_accum(&lm75b, &temperature_a);
+				sprintf(buff, "LM75B:  %3d.%02d°C  ", (int) temperature_a,
+						(int) (100 * temperature_a) % 100);
 				print(buff, line);
 				line++;
 			}
 
 			if (hcd1080.addr) {
-//				accum temperature_a = -99.99;
-//				accum huminity_a = -1;
-//				hcd1080_get_humidity_accum(&hcd1080, &huminity_a);
-//
-//				hcd1080_get_temperature_C_accum(&hcd1080, &temperature_a);
-//
-//				sprintf(buff, "HCD1080:%3d.%02d°C %3d.%02d%%  ",
-//						(int) temperature_a % 999,
-//						abs((int) (100 * temperature_a)) % 100,
-//						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
+				accum temperature_a = -99.99;
+				accum huminity_a = -1;
+				hcd1080_get_humidity_accum(&hcd1080, &huminity_a);
 
-				float temperature_f = -99.99;
-				float huminity_f = -1;
-				hcd1080_get_humidity_float(&hcd1080, &huminity_f);
-
-				hcd1080_get_temperature_C_float(&hcd1080, &temperature_f);
+				hcd1080_get_temperature_C_accum(&hcd1080, &temperature_a);
 
 				sprintf(buff, "HCD1080:%3d.%02d°C %3d.%02d%%  ",
-						(int) temperature_f % 999,
-						abs((int) (100 * temperature_f)) % 100,
-						(int) huminity_f, abs((int) (100 * huminity_f)) % 100);
-
+						(int) temperature_a % 999,
+						abs((int) (100 * temperature_a)) % 100,
+						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
 				print(buff, line);
 				line++;
 			}
 			if (si70xx.addr) {
-//				accum temperature_a;
-//				si70xx_get_temperature_C_accum(&si70xx, &temperature_a);
-//				accum huminity_a;
-//				si70xx_get_humidity_accum(&si70xx, &huminity_a);
-//
-//				sprintf(buff, "SI70XX: %3d.%02d°C %3d.%02d%%  ",
-//						(int) temperature_a %999,
-//						abs((int) (100 * temperature_a)) % 100,
-//						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
-
-
-				float temperature_f;
-				si70xx_get_temperature_C_float(&si70xx, &temperature_f);
-				float huminity_f;
-				si70xx_get_humidity_float(&si70xx, &huminity_f);
+				accum temperature_a;
+				si70xx_get_temperature_C_accum(&si70xx, &temperature_a);
+				accum huminity_a;
+				si70xx_get_humidity_accum(&si70xx, &huminity_a);
 
 				sprintf(buff, "SI70XX: %3d.%02d°C %3d.%02d%%  ",
-						(int) temperature_f %999,
-						abs((int) (100 * temperature_f)) % 100,
-						(int) huminity_f, abs((int) (100 * huminity_f)) % 100);
-
+						(int) temperature_a %999,
+						abs((int) (100 * temperature_a)) % 100,
+						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
 				print(buff, line);
 				line++;
 
 			}
 
 			if (sht3x.addr) {
-//				accum temperature_a;
-//				accum huminity_a;
-//				sht3x_get_humidity_accum(&sht3x, &huminity_a);
-//				sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
-//
-//				sprintf(buff, "SHT3X:  %3d.%02d°C %3d.%02d%%  ",
-//						(int) temperature_a %999,
-//						abs((int) (100 * temperature_a)) % 100,
-//						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
-
-				float temperature_f;
-				float huminity_f;
-				sht3x_get_humidity_float(&sht3x, &huminity_f);
-				sht3x_get_temperature_C_float(&sht3x, &temperature_f);
+				accum temperature_a;
+				accum huminity_a;
+				sht3x_get_humidity_accum(&sht3x, &huminity_a);
+				sht3x_get_temperature_C_accum(&sht3x, &temperature_a);
 
 				sprintf(buff, "SHT3X:  %3d.%02d°C %3d.%02d%%  ",
-						(int) temperature_f %999,
-						abs((int) (100 * temperature_f)) % 100,
-						(int) huminity_f, abs((int) (100 * huminity_f)) % 100);
+						(int) temperature_a %999,
+						abs((int) (100 * temperature_a)) % 100,
+						(int) huminity_a, abs((int) (100 * huminity_a)) % 100);
 
 				print(buff, line);
 				line++;
@@ -408,79 +365,64 @@ int main() {
 				line++;
 			}
 			if (ccs811.addr) {
-				//			static uint16_t TVOC = 0;
-				//			static uint16_t eCO2 = 0;
-				//			css811_measure(&ccs811, &eCO2, &TVOC);
-				//			sprintf(buff, "CCS811:  TVOC %4d eCO2 %4d", TVOC, eCO2);
-
 				static uint16_t TVOC = 0;
-				css811_measure(&ccs811, NULL, &TVOC);
+				static uint16_t eCO2 = 0;
+				css811_measure(&ccs811, &eCO2, &TVOC);
 				sprintf(buff, "CCS811:    %4d ppb TVOC", TVOC);
 				print(buff, line);
 				line++;
 			}
 
 			if (bmp280.addr) {
-//				accum temperature_a;
-//				long accum pressure_la;
-//				bmp280_measure_a(&bmp280, &temperature_a, &pressure_la);
-//
-//
-//				sprintf(buff, "BMP280: %3d.%02d°C %d hPa  ",
-//						(int) temperature_a % 999,
-//						abs((int) (100 * temperature_a)) % 100,
-//						(int) pressure_la / 100);
-
-				float temperature_f;
-				float pressure_f;
-				bmp280_measure_f(&bmp280, &temperature_f, &pressure_f);
+				accum temperature_a;
+				long accum pressure_la;
+				bmp280_measure_a(&bmp280, &temperature_a, &pressure_la);
 
 
 				sprintf(buff, "BMP280: %3d.%02d°C %d hPa  ",
-						(int) temperature_f % 999,
-						abs((int) (100 * temperature_f)) % 100,
-						(int) pressure_f / 100);
-
+						(int) temperature_a % 999,
+						abs((int) (100 * temperature_a)) % 100,
+						(int) pressure_la / 100);
 				print(buff, line);
 				line++;
 
 			}
-/*
-			if (rc52x_version) {
-				// When either SHT3x or HCD1080 are being read,
-				// The mfrc522 stops reading cards
-				// This will need more investigation
-				{
 
-					picc_t picc = { 0 };
+//			if (rc52x_version) {
+//				// When either SHT3x or HCD1080 are being read,
+//				// The mfrc522 stops reading cards
+//				// This will need more investigation
+//				{
+//
+//					picc_t picc = { 0 };
+//
+//					rc52x_result_t status = 0;
+//					status = PICC_RequestA(&rc52x, &picc);
+//
+//					if (status) {
+//						status = PICC_RequestA(&rc52x, &picc);
+//					}
+//
+//					if (!status) {
+//						sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
+//						//print(str, 0);
+//						status = PICC_Select(&rc52x, &picc, 0);
+//					}
+//					if (!status) {
+//
+//						sprintf(str, "UID  ");
+//						for (int i = 0; i < picc.size; i++)
+//							sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
+//						print(str, line);
+//						//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
+//						//print(str, 1);
+//					} else {
+//						print("No Card found", line);
+//					}
+//					line++;
+//				}
+//			}
 
-					rc52x_result_t status = 0;
-					status = PICC_RequestA(&rc52x, &picc);
-
-					if (status) {
-						status = PICC_RequestA(&rc52x, &picc);
-					}
-
-					if (!status) {
-						sprintf(str, "ATQA %04X", picc.atqa.as_uint16);
-						//print(str, 0);
-						status = PICC_Select(&rc52x, &picc, 0);
-					}
-					if (!status) {
-
-						sprintf(str, "UID  ");
-						for (int i = 0; i < picc.size; i++)
-							sprintf(str + strlen(str), "%02X", picc.uidByte[i]);
-						print(str, line);
-						//sprintf(str, "SAK  %02X", picc.sak.as_uint8);
-						//print(str, 1);
-					} else {
-						print("No Card found", line);
-					}
-					line++;
-				}
-			}
-*/
 
 			break;
 		case '*':
@@ -614,4 +556,3 @@ int main() {
 	}
 
 }
-
