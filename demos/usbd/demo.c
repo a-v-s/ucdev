@@ -2,7 +2,7 @@
  File:		demo.c
  License: 	MIT
 
- Copyright (c) 2019, 2020 André van Schoubroeck
+Copyright (c) 2018 - 2022 André van Schoubroeck <andre@blaatschaap.be>
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,8 @@
 
 #include "usbd_descriptor_winusb.h"
 #include "usbd_descriptor_webusb.h"
+
+#include "ConvertUTF.h"
 
 uint8_t temp_recv_buffer[256];
 void transfer_in_complete(bscp_usbd_handle_t *handle, uint8_t epnum, void *data,
@@ -86,8 +88,14 @@ bscp_usbd_handler_result_t bscp_usbd_handle_user_request(
 		bos_respose.bos_winusb.bMS_VendorCode = REQUESTVALUE_MICROSOFT;
 		bos_respose.bos_winusb.bAltEnumCode = 0x00;
 
+		if (req->wLength < sizeof(bos_respose)) {
+			*len = req->wLength;
+		} else {
+			*len = sizeof(bos_respose);
+		}
+
 		*buf = &bos_respose;
-		*len = sizeof(bos_respose);
+
 		return RESULT_HANDLED;
 	}
 
@@ -127,15 +135,26 @@ bscp_usbd_handler_result_t bscp_usbd_handle_user_request(
 		winusb_response.registery_property.wPropertyDataLength = 0x50;
 
 		uint8_t PropertyName[] = "DeviceInterfaceGUIDs";
-		ConvertUTF8toUTF16(PropertyName, PropertyName + sizeof(PropertyName),
-				winusb_response.registery_property.PropertyName,
-				&winusb_response.registery_property.PropertyName[20], NULL);
+		uint8_t *pni_begin = PropertyName;
+		uint16_t *pno_begin = winusb_response.registery_property.PropertyName;
+		ConvertUTF8toUTF16(&pni_begin, PropertyName + sizeof(PropertyName),
+				&pno_begin,
+				&winusb_response.registery_property.PropertyName[20], 0);
 
 		// NOTE: Generate a new GUID for a new project.
 		uint8_t PropertyData[39] = "{3e295e33-b22f-466e-80d9-3a5e6574cfe8}";
-		ConvertUTF8toUTF16(PropertyData, PropertyData + sizeof(PropertyData),
-				winusb_response.registery_property.PropertyData,
-				&winusb_response.registery_property.PropertyData[40], NULL);
+		uint8_t *pdi_begin = PropertyData;
+		uint16_t *pdo_begin = winusb_response.registery_property.PropertyData;
+		ConvertUTF8toUTF16(&pdi_begin, PropertyData + sizeof(PropertyData),
+				&pdo_begin,
+				&winusb_response.registery_property.PropertyData[40], 0);
+
+
+		if (req->wLength < sizeof(winusb_response)) {
+			*len = req->wLength;
+		} else {
+			*len = sizeof(winusb_response);
+		}
 
 		*buf = &winusb_response;
 		*len = sizeof(winusb_response);
@@ -152,6 +171,7 @@ void bscp_usbd_demo_setup_descriptors(bscp_usbd_handle_t *handle) {
 	handle->descriptor_device->bMaxPacketSize0 = 64;
 	handle->descriptor_device->bNumConfigurations = 1;
 	handle->descriptor_device->bcdUSB = 0x0201; // USB 2.1 for BOS
+	//handle->descriptor_device->bcdUSB = 0x0200; // USB 2.0 for no BOS
 	handle->descriptor_device->idVendor = 0xdead;
 	handle->descriptor_device->idProduct = 0xbeef;
 
@@ -198,6 +218,6 @@ void bscp_usbd_demo_setup_descriptors(bscp_usbd_handle_t *handle) {
 	handle->descriptor_string[3] = add_string_descriptor_utf16(handle,
 			serial_number);
 
-	bscp_usbd_request_handler_add(bscp_usbd_handle_user_request);
+	bscp_usbd_request_handler_add(handle, bscp_usbd_handle_user_request);
 
 }
