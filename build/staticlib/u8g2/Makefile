@@ -10,6 +10,7 @@ U8G2_DIR 	= $(UCDEV_ROOT)/ext/u8g2/csrc
 ## Library Compile Time COnfig
 
 CFLAGS += -DU8X8_WITH_USER_PTR
+CFLAGS += -DU8G2_USE_DYNAMIC_ALLOC
 
 
 #######################################

@@ -133,7 +133,7 @@ void rfid5_spi_init(rc52x_t *rc52x) {
 	rc52x->transport_type = bshal_transport_i2c;
 	rc52x->transport_instance.i2cm = gp_i2c;
 	rc52x->delay_ms = bshal_delay_ms;
-	RC52X_Init(rc52x);
+	rc52x_init(rc52x);
 }
 
 int main() {
