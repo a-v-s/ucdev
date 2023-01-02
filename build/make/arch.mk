@@ -95,9 +95,20 @@ ifeq ($(ARCH), RISCV)
 		# As the GD32VF/CH32V in one is still a work in progress
 		# For now, do it here
 		C_INCLUDES +=$(NMSIS_INC_CORE)
-		
-		
 	endif
+
+	ifeq ($(SUBARCH), RV32EC)
+		CPU?=	-march=rv32ec
+		FPU?=	
+		ABI?= -mabi=ilp32e  -mcmodel=medlow
+
+		# This wouldn't be the correct place to include this but
+		# As the GD32VF/CH32V in one is still a work in progress
+		# For now, do it here
+		C_INCLUDES +=$(NMSIS_INC_CORE)
+	endif
+
+
 
 endif
 

@@ -119,9 +119,32 @@ ifeq ($(MCU), RV32F103)
 	
 	# Temp fix
 	ASFLAGS += -I $(UCDEV_ROOT)/ext/NMSIS/NMSIS/Core/Include/
-
-
 endif
+
+
+ifeq ($(MCU), CH32V003)
+	SERIES = RV32F103
+	# Compile the STM32F103 HAL against RISCV
+	# With compatibility layer for both  CH32V103 and GD32VF103
+	ARCH?=RISCV
+	SUBARCH?=RV32EC
+	CFLAGS += -DSTM32F103xB
+	CFLAGS += -DUSBD_LPM_ENABLED -DUSE_HAL_DRIVER
+	C_INCLUDES += $(UCDEV_ROOT)/lib/libhalglue/compat/rv32f103
+    C_INCLUDES += $(LIBHALGLUE_INC)    
+	C_INCLUDES += $(LIBHALGLUE_INC)/stm32
+	C_INCLUDES += $(CUBEF1_HAL_INC_ROOT)
+	C_INCLUDES += $(CUBEF1_CMSIS_INC_DEV)
+
+	SLIB_BLD?=$(SLIB_ROOT)/$(shell echo $(SERIES) | tr A-Z a-z)
+	SLIB_DIR?=$(SLIB_BLD)/$(shell echo $(BUILD_MODE) | tr A-Z a-z)
+	SLIB=$(SLIB_DIR)/lib$(shell echo $(MCU) | tr A-Z a-z).a
+	LIBS += -l$(shell echo $(MCU) | tr A-Z a-z)
+	
+	# Temp fix
+	ASFLAGS += -I $(UCDEV_ROOT)/ext/NMSIS/NMSIS/Core/Include/
+endif
+
 
 ifeq ($(FAMILY), STM32)
 	ARCH?=ARM
