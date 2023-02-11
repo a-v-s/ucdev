@@ -73,23 +73,26 @@ endif
 
 ifeq ($(ARCH), RISCV)
 	COMPILER_TYPE?=GCC
-	#SPECS+= --specs=nosys.specs
+#	SPECS+= --specs=nosys.specs
 	SPECS ?=  --specs=nosys.specs --specs=nano.specs
-	# Older toolchains use riscv64-unknown-elf-  	(built from AUR)
-	# Newer toolchains use riscv64-elf-				(community repo)
-	#PREFIX?=riscv64-unknown-elf-
+#	SPECS ?=   --specs=nano.specs
 
-#	PREFIX?=riscv64-elf-
-#	CFLAGS += -misa-spec=2.2	
+#	riscv64-elf-gcc
+	PREFIX?=riscv64-elf-
 
-	PREFIX ?= riscv-none-embed-
+#	mounriver-studio-toolchain-riscv-bin
+#	PREFIX ?= riscv-none-embed-
 
+#	riscv-none-elf-gcc-bin
+#	PREFIX ?= riscv-none-elf-
 	
-    LDFLAGS += -nostartfiles
+    LDFLAGS += -nostartfiles -Wl,--no-relax
 	ifeq ($(SUBARCH), RV32IMAC)
 		CPU?=	-march=rv32imac 
+#		CPU?=	-march=rv32imac_zicsr  #Use with gcc12
 		FPU?=	
-		ABI?=	-mabi=ilp32 -mcmodel=medlow
+#		ABI?=	-mabi=ilp32 -mcmodel=medlow 
+		ABI?=	-mabi=ilp32 -mcmodel=medlow -misa-spec=2.2
 
 		# This wouldn't be the correct place to include this but
 		# As the GD32VF/CH32V in one is still a work in progress
@@ -107,9 +110,6 @@ ifeq ($(ARCH), RISCV)
 		# For now, do it here
 		C_INCLUDES +=$(NMSIS_INC_CORE)
 	endif
-
-
-
 endif
 
 ifeq ($(ARCH), MCS51)
@@ -123,6 +123,25 @@ endif
 ifeq ($(ARCH), AVR)
 	COMPILER_TYPE?=GCC
 	PREFIX?=avr-
+endif
+
+ifeq ($(ARCH), CSKY)
+	COMPILER_TYPE?=GCC
+	SPECS ?=  --specs=nosys.specs 
+    LDFLAGS += -nostartfiles
+
+# binary distributed toolchain
+#	PREFIX ?= csky-abiv2-elf-
+#	CPU ?= -mcpu=ck804ef
+
+# build from upstream 
+	PREFIX ?= csky-none-elf-
+	CPU ?= -mcpu=ck803efr1
+
+	FPU ?= -mhard-float 
+	CFLAGS +=  -mistack
+	LDFLAGS += -mistack
+	ASFLAGS += -mistack
 endif
 
 
@@ -140,7 +159,7 @@ ifeq ($(COMPILER_TYPE),GCC)
 
 #$(info ARCH: Configuring GCC)
 
-#	CC  ?= $(PREFIX)gcc
+	AR  = $(PREFIX)ar
 	CC  = $(PREFIX)gcc
 	AS  = $(PREFIX)gcc -x assembler-with-cpp
 	CP  = $(PREFIX)objcopy
@@ -164,7 +183,7 @@ ifeq ($(COMPILER_TYPE),GCC)
 	ASFLAGS  += $(CPU) $(FPU) $(ABI) $(AS_DEFS)  $(OPT) -Wall -fdata-sections -ffunction-sections 
 	CFLAGS   += $(CPU) $(FPU) $(ABI) $(C_DEFS)   $(OPT) -Wall -fdata-sections -ffunction-sections  
 	CXXFLAGS += $(CPU) $(FPU) $(ABI) $(CXX_DEFS) $(OPT) -Wall -fdata-sections -ffunction-sections 
-	LDFLAGS  += $(CPU) $(FPU) $(ABI) $(SPECS) -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(MCU).map,--cref -Wl,--gc-sections
+	LDFLAGS  += $(CPU) $(FPU) $(ABI) $(SPECS) -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,--gc-sections
 
 	# Generate dependency information
 	CFLAGS +=  -MMD -MP -MF"$(@:%.o=%.d)"

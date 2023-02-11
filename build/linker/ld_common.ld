@@ -12,6 +12,8 @@ __STACK_SIZE = 0x00000400;
 __HEAP_SIZE  = 0x00000C00;
 __STACKSEAL_SIZE = 0;
 
+PROVIDE( _stack_size = __STACK_SIZE );
+
 SECTIONS
 {
 
@@ -93,7 +95,7 @@ SECTIONS
 	  {
 	    . = ALIGN(4);
         PROVIDE( _data_vma = . );	    
-	  } >RAM AT>FLASH 
+	  } >RAM AT >FLASH 
   
   /* Data section (variables) */ 
     .data :
@@ -101,10 +103,20 @@ SECTIONS
 		PROVIDE( __global_pointer$ = . + 0x800 );
 		PROVIDE( _sdata = . );
 		PROVIDE( __data_start__ = . );
+		*(.ramfunc*);  /* Functions excured from RAM */
         *(.data*);
         PROVIDE( _edata = . );
 		PROVIDE( __data_end__ = . );
     } > RAM AT >FLASH
+
+
+  . = ALIGN(8);
+  .tdata           : ALIGN(8)
+  {
+    PROVIDE( __tls_base = . );
+    *(.tdata .tdata.* .gnu.linkonce.td.*)
+  } >RAM AT>FLASH
+
 
 	.heap (COPY) :
 	{

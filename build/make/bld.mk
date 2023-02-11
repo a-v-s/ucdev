@@ -56,11 +56,12 @@ endif
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.c$(OBJ_SUFFIX))))
 vpath %.c $(sort $(dir $(C_SOURCES)))
 
-
-
-
 # list of ASM program objects
 # Handle both .s (eg STM32Cube) and .S (eg nrfx) asm files 
+# TODO : .https://twitter.com/yannsionneau/status/1557994026464419841
+# .s goes to $(AS)
+# .S goes to $(CC) 
+
 OBJ_ASM_TMP1 =  $(ASM_SOURCES:.s=.s$(OBJ_SUFFIX))
 OBJ_ASM_TMP2 =  $(OBJ_ASM_TMP1:.S=.S$(OBJ_SUFFIX))
 
@@ -68,8 +69,6 @@ OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(OBJ_ASM_TMP2)  ))
 
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
 vpath %.S $(sort $(dir $(ASM_SOURCES)))
-
-
 
 ifeq ($(BUILD_LIBRARY),1)
 all: $(OUT_DIR)/lib$(TARGET).a
@@ -82,7 +81,10 @@ clean:
 
 
 $(BUILD_DIR)/%.c.o: %.c Makefile | $(BUILD_DIR) 
-	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	$(CC) -c $(CFLAGS) $< -o $@
+# Disabled the generation of assembly listing as this triggers a gcc bug
+# causing corrupted DWARF debug data when building for RISCV
+#	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 $(BUILD_DIR)/%.s.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(ASFLAGS) $< -o $@
@@ -98,7 +100,7 @@ $(OUT_DIR)/%.bin: $(OUT_DIR)/%.elf | $(OUT_DIR)
 	$(BIN) $< $@	
 
 $(OUT_DIR)/$(TARGET).elf: $(OBJECTS) Makefile $(OUT_DIR)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(CC) $(OBJECTS) $(LDFLAGS) -Wl,-Map=$(OUT_DIR)/$(TARGET).map,--cref -o $@
 	$(SZ) $@
 
 $(OUT_DIR)/lib$(TARGET).a: $(OBJECTS) Makefile $(OUT_DIR)

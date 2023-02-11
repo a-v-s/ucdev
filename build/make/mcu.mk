@@ -32,6 +32,10 @@ ifneq (,$(findstring FE310,$(MCU)))
 	FAMILY?=FE3
 endif
 
+ifneq (,$(findstring W80,$(MCU)))
+	FAMILY?=W80X
+endif
+
 
 ################################################################################
 # MCU Families: Determine the architecture of the family
@@ -302,6 +306,13 @@ endif
 
 ifeq ($(FAMILY), AVR)
 	ARCH?=AVR
+endif
+
+
+ifeq ($(FAMILY), W80X)
+	ARCH?=CSKY
+	SUBARCH?=V2
+	SERIES?=W80X
 endif
 
 C_DEFS += -D$(MCU) -D$(SERIES) -I$(SLIB_BLD)
