@@ -35,7 +35,13 @@ SECTIONS
 		KEEP(*(.ch32_vector))
     . = ALIGN(4);
     	KEEP(*(.isr_vector)) 
-        . = ALIGN(0x200);
+	} > FLASH
+
+	/* If the firmware includes a firmware info struct, store it at a fixed
+		offset 	*/
+	.firmware_info :
+	{
+	. = ALIGN(0x200);
 		KEEP(*(.firmware_info))
 	} > FLASH
 	
@@ -61,22 +67,13 @@ SECTIONS
 		*(SORT(.dtors.*))
 		*(.dtors)
 
+		*(.rdata*);
+		*(.srdata*);
 		*(.rodata*)
+		*(.srodata*)
 
 		KEEP(*(.eh_frame*))
   } > FLASH
-
-
-/* BSS section: Uninitialised data, will be zeroed on start */
-    .bss (NOLOAD) :
-    {
-        PROVIDE ( _sbss = . );
-        PROVIDE ( __bss_start__ = . );
-        *(.bss .bss.*)
-        *(COMMON)
-        PROVIDE ( _ebss = . ) ;
-        PROVIDE ( __bss_end__ = . );
-    } > RAM
 
 /* Memory alignment and provide _data_lma for the initialisation 
    The initialised data, values in flash to be copies to ram
@@ -103,19 +100,36 @@ SECTIONS
 		PROVIDE( __global_pointer$ = . + 0x800 );
 		PROVIDE( _sdata = . );
 		PROVIDE( __data_start__ = . );
-		*(.ramfunc*);  /* Functions excured from RAM */
-        *(.data*);
-        PROVIDE( _edata = . );
+		*(.SEGGER_RTT*);  /* SEGGER RTT at fixed place in RAM */
+		*(.ramfunc*);  /* TODO should this be its own section?  */
+		*(.data*);
+		*(.sdata*);
+		PROVIDE( _edata = . );
 		PROVIDE( __data_end__ = . );
     } > RAM AT >FLASH
 
 
-  . = ALIGN(8);
-  .tdata           : ALIGN(8)
-  {
-    PROVIDE( __tls_base = . );
-    *(.tdata .tdata.* .gnu.linkonce.td.*)
-  } >RAM AT>FLASH
+/* TODO Verify this */ 
+	. = ALIGN(8);
+	.tdata           : ALIGN(8)
+	{
+		PROVIDE( __tls_base = . );
+		*(.tdata .tdata.* .gnu.linkonce.td.*)
+	} >RAM AT>FLASH
+
+
+/* BSS section: Uninitialised data, will be zeroed on start */
+    .bss (NOLOAD) :
+    {
+        PROVIDE ( _sbss = . );
+        PROVIDE ( __bss_start__ = . );
+        /* *(.bss .bss.*) */
+		*(.sbss*)
+		*(.bss*)
+        *(COMMON)
+        PROVIDE ( _ebss = . ) ;
+        PROVIDE ( __bss_end__ = . );
+    } > RAM
 
 
 	.heap (COPY) :
@@ -130,6 +144,8 @@ SECTIONS
 		PROVIDE( _eheap = . );
 	} > RAM
 
+
+
 	.stack (ORIGIN(RAM) + LENGTH(RAM) - __STACK_SIZE - __STACKSEAL_SIZE) (COPY) :
 	{
 		. = ALIGN(8);
@@ -142,6 +158,8 @@ SECTIONS
 		PROVIDE( __stack = . );
 		PROVIDE( __StackTop = .);
 	} > RAM
+
+
 	
 	/* C++ Support */
 

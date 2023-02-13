@@ -173,3 +173,6 @@
 	path = ext/stm32/stm32f0xx_hal_driver
 	url = https://github.com/STMicroelectronics/stm32f0xx_hal_driver
 
+[submodule "ext/RTT"]
+	path = ext/RTT
+	url = https://github.com/SEGGERMicro/RTT
