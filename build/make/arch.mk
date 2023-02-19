@@ -5,8 +5,10 @@
 ifeq ($(ARCH), ARM)
 	COMPILER_TYPE?=GCC
 	PREFIX?=arm-none-eabi-
-	SPECS ?=  -specs=nano.specs
-
+#	SPECS ?=  -specs=nano.specs 
+	SPECS ?=  --specs=nosys.specs  --specs=nano.specs 
+#	SPECS +=  --specs=rdimon.specs
+#    LDFLAGS += -nostartfiles 
 	ifeq ($(SUBARCH), M0)
 			CPU?=	-mcpu=cortex-m0
 			FPU?=
@@ -86,7 +88,7 @@ ifeq ($(ARCH), RISCV)
 #	riscv-none-elf-gcc-bin
 #	PREFIX ?= riscv-none-elf-
 	
-    LDFLAGS += -nostartfiles -Wl,--no-relax
+#    LDFLAGS += -nostartfiles 
 	ifeq ($(SUBARCH), RV32IMAC)
 		CPU?=	-march=rv32imac 
 #		CPU?=	-march=rv32imac_zicsr  #Use with gcc12
@@ -103,7 +105,7 @@ ifeq ($(ARCH), RISCV)
 	ifeq ($(SUBARCH), RV32EC)
 		CPU?=	-march=rv32ec
 		FPU?=	
-		ABI?= -mabi=ilp32e  -mcmodel=medlow
+		ABI?=	-mabi=ilp32e  -mcmodel=medlow  -misa-spec=2.2
 
 		# This wouldn't be the correct place to include this but
 		# As the GD32VF/CH32V in one is still a work in progress
