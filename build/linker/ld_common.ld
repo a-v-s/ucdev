@@ -83,6 +83,7 @@ SECTIONS
 	  {
 	    . = ALIGN(4);
 	    PROVIDE( _data_lma = . );
+		PROVIDE( __etext = . );   /* nrfx */
 	  } >FLASH AT>FLASH 
 
 /* Memory alignment and provide _data_vma for the initialisation 
