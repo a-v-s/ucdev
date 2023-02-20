@@ -27,6 +27,8 @@ SECTIONS
 		no other RISC-V cores are supported at the moment 
 	*/
 
+/* https://stackoverflow.com/questions/74986830/load-segment-with-rwx-permissions-linker-add-writable-attribute-after-use-align */
+
 	.vtor : 
 	{
     . = ALIGN(0x200);
@@ -39,9 +41,8 @@ SECTIONS
 
 	/* If the firmware includes a firmware info struct, store it at a fixed
 		offset 	*/
-	.firmware_info :
+	.firmware_info ALIGN(0x200) :
 	{
-	. = ALIGN(0x200);
 		KEEP(*(.firmware_info))
 	} > FLASH
 	
@@ -79,9 +80,8 @@ SECTIONS
    The initialised data, values in flash to be copies to ram
 */
 
-	  .lalign :
+	  .lalign ALIGN(4) :
 	  {
-	    . = ALIGN(4);
 	    PROVIDE( _data_lma = . );
 		PROVIDE( __etext = . );   /* nrfx */
 	  } >FLASH AT>FLASH 
@@ -89,9 +89,8 @@ SECTIONS
 /* Memory alignment and provide _data_vma for the initialisation 
    The initialised data, where to write the data
 */	
-	  .dalign :
+	  .dalign ALIGN(4) :
 	  {
-	    . = ALIGN(4);
         PROVIDE( _data_vma = . );	    
 	  } >RAM AT >FLASH 
   
@@ -101,7 +100,7 @@ SECTIONS
 		PROVIDE( __global_pointer$ = . + 0x800 );
 		PROVIDE( _sdata = . );
 		PROVIDE( __data_start__ = . );
-		*(.SEGGER_RTT*);  /* SEGGER RTT at fixed place in RAM */
+		KEEP(*(.SEGGER_RTT*));  /* SEGGER RTT at fixed place in RAM */
 		*(.ramfunc*);  /* TODO should this be its own section?  */
 		*(.data*);
 		*(.sdata*);
@@ -139,6 +138,7 @@ SECTIONS
 		__end__ = .;
 		PROVIDE(end = .);
 		PROVIDE( _sheap = . );
+		heap_end = .;
 		. = . + __HEAP_SIZE;
 		. = ALIGN(8);
 		__HeapLimit = .;
