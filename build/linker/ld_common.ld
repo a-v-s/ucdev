@@ -96,12 +96,12 @@ SECTIONS
   /* Data section (variables) */ 
     .data :
     {
-		PROVIDE( __global_pointer$ = . + 0x800 );
-		PROVIDE( _sdata = . );
 		PROVIDE( __data_start__ = . );
 		KEEP(*(.SEGGER_RTT*));  /* SEGGER RTT at fixed place in RAM */
 		*(.ramfunc*);  /* TODO should this be its own section?  */
 		*(.data*);
+		PROVIDE( __global_pointer$ = . + 0x800 );
+		PROVIDE( _sdata = . );
 		*(.sdata*);
 		PROVIDE( _edata = . );
 		PROVIDE( __data_end__ = . );
