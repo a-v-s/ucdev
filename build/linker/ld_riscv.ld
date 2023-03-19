@@ -26,7 +26,7 @@
 
 OUTPUT_ARCH( "riscv" )
 
-
+/*
  * <h> Stack / Heap Configuration
  * <o0> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
  * <o1> Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
@@ -38,8 +38,8 @@ __HEAP_SIZE  = 0x00000800;
 /**************************** end of configuration section ********************/
 
  
-REGION_ALIAS("ROM", flash)
-REGION_ALIAS("RAM", ram)
+REGION_ALIAS("ROM", FLASH)
+
 
 /* Linker script to place sections and symbol values. Should be used together
  * with other linker script that defines memory regions FLASH,ILM and RAM.
