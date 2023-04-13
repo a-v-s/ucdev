@@ -1,1 +1,1 @@
-INCLUDE "ld_common.ld"
+INCLUDE ld_common.ld
