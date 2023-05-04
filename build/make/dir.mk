@@ -101,4 +101,8 @@ GD32VF1_RISCV_STUB ?=        $(GD32VF1_FWLIB_ROOT)/RISCV/stubs
 GD32VF1_ECLIPSE    ?=        $(GD32VF1_FWLIB_ROOT)/RISCV/env_Eclipse
 
 STM8S_INC           ?=    $(UCDEV_ROOT)/ext/stm8-header
+
+GECKO_ROOT			?=     $(UCDEV_ROOT)/ext/gecko_sdk
+GECKO_EMLIB_INC		?=		$(GECKO_ROOT)/platform/emlib/inc
+GECKO_EMLIB_SRC		?=		$(GECKO_ROOT)/platform/emlib/src
  
