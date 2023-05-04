@@ -36,6 +36,10 @@ ifneq (,$(findstring W80,$(MCU)))
 	FAMILY?=W80X
 endif
 
+ifneq (,$(findstring EFR32,$(MCU)))
+	FAMILY?=EFR32
+endif
+
 
 ################################################################################
 # MCU Families: Determine the architecture of the family
@@ -313,6 +317,21 @@ ifeq ($(FAMILY), W80X)
 	ARCH?=CSKY
 	SUBARCH?=V2
 	SERIES?=W80X
+endif
+
+ifeq ($(FAMILY), EFR32)
+	ARCH?=ARM
+
+	ifneq (,$(findstring BG22,$(MCU)))
+	    SUBARCH?=M33F
+		SERIES?=EFR32BG22
+		C_INCLUDES += $(GECKO_EMLIB_INC)
+
+	endif
+	C_INCLUDES += $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Include
+	C_INCLUDES += $(GECKO_ROOT)/platform/common/inc
+	C_INCLUDES +=$(CMSIS_INC_CORE)
+	CFLAGS += -mcmse
 endif
 
 C_DEFS += -D$(MCU) -D$(SERIES) -I$(SLIB_BLD)
