@@ -323,15 +323,44 @@ ifeq ($(FAMILY), EFR32)
 	ARCH?=ARM
 
 	ifneq (,$(findstring BG22,$(MCU)))
+		# Blue Gecko
+		# eg SiLabs Thunderboard EFR32BG22 (aka SLTB010A aka BRD4184)
+		# eg eByte E104-BT53A3
 	    SUBARCH?=M33F
 		SERIES?=EFR32BG22
-		C_INCLUDES += $(GECKO_EMLIB_INC)
-
+		CFLAGS += -mcmse
 	endif
+
+	ifneq (,$(findstring MG1P,$(MCU)))
+		# Mighty Gecko
+		# eg eByte E76-2G4M20S
+	    SUBARCH?=M4F
+		SERIES?=EFR32MG1P
+	endif
+
+	ifneq (,$(findstring MG1B,$(MCU)))
+		# Mighty Gecko
+		# eg eByte E180-2G120A/B
+	    SUBARCH?=M4F
+		SERIES?=EFR32MG1B
+	endif
+
+	ifneq (,$(findstring FG1P,$(MCU)))
+		# Flex Gecko
+		# eg. eByte E76-868M20S
+	    SUBARCH?=M4F
+		SERIES?=EFR32FG1P
+	endif
+
+
+	C_INCLUDES += $(GECKO_EMLIB_INC)
 	C_INCLUDES += $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Include
 	C_INCLUDES += $(GECKO_ROOT)/platform/common/inc
 	C_INCLUDES +=$(CMSIS_INC_CORE)
-	CFLAGS += -mcmse
+	SYSTEM = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/system_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').c
+	STARTUPC = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/startup_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').c
+	STARTUPS = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/GCC/startup_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').S
+	
 endif
 
 ifdef MCU
