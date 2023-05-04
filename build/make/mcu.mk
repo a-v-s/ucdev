@@ -315,7 +315,18 @@ ifeq ($(FAMILY), W80X)
 	SERIES?=W80X
 endif
 
-C_DEFS += -D$(MCU) -D$(SERIES) -I$(SLIB_BLD)
+
+ifdef MCU
+C_DEFS += -D$(MCU)
+endif
+
+ifdef SERIES
+C_DEFS += -D$(SERIES)
+endif
+
+ifdef SLIB_BLD
+C_DEFS += -I$(SLIB_BLD)
+endif
 
 
 
