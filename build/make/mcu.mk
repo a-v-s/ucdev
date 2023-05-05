@@ -328,6 +328,7 @@ ifeq ($(FAMILY), EFR32)
 		# eg eByte E104-BT53A3
 	    SUBARCH?=M33F
 		SERIES?=EFR32BG22
+		CFLAGS += -DGECKO=2
 		CFLAGS += -mcmse
 	endif
 
@@ -336,6 +337,7 @@ ifeq ($(FAMILY), EFR32)
 		# eg eByte E76-2G4M20S
 	    SUBARCH?=M4F
 		SERIES?=EFR32MG1P
+		CFLAGS += -DGECKO=1
 	endif
 
 	ifneq (,$(findstring MG1B,$(MCU)))
@@ -343,6 +345,7 @@ ifeq ($(FAMILY), EFR32)
 		# eg eByte E180-2G120A/B
 	    SUBARCH?=M4F
 		SERIES?=EFR32MG1B
+		CFLAGS += -DGECKO=1
 	endif
 
 	ifneq (,$(findstring FG1P,$(MCU)))
@@ -350,6 +353,7 @@ ifeq ($(FAMILY), EFR32)
 		# eg. eByte E76-868M20S
 	    SUBARCH?=M4F
 		SERIES?=EFR32FG1P
+		CFLAGS += -DGECKO=1
 	endif
 
 
@@ -359,7 +363,15 @@ ifeq ($(FAMILY), EFR32)
 	C_INCLUDES +=$(CMSIS_INC_CORE)
 	SYSTEM = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/system_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').c
 	STARTUPC = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/startup_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').c
-	STARTUPS = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/GCC/startup_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').S
+	STARTUPA = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/GCC/startup_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').S
+
+	LDFLAGS += -L $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/GCC/
+
+	SLIB_BLD?=$(SLIB_ROOT)/gecko
+	SLIB_DIR?=$(SLIB_BLD)/$(shell echo $(BUILD_MODE) | tr A-Z a-z)
+
+	LIBS += -l$(shell echo $(MCU) | tr A-Z a-z)
+	SLIB=$(SLIB_DIR)/lib$(shell echo $(MCU) | tr A-Z a-z).a
 	
 endif
 
@@ -374,6 +386,11 @@ endif
 ifdef SLIB_BLD
 C_DEFS += -I$(SLIB_BLD)
 endif
+
+ifdef FAMILY
+C_DEFS += -D$(FAMILY)
+endif
+
 
 
 
