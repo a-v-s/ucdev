@@ -176,3 +176,6 @@
 [submodule "ext/RTT"]
 	path = ext/RTT
 	url = https://github.com/SEGGERMicro/RTT
+[submodule "ext/air32f103"]
+	path = ext/air32f103
+	url = https://github.com/IOsetting/air32f103-template
