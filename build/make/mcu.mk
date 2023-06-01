@@ -36,7 +36,12 @@ ifneq (,$(findstring W80,$(MCU)))
 	FAMILY?=W80X
 endif
 
+
 ifneq (,$(findstring EFR32,$(MCU)))
+	FAMILY?=EFR32
+endif
+
+ifneq (,$(findstring EFM32,$(MCU)))
 	FAMILY?=EFR32
 endif
 
@@ -321,6 +326,16 @@ endif
 
 ifeq ($(FAMILY), EFR32)
 	ARCH?=ARM
+
+
+	ifneq (,$(findstring PG22,$(MCU)))
+
+		# eg UG474: PG22 Dev Kit
+	    SUBARCH?=M33F
+		SERIES?=EFM32PG22
+		CFLAGS += -DGECKO=2
+		CFLAGS += -mcmse
+	endif
 
 	ifneq (,$(findstring BG22,$(MCU)))
 		# Blue Gecko
