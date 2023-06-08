@@ -37,6 +37,15 @@ ifneq (,$(findstring W80,$(MCU)))
 endif
 
 
+ifneq (,$(findstring EFR32,$(MCU)))
+	FAMILY?=EFR32
+endif
+
+ifneq (,$(findstring EFM32,$(MCU)))
+	FAMILY?=EFR32
+endif
+
+
 ################################################################################
 # MCU Families: Determine the architecture of the family
 ################################################################################
@@ -315,6 +324,71 @@ ifeq ($(FAMILY), W80X)
 	SERIES?=W80X
 endif
 
+ifeq ($(FAMILY), EFR32)
+	ARCH?=ARM
+
+
+	ifneq (,$(findstring PG22,$(MCU)))
+
+		# eg UG474: PG22 Dev Kit
+	    SUBARCH?=M33F
+		SERIES?=EFM32PG22
+		CFLAGS += -DGECKO=2
+		CFLAGS += -mcmse
+	endif
+
+	ifneq (,$(findstring BG22,$(MCU)))
+		# Blue Gecko
+		# eg SiLabs Thunderboard EFR32BG22 (aka SLTB010A aka BRD4184)
+		# eg eByte E104-BT53A3
+	    SUBARCH?=M33F
+		SERIES?=EFR32BG22
+		CFLAGS += -DGECKO=2
+		CFLAGS += -mcmse
+	endif
+
+	ifneq (,$(findstring MG1P,$(MCU)))
+		# Mighty Gecko
+		# eg eByte E76-2G4M20S
+	    SUBARCH?=M4F
+		SERIES?=EFR32MG1P
+		CFLAGS += -DGECKO=1
+	endif
+
+	ifneq (,$(findstring MG1B,$(MCU)))
+		# Mighty Gecko
+		# eg eByte E180-2G120A/B
+	    SUBARCH?=M4F
+		SERIES?=EFR32MG1B
+		CFLAGS += -DGECKO=1
+	endif
+
+	ifneq (,$(findstring FG1P,$(MCU)))
+		# Flex Gecko
+		# eg. eByte E76-868M20S
+	    SUBARCH?=M4F
+		SERIES?=EFR32FG1P
+		CFLAGS += -DGECKO=1
+	endif
+
+
+	C_INCLUDES += $(GECKO_EMLIB_INC)
+	C_INCLUDES += $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Include
+	C_INCLUDES += $(GECKO_ROOT)/platform/common/inc
+	C_INCLUDES +=$(CMSIS_INC_CORE)
+	SYSTEM = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/system_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').c
+	STARTUPC = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/startup_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').c
+	STARTUPA = $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/GCC/startup_$(shell echo $(SERIES) |  tr '[:upper:]' '[:lower:]').S
+
+	LDFLAGS += -L $(GECKO_ROOT)/platform/Device/SiliconLabs/$(SERIES)/Source/GCC/
+
+	SLIB_BLD?=$(SLIB_ROOT)/gecko
+	SLIB_DIR?=$(SLIB_BLD)/$(shell echo $(BUILD_MODE) | tr A-Z a-z)
+
+	LIBS += -l$(shell echo $(MCU) | tr A-Z a-z)
+	SLIB=$(SLIB_DIR)/lib$(shell echo $(MCU) | tr A-Z a-z).a
+	
+endif
 
 ifdef MCU
 C_DEFS += -D$(MCU)
@@ -327,6 +401,11 @@ endif
 ifdef SLIB_BLD
 C_DEFS += -I$(SLIB_BLD)
 endif
+
+ifdef FAMILY
+C_DEFS += -D$(FAMILY)
+endif
+
 
 
 
