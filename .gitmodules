@@ -179,3 +179,6 @@
 [submodule "ext/gecko_sdk"]
 	path = ext/gecko_sdk
 	url = https://github.com/SiliconLabs/gecko_sdk
+[submodule "lib/bsradio"]
+	path = lib/bsradio
+	url = ../bsradio
