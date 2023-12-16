@@ -182,3 +182,6 @@
 [submodule "lib/bsradio"]
 	path = lib/bsradio
 	url = ../bsradio
+[submodule "lib/bssensor"]
+	path = lib/bssensor
+	url = ../bssensor/
