@@ -77,7 +77,7 @@ typedef enum {
     PROTOCOL_TRANSPORT_UART = 0x22,
 
     PROTOCOL_TRANSPORT_ESB = 0x40,
-    PROTOCOL_TRANSPORT_PRF = 0x41,
+    PROTOCOL_TRANSPORT_RF = 0x41,
 	PROTOCOL_TRANSPORT_BLE = 0x42,
 } protocol_transport_t;
 
@@ -97,6 +97,7 @@ typedef itph_handler_status_t (*command_handler_f)(itph_protocol_packet_t *data,
 uint32_t protocol_parse(uint8_t *data, size_t size, protocol_transport_t transport, uint32_t param);
 uint32_t protocol_register_command(command_handler_f handler, uint8_t command);
 
-uint32_t protocol_merge_packets(uint16_t packet_size, uint8_t* data_in, uint8_t count_in, uint8_t* data_out);
+uint32_t protocol_packet_merge(uint8_t* buffer, size_t buffer_size, itph_protocol_packet_t * packet);
+size_t protocol_merged_packet_size(void* buffer, size_t buffer_size);
 
 #endif /* ANY_INC_PROTOCOL_H_ */
