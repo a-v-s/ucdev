@@ -37,15 +37,16 @@
 
 
 // Basic Commands
-#define ITPH_CMD_NOP      0x00
-#define ITPH_CMD_PING     0x01
-#define ITPH_CMD_INFO     0x02
+#define BSCP_CMD_NOP      0x00
+#define BSCP_CMD_PING     0x01
+#define BSCP_CMD_INFO     0x02
+#define BSCP_CMD_FORWARD  0x03
 
 // Basic Subcommands
-#define ITPH_SUB_QGET 0x10 // reQuest GET
-#define ITPH_SUB_QSET 0x11 // reQuest SET
-#define ITPH_SUB_SDAT 0x20 // reSponse DATa
-#define ITPH_SUB_SSTA 0x21 // reSponse STAtus
+#define BSCP_SUB_QGET 0x10 // reQuest GET
+#define BSCP_SUB_QSET 0x11 // reQuest SET
+#define BSCP_SUB_SDAT 0x20 // reSponse DATa
+#define BSCP_SUB_SSTA 0x21 // reSponse STAtus
 
 
 typedef struct {
@@ -53,18 +54,33 @@ typedef struct {
     uint8_t  cmd;
     uint8_t  sub;
     uint8_t  res;
-} protocol_header_t;
+} bscp_protocol_header_t;
+
 
 typedef struct {
-    uint8_t transport;
-    uint8_t target;
-    uint8_t data[];
-} itph_protocol_forward_t;
+	union {
+	struct {
+		uint8_t transport;
+		uint8_t from;
+		uint8_t to;
+		union {
+			int8_t rssi;
+			uint8_t flags;
+		};
+		};
+	uint32_t as_uint32;
+	};
+} protocol_transport_header_t;
 
 typedef struct {
-    protocol_header_t head;
+	protocol_transport_header_t head;
     uint8_t data[];
-} itph_protocol_packet_t;
+} bscp_protocol_forward_t;
+
+typedef struct {
+    bscp_protocol_header_t head;
+    uint8_t data[];
+} bscp_protocol_packet_t;
 
 
 typedef enum {
@@ -82,22 +98,22 @@ typedef enum {
 } protocol_transport_t;
 
 typedef enum {
-    ITPH_HANDLER_STATUS_OK      = 0,
-    ITPH_HANDLER_STATUS_OK_FW   = 1,
-    ITPH_HANDLER_STATUS_SKIPPED = 2,
-    ITPH_HANDLER_STATUS_BADSIZE = 3,
-    ITPH_HANDLER_STATUS_BADCMD  = 4,
-    ITPH_HANDLER_STATUS_BADSUB  = 5,
-    ITPH_HANDLER_STATUS_BADDATA = 6,
-    ITPH_HANDLER_STATUS_ERROR  = 0xF0,
-} itph_handler_status_t ;
+    BSCP_HANDLER_STATUS_OK      = 0,
+    BSCP_HANDLER_STATUS_OK_FW   = 1,
+    BSCP_HANDLER_STATUS_SKIPPED = 2,
+    BSCP_HANDLER_STATUS_BADSIZE = 3,
+    BSCP_HANDLER_STATUS_BADCMD  = 4,
+    BSCP_HANDLER_STATUS_BADSUB  = 5,
+    BSCP_HANDLER_STATUS_BADDATA = 6,
+    BSCP_HANDLER_STATUS_ERROR  = 0xF0,
+} bscp_handler_status_t ;
 
-typedef itph_handler_status_t (*command_handler_f)(itph_protocol_packet_t *data, protocol_transport_t transport, uint32_t param);
+typedef bscp_handler_status_t (*command_handler_f)(bscp_protocol_packet_t *data, protocol_transport_t transport, uint32_t param);
 
 uint32_t protocol_parse(uint8_t *data, size_t size, protocol_transport_t transport, uint32_t param);
 uint32_t protocol_register_command(command_handler_f handler, uint8_t command);
 
-uint32_t protocol_packet_merge(uint8_t* buffer, size_t buffer_size, itph_protocol_packet_t * packet);
+uint32_t protocol_packet_merge(uint8_t* buffer, size_t buffer_size, bscp_protocol_packet_t * packet);
 size_t protocol_merged_packet_size(void* buffer, size_t buffer_size);
 
 #endif /* ANY_INC_PROTOCOL_H_ */
