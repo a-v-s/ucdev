@@ -42,6 +42,8 @@
 #define BSCP_CMD_INFO     0x02
 #define BSCP_CMD_FORWARD  0x03
 
+
+
 // Basic Subcommands
 #define BSCP_SUB_QGET 0x10 // reQuest GET
 #define BSCP_SUB_QSET 0x11 // reQuest SET
@@ -81,6 +83,13 @@ typedef struct {
     bscp_protocol_header_t head;
     uint8_t data[];
 } bscp_protocol_packet_t;
+
+typedef struct {
+    uint8_t cmd;
+    uint8_t index;
+    uint8_t flags;
+} bscp_protocol_info_t;
+
 
 
 typedef enum {
