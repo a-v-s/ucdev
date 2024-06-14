@@ -92,35 +92,34 @@ typedef struct {
 } spi_flash_rems_t;
 
 typedef struct {
-	unsigned int busy : 1;
-	unsigned int wel : 1;
-	unsigned int bp : 3;
-	unsigned int tb : 1;
-	unsigned int sec : 1;
-	unsigned int srp0 : 1;
+	unsigned int busy :1;
+	unsigned int wel :1;
+	unsigned int bp :3;
+	unsigned int tb :1;
+	unsigned int sec :1;
+	unsigned int srp0 :1;
 } spi_flash_sr1_t;
 
 typedef struct {
-	unsigned int srp1 : 1;
-	unsigned int qe : 1;
-	unsigned int lb : 4;
-	unsigned int cmp : 1;
-	unsigned int sus : 1;
+	unsigned int srp1 :1;
+	unsigned int qe :1;
+	unsigned int lb :4;
+	unsigned int cmp :1;
+	unsigned int sus :1;
 } spi_flash_sr2_t;
 
 typedef struct {
-	unsigned int lc : 4;
-	unsigned int hfm : 1;
-	unsigned int srv : 2;
-	unsigned int hrsw : 1;
+	unsigned int lc :4;
+	unsigned int hfm :1;
+	unsigned int srv :2;
+	unsigned int hrsw :1;
 } spi_flash_sr3_t;
-
 
 //---------------------------------------------------------------------------
 // SPI COMMANDS
 //---------------------------------------------------------------------------
 
- // Read
+// Read
 #define SPI_FLASH_CMD_READ	0x03
 #define SPI_FLASH_CMD_FREAD	0x0B
 
@@ -184,7 +183,6 @@ typedef struct {
 #define SPI_FLASH_CMD_2FREAD	0xBB
 #define SPI_FLASH_CMD_4FREAD	0xEB
 
-
 //---------------------------------------------------------------------------
 // Number of Dummy bytes for each command
 //---------------------------------------------------------------------------
@@ -239,11 +237,24 @@ typedef struct {
 #define SPI_FLASH_DMY_RUID	4
 #define SPI_FLASH_DMY_NOP	0
 
-
-
 #pragma pack (pop)
 
-
-
+int spi_flash_cmd(bshal_spim_instance_t *spim, uint8_t cmd, void *request,
+		uint16_t request_size, uint8_t dummy_count, void *response,
+		uint16_t reponse_size);
+bool spi_flash_busy(bshal_spim_instance_t *spim);
+bool spi_flash_wel(bshal_spim_instance_t *spim);
+int spi_flash_write_enable(bshal_spim_instance_t *spim);
+int spi_flash_erase_page_256(bshal_spim_instance_t *spim, uint32_t address);
+int spi_flash_erase_sector_4k(bshal_spim_instance_t *spim, uint32_t address);
+int spi_flash_erase_block_32k(bshal_spim_instance_t *spim, uint32_t address);
+int spi_flash_erase_block_64k(bshal_spim_instance_t *spim, uint32_t address);
+int spi_flash_erase_chip(bshal_spim_instance_t *spim);
+void spi_flash_program(bshal_spim_instance_t *spim, uint32_t address,
+		void *data, size_t size);
+int spi_flash_read(bshal_spim_instance_t *spim, uint32_t address, void *data,
+		size_t size);
+uint32_t spi_flash_get_id(bshal_spim_instance_t *spim);
 uint64_t spi_flash_get_serial(bshal_spim_instance_t *spim);
+
 #endif // __SPI_FLASH_H

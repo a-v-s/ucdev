@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdfix.h>
 #include <inttypes.h>
+#include <stdio.h>
 
 #include <system.h>
 #include <bshal_spim.h>
