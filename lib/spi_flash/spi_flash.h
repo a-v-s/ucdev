@@ -83,7 +83,7 @@ typedef struct {
 } spi_flash_rdid_t;
 
 typedef struct {
-	uint8_t electronic_id
+	uint8_t electronic_id;
 } spi_flash_res_t;
 
 typedef struct {
