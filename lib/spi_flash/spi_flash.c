@@ -101,7 +101,7 @@ int spi_flash_write_enable(bshal_spim_instance_t *spim){
 int spi_flash_erase_page_256(bshal_spim_instance_t *spim, uint32_t address){
 	// Note: Not all flash chips implement page erase
 	// So far I've only seen this on PUYA flash
-	size_t page_size = 256;
+	size_t page_size = 256; (void)page_size;
 	if (spi_flash_write_enable(spim)) return -1;
 	uint8_t addr[3] = {};
 	addr[2] = address;
@@ -113,7 +113,7 @@ int spi_flash_erase_page_256(bshal_spim_instance_t *spim, uint32_t address){
 }
 
 int spi_flash_erase_sector_4k(bshal_spim_instance_t *spim, uint32_t address){
-	size_t sector_size = 4096;
+	size_t sector_size = 4096; (void)sector_size;
 	if (spi_flash_write_enable(spim)) return -1;
 	uint8_t addr[3] = {};
 	addr[2] = address;
@@ -126,7 +126,7 @@ int spi_flash_erase_sector_4k(bshal_spim_instance_t *spim, uint32_t address){
 
 
 int spi_flash_erase_block_32k(bshal_spim_instance_t *spim, uint32_t address){
-	size_t block_size = 32768;
+	size_t block_size = 32768; (void)block_size;
 	if (spi_flash_write_enable(spim)) return -1;
 	uint8_t addr[3] = {};
 	addr[2] = address;
@@ -138,7 +138,7 @@ int spi_flash_erase_block_32k(bshal_spim_instance_t *spim, uint32_t address){
 }
 
 int spi_flash_erase_block_64k(bshal_spim_instance_t *spim, uint32_t address){
-	size_t block_size = 65536;
+	size_t block_size = 65536; (void)block_size;
 	if (spi_flash_write_enable(spim)) return -1;
 	uint8_t addr[3] = {};
 	addr[2] = address;
@@ -150,7 +150,7 @@ int spi_flash_erase_block_64k(bshal_spim_instance_t *spim, uint32_t address){
 }
 
 int spi_flash_erase_chip(bshal_spim_instance_t *spim){
-	size_t block_size = 65536;
+	size_t block_size = 65536; (void)block_size;
 	if (spi_flash_write_enable(spim)) return -1;
 	spi_flash_cmd(spim, SPI_FLASH_CMD_CE, NULL, 0, SPI_FLASH_DMY_CE, NULL, 0);
 	while (spi_flash_busy(spim));
