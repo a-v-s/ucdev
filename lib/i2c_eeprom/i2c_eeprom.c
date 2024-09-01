@@ -64,7 +64,7 @@ int i2c_eeprom_program(i2c_eeprom_t *i2c_eeprom, uint32_t address, void* data, s
 
 		int result = bshal_i2cm_send_reg(i2c_eeprom->p_i2c,i2c_eeprom->i2c_addr,addr,data + data_offset, write_size);
 		if(result) return result;
-
+		bshal_delay_ms(5); // need a delay to write multiple pages
 		data_offset += write_size;
 		size -= write_size;
 		write_size = (size < page_size) ? size : page_size;
