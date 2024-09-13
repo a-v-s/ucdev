@@ -38,7 +38,7 @@
 static command_handler_f command_handlers[0x100];
 
 uint32_t protocol_parse(uint8_t *data, size_t size,
-		protocol_transport_t transport, uint32_t param) {
+		protocol_transport_t transport, void* param) {
 	int offset = 0;
 	bscp_protocol_header_t *header = (bscp_protocol_header_t*) (data);
 	while (header->size && (header->size + offset) <= size) {

@@ -117,9 +117,9 @@ typedef enum {
     BSCP_HANDLER_STATUS_ERROR  = 0xF0,
 } bscp_handler_status_t ;
 
-typedef bscp_handler_status_t (*command_handler_f)(bscp_protocol_packet_t *data, protocol_transport_t transport, uint32_t param);
+typedef bscp_handler_status_t (*command_handler_f)(bscp_protocol_packet_t *data, protocol_transport_t transport, void* param);
 
-uint32_t protocol_parse(uint8_t *data, size_t size, protocol_transport_t transport, uint32_t param);
+uint32_t protocol_parse(uint8_t *data, size_t size, protocol_transport_t transport, void* param);
 uint32_t protocol_register_command(command_handler_f handler, uint8_t command);
 
 uint32_t protocol_packet_merge(uint8_t* buffer, size_t buffer_size, bscp_protocol_packet_t * packet);
