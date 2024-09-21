@@ -12,6 +12,9 @@
 
 #define BSCP_CMD_SENSOR_ENVIOREMENTAL_VALUE	0x10
 
+
+#include "bsfix.h"
+
 typedef enum {
 	bsprot_sensor_enviromental_temperature = 0,
 	bsprot_sensor_enviromental_humidity = 1,

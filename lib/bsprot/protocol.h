@@ -44,6 +44,7 @@
 
 
 
+
 // Basic Subcommands
 #define BSCP_SUB_QGET 0x10 // reQuest GET
 #define BSCP_SUB_QSET 0x11 // reQuest SET
