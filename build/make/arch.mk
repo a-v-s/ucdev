@@ -185,7 +185,7 @@ ifeq ($(COMPILER_TYPE),GCC)
 	ASFLAGS  += $(CPU) $(FPU) $(ABI) $(AS_DEFS)  $(OPT) -Wall -fdata-sections -ffunction-sections 
 	CFLAGS   += $(CPU) $(FPU) $(ABI) $(C_DEFS)   $(OPT) -Wall -fdata-sections -ffunction-sections  
 	CXXFLAGS += $(CPU) $(FPU) $(ABI) $(CXX_DEFS) $(OPT) -Wall -fdata-sections -ffunction-sections 
-	LDFLAGS  += $(CPU) $(FPU) $(ABI) $(SPECS) -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,--gc-sections
+	LDFLAGS  += $(CPU) $(FPU) $(ABI) $(SPECS) -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,--gc-sections -Wl,--print-memory-usage
 
 	# Generate dependency information
 	CFLAGS +=  -MMD -MP -MF"$(@:%.o=%.d)"
