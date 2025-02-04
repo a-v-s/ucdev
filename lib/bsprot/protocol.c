@@ -44,7 +44,7 @@ uint32_t protocol_parse(uint8_t *data, size_t size,
 		if (command_handlers[header->cmd]) {
 			uint8_t command_data[header->size];
 			memcpy(command_data, header, header->size);
-			command_handlers[header->cmd](command_data, transport, param);
+			command_handlers[header->cmd]((bscp_protocol_packet_t *)(command_data), transport, param);
 		}
 		offset += header->size;
 		header = (bscp_protocol_header_t*) (data+offset);
