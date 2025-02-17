@@ -101,7 +101,8 @@ $(OUT_DIR)/%.bin: $(OUT_DIR)/%.elf | $(OUT_DIR)
 
 $(OUT_DIR)/$(TARGET).elf: $(OBJECTS) Makefile $(OUT_DIR)
 	$(CC) $(OBJECTS) $(LDFLAGS) -Wl,-Map=$(OUT_DIR)/$(TARGET).map,--cref -o $@
-	$(SZ) $@
+	$(SZ) -A $@
+	$(SZ) -G $@
 
 $(OUT_DIR)/lib$(TARGET).a: $(OBJECTS) Makefile $(OUT_DIR)
 	$(AR) rcs $@ $(OBJECTS)
