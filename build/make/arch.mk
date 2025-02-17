@@ -225,12 +225,19 @@ $(info MCU           $(MCU))
 $(info Family        $(FAMILY))
 
 $(info Architecture  $(ARCH))
+$(info Subarch       $(SUBARCH))
 $(info Compile type  $(COMPILER_TYPE))
 
-#$(info ARCH: CC           $(CC))
-#
+$(info CC           $(CC))
+
+
+$(info CPU           $(CPU))
+$(info FPU           $(FPU))
+$(info ABI           $(ABI))
+
+
 #$(info ARCH: LIBDIR 	   $(LIBDIR))
 #$(info ARCH: ASFLAGS  	   $(ASFLAGS))
 #$(info ARCH: CFLAGS 	   $(CFLAGS))
 #$(info ARCH: LDFLAGS  	   $(LDFLAGS))
-#$(info ------------------------------------------------------------------------)
+$(info ------------------------------------------------------------------------)

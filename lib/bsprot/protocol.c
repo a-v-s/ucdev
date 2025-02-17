@@ -39,14 +39,15 @@ static command_handler_f command_handlers[0x100];
 uint32_t protocol_parse(uint8_t *data, size_t size,
 		protocol_transport_t transport, uint32_t param) {
 	int offset = 0;
-	protocol_header_t *header = (protocol_header_t*) data;
+	bscp_protocol_header_t *header = (bscp_protocol_header_t*) (data);
 	while (header->size && (header->size + offset) <= size) {
 		if (command_handlers[header->cmd]) {
 			uint8_t command_data[header->size];
 			memcpy(command_data, header, header->size);
-			command_handlers[header->cmd](command_data, transport, param);
+			command_handlers[header->cmd]((bscp_protocol_packet_t *)(command_data), transport, param);
 		}
 		offset += header->size;
+		header = (bscp_protocol_header_t*) (data+offset);
 	}
 	return 0;
 }
@@ -56,19 +57,27 @@ uint32_t protocol_register_command(command_handler_f handler, uint8_t command) {
 	return 0;
 }
 
-uint32_t protocol_merge_packets(uint16_t packet_size, uint8_t *data_in,
-		uint8_t count_in, uint8_t *data_out) {
-	uint16_t offset = 0;
-	uint8_t count = 0;
-	while (count < count_in
-			&& offset
-					+ ((protocol_header_t*) (data_in + (count * packet_size)))->size
-					<= packet_size) {
-		memcpy(data_out + offset, data_in + (count * packet_size),
-				((protocol_header_t*) (data_in + (count * packet_size)))->size);
-		offset +=
-				((protocol_header_t*) (data_in + (count * packet_size)))->size;
-		count++;
+uint32_t protocol_packet_merge(uint8_t* buffer, size_t buffer_size, bscp_protocol_packet_t * packet) {
+	int pos = 0;
+	while (buffer[pos]) {
+		pos += buffer[pos];
+		if (( pos + packet->head.size)  > buffer_size )
+			return -1;
 	}
-	return count;
+	memcpy(buffer+pos, packet, packet->head.size);
+	int end = pos+packet->head.size;
+	if (end < buffer_size) buffer[end]=0;
+	return 0;
+}
+
+
+size_t protocol_merged_packet_size(void* buffer_, size_t buffer_size) {
+	int pos = 0;;
+	uint8_t* buffer = (uint8_t*)buffer_;
+	while (buffer[pos]) {
+		pos += buffer[pos];
+		if (pos >- buffer_size)
+			break;
+	}
+	return pos;
 }

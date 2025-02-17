@@ -14,12 +14,14 @@ CFLAGS += -DWITH_USER_PTR
 
 #  source of the library
 
+
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_bitmap.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_box.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_ccs.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_circle.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_clip.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_com_msg_api.c
+C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_buffer.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_default_cb.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_ic_hx8352c.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_ic_ili9163.c
@@ -40,6 +42,7 @@ C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_oled_128x128_ilsoft.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_oled_128x128_univision.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_oled_160x128_samsung.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_oled_96x64_univision.c
+C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_st7789.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_tft_128x128_ili9163.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_tft_128x160_st7735.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_dev_tft_132x132_pcf8833.c
@@ -58,6 +61,7 @@ C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_polygon.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_rotate.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_scale.c
 C_SOURCES += $(UCDEV_ROOT)/ext/ucglib/csrc/ucg_vector_font_data.c
+
 
 
 BUILD_LIBRARY = 1
