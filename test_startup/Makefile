@@ -9,7 +9,7 @@ C_INCLUDES += $(UCDEV_ROOT)/ext/RTT//Syscalls/
 C_INCLUDES += $(UCDEV_ROOT)/ext/RTT//RTT/
 C_INCLUDES += $(UCDEV_ROOT)/ext/RTT//Config/
 
-C_INCLUDES += $(UCDEV_ROOT)/ext/CMSIS_5/CMSIS/Core/Include/
+C_INCLUDES += $(UCDEV_ROOT)/ext/CMSIS_6/CMSIS/Core/Include/
 
 C_SOURCES += $(UCDEV_ROOT)/lib/libhalglue/common/nosysfix.c 
 

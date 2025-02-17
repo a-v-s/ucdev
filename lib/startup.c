@@ -8,7 +8,7 @@
 typedef int IRQn_Type;
 #define SysTick_IRQn -1
 #define IRQ_COUNT 64
-#include "../ext/CMSIS_5/CMSIS/Core/Include/core_cm3.h"
+#include "core_cm3.h"
 
 
 int irq_count() { return 32 * (1 + SCnSCB->ICTR); }
