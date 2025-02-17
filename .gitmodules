@@ -185,3 +185,6 @@
 [submodule "lib/bssensor"]
 	path = lib/bssensor
 	url = ../bssensor/
+[submodule "ext/CMSIS_6"]
+	path = ext/CMSIS_6
+	url = https://github.com/ARM-software/CMSIS_6
