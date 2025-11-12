@@ -46,9 +46,9 @@ uint32_t protocol_parse(uint8_t *data, size_t size,
 			uint8_t command_data[header->size];
 			memcpy(command_data, header, header->size);
 			command_handlers[header->cmd]((bscp_protocol_packet_t *)(command_data), transport, param);
-			printf("Handled   command %02X\n", header->cmd);
+			// printf("Handled   command %02X\n", header->cmd);
 		} else {
-			printf("Unhandled command %02X\n", header->cmd);
+			// printf("Unhandled command %02X\n", header->cmd);
 		}
 		offset += header->size;
 		header = (bscp_protocol_header_t*) (data+offset);
